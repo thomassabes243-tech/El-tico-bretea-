@@ -8,11 +8,12 @@ Cubierto hasta ahora: autenticación por correo/contraseña, tipos de usuario
 (trabajador, empresa, moderador, admin), registro de trabajador y de
 empresa, perfil profesional, vacantes empresariales con aplicaciones, chat
 en vivo por comunidad (con fotos efímeras y límites diarios), moderación de
-salas, reportes de usuarios/empresas, y un panel administrador (usuarios,
+salas, reportes de usuarios/empresas, panel administrador (usuarios,
 empresas, vacantes, moderadores, reportes, precios/límites y
-almacenamiento). Pendiente: pagos reales (falta definir procesador
-compatible con Costa Rica), generación de PDF del CV, publicidad y
-categorías editables desde el panel.
+almacenamiento), y descarga real del CV en PDF (gratis por ahora, mientras
+no hay procesador de pagos conectado). Pendiente: pagos reales (falta
+definir procesador compatible con Costa Rica), publicidad y categorías
+editables desde el panel.
 
 ## Stack
 
