@@ -52,10 +52,16 @@ function CvDocument({ worker }: { worker: WorkerWithReferences }) {
           </Text>
         </View>
 
-        {worker.workExperience && (
+        {(worker.workExperience || worker.companiesWorkedAt || worker.previousPositions) && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Experiencia</Text>
-            <Text style={styles.text}>{worker.workExperience}</Text>
+            {worker.workExperience && <Text style={styles.text}>{worker.workExperience}</Text>}
+            {worker.companiesWorkedAt && (
+              <Text style={styles.text}>Empresas donde trabajó: {worker.companiesWorkedAt}</Text>
+            )}
+            {worker.previousPositions && (
+              <Text style={styles.text}>Puestos anteriores: {worker.previousPositions}</Text>
+            )}
           </View>
         )}
 
