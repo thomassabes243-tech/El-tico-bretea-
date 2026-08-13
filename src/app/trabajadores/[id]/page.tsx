@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
+import { ReportButton } from "@/components/forms/ReportButton";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { MapPin, Briefcase, GraduationCap, Sparkles, Phone, Mail, Lock } from "lucide-react";
 
@@ -17,7 +19,10 @@ export default async function PublicWorkerProfilePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const worker = await prisma.workerProfile.findUnique({ where: { id } });
+  const [worker, session] = await Promise.all([
+    prisma.workerProfile.findUnique({ where: { id } }),
+    auth(),
+  ]);
 
   if (!worker || !worker.isPublic) notFound();
 
@@ -107,6 +112,10 @@ export default async function PublicWorkerProfilePage({
             )}
           </div>
         </Card>
+
+        <div className="mt-4 px-1">
+          <ReportButton targetUserId={worker.userId} targetType="USER" isLoggedIn={Boolean(session?.user)} />
+        </div>
       </main>
       <BottomNav />
     </div>

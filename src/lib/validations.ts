@@ -139,3 +139,11 @@ export type JobPostingFormValues = z.input<typeof jobPostingSchema>;
 export const chatMessageSchema = z.object({
   content: z.string().trim().min(1).max(2000),
 });
+
+export const reportSchema = z.object({
+  targetUserId: z.string().min(1),
+  targetType: z.enum(["USER", "COMPANY"]),
+  reason: z.string().trim().min(5, "Contanos brevemente el motivo").max(500),
+});
+
+export type ReportInput = z.infer<typeof reportSchema>;

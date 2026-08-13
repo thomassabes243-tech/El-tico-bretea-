@@ -384,3 +384,19 @@ model Report {
 
   @@map("reports")
 }
+
+// ---------------------------------------------------------------------------
+// Section 20: Panel administrador — precios y límites editables sin
+// necesidad de actualizar la app. Fila única (singleton).
+// ---------------------------------------------------------------------------
+
+model AppSettings {
+  id                    String   @id @default("singleton")
+  cvPriceColones        Int      @default(1090)
+  premiumPriceColones   Int      @default(1500)
+  freeDailyFileLimit    Int      @default(5)
+  companyDailyFileLimit Int      @default(10)
+  updatedAt             DateTime @updatedAt
+
+  @@map("app_settings")
+}

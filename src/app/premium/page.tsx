@@ -4,6 +4,8 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { PriceTag } from "@/components/ui/PriceTag";
+import { getAppSettings } from "@/lib/settings";
+import { formatColones } from "@/lib/format";
 
 const BENEFITS = [
   { icon: EyeOff, text: "Sin publicidad" },
@@ -14,7 +16,10 @@ const BENEFITS = [
   { icon: ImagePlus, text: "Sin límite diario de fotos en el chat" },
 ];
 
-export default function PremiumPage() {
+export default async function PremiumPage() {
+  const settings = await getAppSettings();
+  const price = formatColones(settings.premiumPriceColones);
+
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <TopBar />
@@ -28,7 +33,7 @@ export default function PremiumPage() {
           <div className="bg-gradient-to-br from-colon-700 to-colon-600 px-6 py-7 text-white">
             <p className="text-sm font-medium text-white/80">Suscripción mensual</p>
             <div className="mt-1 flex items-end gap-1">
-              <span className="text-4xl font-extrabold">₡1,500</span>
+              <span className="text-4xl font-extrabold">₡{price}</span>
               <span className="mb-1 text-sm text-white/70">/ mes</span>
             </div>
           </div>
@@ -67,7 +72,7 @@ export default function PremiumPage() {
         </Card>
 
         <div className="mt-4 flex items-center justify-center gap-2 text-xs text-navy-800/45">
-          <PriceTag amount="1,500" suffix="/ mes" />
+          <PriceTag amount={price} suffix="/ mes" />
           <span>· precio configurable desde el panel administrativo</span>
         </div>
       </main>
