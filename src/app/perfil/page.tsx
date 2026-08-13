@@ -10,7 +10,8 @@ import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { recommendJobsForWorker } from "@/lib/recommendations";
 import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
-import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send, Info, Pencil } from "lucide-react";
+import { applicationStatusMeta } from "@/lib/application-status";
+import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send, Info, Pencil, History } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -86,6 +87,25 @@ export default async function PerfilPage() {
               <span className="flex items-center gap-2"><Mail className="h-4 w-4 text-navy-800/40" /> {worker.email}</span>
             </div>
           </Card>
+
+          {(worker.workExperience || worker.companiesWorkedAt || worker.previousPositions) && (
+            <Card className="mt-4 p-5">
+              <h2 className="flex items-center gap-2 text-sm font-bold text-navy-900">
+                <History className="h-4 w-4" /> Experiencia laboral
+              </h2>
+              <dl className="mt-3 flex flex-col gap-2 text-sm text-navy-800/70">
+                {worker.workExperience && (
+                  <div><dt className="font-semibold text-navy-900">Resumen</dt><dd>{worker.workExperience}</dd></div>
+                )}
+                {worker.companiesWorkedAt && (
+                  <div><dt className="font-semibold text-navy-900">Empresas donde trabajó</dt><dd>{worker.companiesWorkedAt}</dd></div>
+                )}
+                {worker.previousPositions && (
+                  <div><dt className="font-semibold text-navy-900">Puestos anteriores</dt><dd>{worker.previousPositions}</dd></div>
+                )}
+              </dl>
+            </Card>
+          )}
 
           {(worker.education || worker.degrees || worker.courses || worker.certifications) && (
             <Card className="mt-4 p-5">
@@ -179,18 +199,24 @@ export default async function PerfilPage() {
               </p>
             ) : (
               <div className="mt-3 flex flex-col gap-2.5">
-                {worker.applications.map((app) => (
-                  <Link key={app.id} href={`/vacantes/${app.jobPosting.id}`}>
-                    <div className="flex items-center gap-3 rounded-xl border border-sand-200 p-3">
-                      <CategoryIcon category={app.jobPosting.laborCategory} size="sm" />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-navy-900">{app.jobPosting.title}</p>
-                        <p className="truncate text-xs text-navy-800/50">{app.jobPosting.company.commercialName}</p>
+                {worker.applications.map((app) => {
+                  const statusMeta = applicationStatusMeta(app.status);
+                  return (
+                    <Link key={app.id} href={`/vacantes/${app.jobPosting.id}`}>
+                      <div className="flex items-center gap-3 rounded-xl border border-sand-200 p-3">
+                        <CategoryIcon category={app.jobPosting.laborCategory} size="sm" />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-semibold text-navy-900">{app.jobPosting.title}</p>
+                          <p className="truncate text-xs text-navy-800/50">{app.jobPosting.company.commercialName}</p>
+                        </div>
+                        <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-bold ${statusMeta.className}`}>
+                          {statusMeta.label}
+                        </span>
+                        <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
                       </div>
-                      <ChevronRight className="h-4 w-4 text-navy-800/30" />
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </Card>

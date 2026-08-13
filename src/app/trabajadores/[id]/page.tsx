@@ -8,7 +8,7 @@ import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { SaveWorkerButton } from "@/components/forms/SaveWorkerButton";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
-import { MapPin, Briefcase, GraduationCap, Sparkles, Phone, Mail, Lock } from "lucide-react";
+import { MapPin, Briefcase, GraduationCap, Sparkles, Phone, Mail, Lock, History } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -88,6 +88,25 @@ export default async function PublicWorkerProfilePage({
             </p>
           )}
         </Card>
+
+        {(worker.workExperience || worker.companiesWorkedAt || worker.previousPositions) && (
+          <Card className="mt-4 p-5">
+            <h2 className="flex items-center gap-2 text-sm font-bold text-navy-900">
+              <History className="h-4 w-4" /> Experiencia laboral
+            </h2>
+            <dl className="mt-3 flex flex-col gap-2 text-sm text-navy-800/70">
+              {worker.workExperience && (
+                <div><dt className="font-semibold text-navy-900">Resumen</dt><dd>{worker.workExperience}</dd></div>
+              )}
+              {worker.companiesWorkedAt && (
+                <div><dt className="font-semibold text-navy-900">Empresas donde trabajó</dt><dd>{worker.companiesWorkedAt}</dd></div>
+              )}
+              {worker.previousPositions && (
+                <div><dt className="font-semibold text-navy-900">Puestos anteriores</dt><dd>{worker.previousPositions}</dd></div>
+              )}
+            </dl>
+          </Card>
+        )}
 
         {(worker.education || worker.degrees || worker.courses || worker.certifications) && (
           <Card className="mt-4 p-5">

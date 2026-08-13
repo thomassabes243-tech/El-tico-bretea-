@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { recommendWorkersForJob } from "@/lib/recommendations";
 import { JobPostingStatusToggle } from "@/components/forms/JobPostingStatusToggle";
+import { ApplicationStatusSelect } from "@/components/forms/ApplicationStatusSelect";
 import { MapPin, Briefcase, Sparkles, Info, Pencil } from "lucide-react";
 
 export default async function AplicantesPage({
@@ -72,11 +73,14 @@ export default async function AplicantesPage({
           )}
           {jobPosting.applications.map((app) => (
             <Card key={app.id} className="p-4">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-bold text-navy-900">{app.worker.fullName}</p>
-                <span className="text-[11px] text-navy-800/45">
-                  {app.createdAt.toLocaleDateString("es-CR")}
-                </span>
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-sm font-bold text-navy-900">{app.worker.fullName}</p>
+                  <span className="text-[11px] text-navy-800/45">
+                    {app.createdAt.toLocaleDateString("es-CR")}
+                  </span>
+                </div>
+                <ApplicationStatusSelect applicationId={app.id} status={app.status} />
               </div>
               <p className="text-xs text-navy-800/60">{app.worker.profession}</p>
               <div className="mt-1.5 flex items-center gap-3 text-[11px] text-navy-800/50">
