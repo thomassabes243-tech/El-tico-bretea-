@@ -7,6 +7,7 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
+import { AvatarImage } from "@/components/brand/AvatarImage";
 import { recommendJobsForWorker } from "@/lib/recommendations";
 import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
@@ -45,9 +46,16 @@ export default async function PerfilPage() {
           <Card className="p-5">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-navy-900/[0.07] text-xl font-extrabold text-navy-800">
-                  {worker.fullName.slice(0, 1).toUpperCase()}
-                </div>
+                <AvatarImage
+                  src={worker.formalPhotoUrl}
+                  alt={worker.fullName}
+                  className="h-16 w-16 shrink-0 rounded-2xl object-cover"
+                  fallback={
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-navy-900/[0.07] text-xl font-extrabold text-navy-800">
+                      {worker.fullName.slice(0, 1).toUpperCase()}
+                    </div>
+                  }
+                />
                 <div>
                   <h1 className="text-lg font-extrabold text-navy-900">{worker.fullName}</h1>
                   <p className="text-sm text-navy-800/60">{worker.profession}</p>
@@ -269,9 +277,16 @@ export default async function PerfilPage() {
           <Card className="p-5">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-cr-red-600/[0.09] text-xl font-extrabold text-cr-red-600">
-                  {company.commercialName.slice(0, 1).toUpperCase()}
-                </div>
+                <AvatarImage
+                  src={company.logoUrl}
+                  alt={company.commercialName}
+                  className="h-16 w-16 shrink-0 rounded-2xl object-cover"
+                  fallback={
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-cr-red-600/[0.09] text-xl font-extrabold text-cr-red-600">
+                      {company.commercialName.slice(0, 1).toUpperCase()}
+                    </div>
+                  }
+                />
                 <div>
                   <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
                     {company.commercialName}

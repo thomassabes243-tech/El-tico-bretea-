@@ -6,6 +6,7 @@ import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
+import { AvatarImage } from "@/components/brand/AvatarImage";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { ShieldCheck, MapPin, ChevronRight } from "lucide-react";
 
@@ -35,9 +36,16 @@ export default async function EmpresaPublicPage({
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
         <Card className="p-5">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-cr-red-600/[0.09] text-xl font-extrabold text-cr-red-600">
-              {company.commercialName.slice(0, 1).toUpperCase()}
-            </div>
+            <AvatarImage
+              src={company.logoUrl}
+              alt={company.commercialName}
+              className="h-16 w-16 shrink-0 rounded-2xl object-cover"
+              fallback={
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-cr-red-600/[0.09] text-xl font-extrabold text-cr-red-600">
+                  {company.commercialName.slice(0, 1).toUpperCase()}
+                </div>
+              }
+            />
             <div>
               <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
                 {company.commercialName}

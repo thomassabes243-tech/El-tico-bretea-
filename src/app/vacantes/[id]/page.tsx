@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { ApplyButton } from "@/components/forms/ApplyButton";
 import { ShareJobButton } from "@/components/forms/ShareJobButton";
+import { ReportButton } from "@/components/forms/ReportButton";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import { MapPin, Briefcase, Users, Calendar, ShieldCheck, Phone, Mail } from "lucide-react";
@@ -172,6 +173,15 @@ export default async function VacanteDetailPage({
             </div>
           </Card>
         )}
+
+        <div className="mt-4 px-1">
+          <ReportButton
+            targetUserId={jobPosting.company.userId}
+            targetType="JOB_POSTING"
+            contextLabel={`Vacante: ${jobPosting.title}`}
+            isLoggedIn={Boolean(session?.user)}
+          />
+        </div>
       </main>
       <BottomNav />
     </div>
