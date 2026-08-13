@@ -32,7 +32,7 @@ export default async function PublicWorkerProfilePage({
               <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
                 {worker.fullName}
                 {worker.isPremium && (
-                  <span className="rounded-full bg-cr-red-100 px-1.5 py-0.5 text-[10px] font-bold text-cr-red-700">
+                  <span className="rounded-full bg-colon-100 px-1.5 py-0.5 text-[10px] font-bold text-colon-700">
                     PREMIUM
                   </span>
                 )}

@@ -84,22 +84,22 @@ export default async function BuscarPersonalPage({
               {workers.map((w) => (
                 <Card key={w.id} className="flex items-center gap-3.5 p-4">
                   <CategoryIcon category={w.laborCategory} size="md" />
-                  <div className="flex-1">
+                  <div className="min-w-0 flex-1">
                     <p className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
-                      {w.fullName}
+                      <span className="truncate">{w.fullName}</span>
                       {w.isPremium && (
-                        <span className="rounded-full bg-cr-red-100 px-1.5 py-0.5 text-[10px] font-bold text-cr-red-700">
+                        <span className="shrink-0 rounded-full bg-colon-100 px-1.5 py-0.5 text-[10px] font-bold text-colon-700">
                           PREMIUM
                         </span>
                       )}
                     </p>
-                    <p className="text-xs text-navy-800/60">{w.profession}</p>
+                    <p className="truncate text-xs text-navy-800/60">{w.profession}</p>
                     <div className="mt-1 flex items-center gap-3 text-[11px] text-navy-800/50">
                       <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {w.residence}</span>
                       <span className="flex items-center gap-1"><Briefcase className="h-3 w-3" /> {w.yearsExperience} años</span>
                     </div>
                   </div>
-                  <Link href={`/trabajadores/${w.id}`} className="text-xs font-semibold text-cr-red-600">
+                  <Link href={`/trabajadores/${w.id}`} className="shrink-0 text-xs font-semibold text-cr-red-600">
                     Ver
                   </Link>
                 </Card>
