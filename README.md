@@ -9,13 +9,15 @@ Cubierto hasta ahora: autenticación por correo/contraseña, tipos de usuario
 empresa, perfil profesional, vacantes empresariales con aplicaciones, chat
 en vivo por comunidad (con fotos efímeras y límites diarios), moderación de
 salas, reportes de usuarios/empresas, panel administrador (usuarios,
-empresas, vacantes, moderadores, reportes, precios/límites y
+empresas, vacantes, moderadores, reportes, publicidad, precios/límites y
 almacenamiento), descarga real del CV en PDF (gratis por ahora, mientras no
-hay procesador de pagos conectado), publicidad propia para cuentas
-gratuitas (máx. 1 anuncio cada ~5 min, nunca a pantalla completa),
-perfiles guardados para empresas, recomendaciones (vacantes para el
-trabajador, candidatos para la empresa) por categoría/ubicación con
-prioridad Premium, y eliminación de cuenta con confirmación explícita.
+hay procesador de pagos conectado), Premium activable manualmente desde el
+admin (mientras no hay cobro automático), publicidad propia editable desde
+el panel para cuentas gratuitas (máx. 1 anuncio cada ~5 min, nunca a
+pantalla completa), perfiles guardados para empresas, recomendaciones
+(vacantes para el trabajador, candidatos para la empresa) por
+categoría/ubicación con prioridad Premium, y eliminación de cuenta con
+confirmación explícita.
 Pendiente: pagos reales (falta definir procesador compatible con Costa
 Rica) y categorías editables desde el panel.
 
@@ -79,6 +81,12 @@ Rica) y categorías editables desde el panel.
   secciones aún no construidas (pagos) muestran un estado honesto de
   "próximamente" en lugar de una interacción falsa.
 - Publicidad (`src/components/ads/AdSlot.tsx`): mientras no haya una red
-  publicitaria externa contratada, se muestran anuncios propios (promoción
-  de Premium, CV, comunidad, donaciones) solo a cuentas gratuitas. El mismo
-  componente se puede apuntar a un proveedor externo más adelante.
+  publicitaria externa contratada, se muestran anuncios propios solo a
+  cuentas gratuitas. Los anuncios se administran desde `/admin/publicidad`
+  (crear, pausar/activar, borrar) sin tocar código; si no hay ninguno
+  cargado en la base de datos se usan dos anuncios de respaldo (Premium y
+  CV). El mismo componente se puede apuntar a un proveedor externo más
+  adelante.
+- Premium (`src/app/admin/usuarios/page.tsx`): mientras no hay cobro
+  automático, el admin puede otorgar o quitar Premium manualmente a
+  cualquier trabajador desde `/admin/usuarios`.

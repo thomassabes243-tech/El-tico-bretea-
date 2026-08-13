@@ -400,3 +400,23 @@ model AppSettings {
 
   @@map("app_settings")
 }
+
+// ---------------------------------------------------------------------------
+// Section 10 & 20: Publicidad propia ("house ads"), editable desde el
+// panel sin tocar código. iconKey referencia un ícono de un set fijo
+// (ver ICON_OPTIONS en src/lib/ads.ts).
+// ---------------------------------------------------------------------------
+
+model Advertisement {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  href        String
+  ctaLabel    String
+  iconKey     String   @default("sparkles")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("advertisements")
+}
