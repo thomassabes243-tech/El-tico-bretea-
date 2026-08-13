@@ -7,8 +7,9 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
+import { recommendJobsForWorker } from "@/lib/recommendations";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
-import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send } from "lucide-react";
+import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send, Info } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -31,6 +32,8 @@ export default async function PerfilPage() {
       },
     });
     if (!worker) redirect("/registro/trabajador");
+
+    const recommendedJobs = await recommendJobsForWorker(worker);
 
     return (
       <div className="flex min-h-full flex-1 flex-col">
@@ -120,6 +123,34 @@ export default async function PerfilPage() {
                   </div>
                 ))}
               </div>
+            </Card>
+          )}
+
+          {recommendedJobs.length > 0 && (
+            <Card className="mt-4 p-5">
+              <h2 className="flex items-center gap-2 text-sm font-bold text-navy-900">
+                <Sparkles className="h-4 w-4 text-colon-600" /> Vacantes recomendadas para vos
+              </h2>
+              <p className="mt-1 text-xs text-navy-800/50">Por tu categoría y ubicación.</p>
+              <div className="mt-3 flex flex-col gap-2.5">
+                {recommendedJobs.map((job) => (
+                  <Link key={job.id} href={`/vacantes/${job.id}`}>
+                    <div className="flex items-center gap-3 rounded-xl border border-sand-200 p-3">
+                      <CategoryIcon category={job.laborCategory} size="sm" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-navy-900">{job.title}</p>
+                        <p className="truncate text-xs text-navy-800/50">
+                          {job.company.commercialName} · {job.location}
+                        </p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-navy-800/30" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <p className="mt-2 flex items-center gap-1.5 text-[11px] text-navy-800/40">
+                <Info className="h-3 w-3" /> Una recomendación nunca garantiza contratación.
+              </p>
             </Card>
           )}
 

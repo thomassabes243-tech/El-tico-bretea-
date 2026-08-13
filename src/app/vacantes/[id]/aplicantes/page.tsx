@@ -5,7 +5,9 @@ import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
-import { MapPin, Briefcase } from "lucide-react";
+import { CategoryIcon } from "@/components/brand/CategoryIcon";
+import { recommendWorkersForJob } from "@/lib/recommendations";
+import { MapPin, Briefcase, Sparkles, Info } from "lucide-react";
 
 export default async function AplicantesPage({
   params,
@@ -28,6 +30,11 @@ export default async function AplicantesPage({
   });
 
   if (!jobPosting || jobPosting.company.userId !== session.user.id) notFound();
+
+  const appliedWorkerIds = jobPosting.applications.map((a) => a.workerId);
+  const recommended = jobPosting.isActive
+    ? await recommendWorkersForJob(jobPosting, appliedWorkerIds)
+    : [];
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
@@ -71,6 +78,42 @@ export default async function AplicantesPage({
             </Card>
           ))}
         </div>
+
+        {recommended.length > 0 && (
+          <div className="mt-8">
+            <h2 className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
+              <Sparkles className="h-4 w-4 text-colon-600" /> Trabajadores recomendados
+            </h2>
+            <p className="mt-1 text-xs text-navy-800/50">
+              Por categoría y ubicación. No aplicaron todavía, pero podrían encajar.
+            </p>
+            <div className="mt-3 flex flex-col gap-2.5">
+              {recommended.map((w) => (
+                <Link key={w.id} href={`/trabajadores/${w.id}`}>
+                  <Card className="flex items-center gap-3 p-3.5">
+                    <CategoryIcon category={w.laborCategory} size="sm" />
+                    <div className="min-w-0 flex-1">
+                      <p className="flex items-center gap-1.5 truncate text-sm font-semibold text-navy-900">
+                        {w.fullName}
+                        {w.isPremium && (
+                          <span className="shrink-0 rounded-full bg-colon-100 px-1.5 py-0.5 text-[9px] font-bold text-colon-700">
+                            PREMIUM
+                          </span>
+                        )}
+                      </p>
+                      <p className="truncate text-xs text-navy-800/50">
+                        {w.profession} · {w.residence}
+                      </p>
+                    </div>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+            <p className="mt-2 flex items-center gap-1.5 text-[11px] text-navy-800/40">
+              <Info className="h-3 w-3" /> Una recomendación nunca garantiza contratación.
+            </p>
+          </div>
+        )}
       </main>
       <BottomNav />
     </div>
