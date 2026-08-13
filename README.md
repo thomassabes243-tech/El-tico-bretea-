@@ -125,3 +125,7 @@ Rica) y categorías editables desde el panel.
   empresa y la categoría, para que al pegar el link en esas apps se vea
   una tarjeta con marca en vez de un link pelado. Depende de
   `NEXT_PUBLIC_SITE_URL` — ver sección de Desarrollo local.
+- Vacantes compartidas en la comunidad: si una empresa comparte una
+  vacante en el chat de su gremio y luego la cierra, la tarjeta en el
+  chat se actualiza sola a "Vacante cerrada" (antes seguía mostrándose
+  como activa aunque ya no lo estuviera).
