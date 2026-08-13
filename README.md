@@ -11,10 +11,11 @@ en vivo por comunidad (con fotos efímeras y límites diarios), moderación de
 salas, reportes de usuarios/empresas, panel administrador (usuarios,
 empresas, vacantes, moderadores, reportes, precios/límites y
 almacenamiento), descarga real del CV en PDF (gratis por ahora, mientras no
-hay procesador de pagos conectado), y publicidad propia para cuentas
-gratuitas (máx. 1 anuncio cada ~5 min, nunca a pantalla completa). Pendiente:
-pagos reales (falta definir procesador compatible con Costa Rica) y
-categorías editables desde el panel.
+hay procesador de pagos conectado), publicidad propia para cuentas
+gratuitas (máx. 1 anuncio cada ~5 min, nunca a pantalla completa), y
+perfiles guardados para empresas. Pendiente: pagos reales (falta definir
+procesador compatible con Costa Rica) y categorías editables desde el
+panel.
 
 ## Stack
 

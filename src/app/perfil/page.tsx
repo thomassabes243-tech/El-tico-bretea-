@@ -258,6 +258,10 @@ export default async function PerfilPage() {
               También podés explorar perfiles de trabajadores directamente en{" "}
               <Link href="/buscar-personal" className="font-semibold text-cr-red-600">
                 Buscar personal
+              </Link>{" "}
+              o revisar tus{" "}
+              <Link href="/empresa/guardados" className="font-semibold text-cr-red-600">
+                trabajadores guardados
               </Link>.
             </p>
           </Card>
