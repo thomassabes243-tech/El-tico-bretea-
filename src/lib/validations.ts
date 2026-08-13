@@ -101,6 +101,26 @@ export const companyRegistrationSchema = z.object({
 
 export type CompanyRegistrationInput = z.infer<typeof companyRegistrationSchema>;
 
+export const workerProfileUpdateSchema = workerRegistrationSchema
+  .omit({ email: true, password: true })
+  .extend({
+    isPublic: z.boolean().default(true),
+    showPhone: z.boolean().default(false),
+    showWhatsapp: z.boolean().default(false),
+    showEmail: z.boolean().default(false),
+    showSalaryExpectation: z.boolean().default(false),
+  });
+
+export type WorkerProfileUpdateInput = z.infer<typeof workerProfileUpdateSchema>;
+export type WorkerProfileUpdateFormValues = z.input<typeof workerProfileUpdateSchema>;
+
+export const companyProfileUpdateSchema = companyRegistrationSchema.omit({
+  email: true,
+  password: true,
+});
+
+export type CompanyProfileUpdateInput = z.infer<typeof companyProfileUpdateSchema>;
+
 export const loginSchema = z.object({
   email: z.string().email("Correo inválido"),
   password: z.string().min(1, "La contraseña es requerida"),

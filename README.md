@@ -7,8 +7,9 @@ panel administrativo.
 Cubierto hasta ahora: autenticación por correo/contraseña, tipos de usuario
 (trabajador, empresa, moderador, admin), registro de trabajador y de
 empresa, perfil profesional, vacantes empresariales con aplicaciones, chat
-en vivo por comunidad (con fotos efímeras y límites diarios), moderación de
-salas, reportes de usuarios/empresas, panel administrador (usuarios,
+en vivo por comunidad (con fotos efímeras y límites diarios), edición del
+perfil propio (trabajador y empresa) con control de privacidad de contacto,
+moderación de salas, reportes de usuarios/empresas, panel administrador (usuarios,
 empresas, vacantes, moderadores, reportes, publicidad, precios/límites y
 almacenamiento), descarga real del CV en PDF (gratis por ahora, mientras no
 hay procesador de pagos conectado), Premium activable manualmente desde el
@@ -90,3 +91,10 @@ Rica) y categorías editables desde el panel.
 - Premium (`src/app/admin/usuarios/page.tsx`): mientras no hay cobro
   automático, el admin puede otorgar o quitar Premium manualmente a
   cualquier trabajador desde `/admin/usuarios`.
+- Editar perfil (`/perfil/editar`): trabajador y empresa pueden actualizar
+  todos sus datos después de registrarse. El trabajador también controla
+  ahí la visibilidad de su perfil público y de cada dato de contacto
+  (teléfono, WhatsApp, correo, expectativa salarial), todo oculto por
+  defecto salvo la visibilidad general del perfil. Si una empresa
+  verificada cambia su identificación legal, la verificación se revoca
+  automáticamente hasta que el admin la revise de nuevo.
