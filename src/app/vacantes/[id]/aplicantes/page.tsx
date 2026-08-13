@@ -7,7 +7,8 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { recommendWorkersForJob } from "@/lib/recommendations";
-import { MapPin, Briefcase, Sparkles, Info } from "lucide-react";
+import { JobPostingStatusToggle } from "@/components/forms/JobPostingStatusToggle";
+import { MapPin, Briefcase, Sparkles, Info, Pencil } from "lucide-react";
 
 export default async function AplicantesPage({
   params,
@@ -43,9 +44,25 @@ export default async function AplicantesPage({
         <Link href={`/vacantes/${jobPosting.id}`} className="text-sm font-medium text-navy-800/60">
           ← {jobPosting.title}
         </Link>
-        <h1 className="mt-2 text-xl font-extrabold tracking-tight text-navy-900">
-          Aplicantes ({jobPosting.applications.length})
-        </h1>
+        <div className="mt-2 flex items-start justify-between gap-3">
+          <h1 className="text-xl font-extrabold tracking-tight text-navy-900">
+            Aplicantes ({jobPosting.applications.length})
+          </h1>
+          <div className="flex shrink-0 items-center gap-2">
+            <Link
+              href={`/empresa/vacantes/${jobPosting.id}/editar`}
+              className="flex items-center gap-1.5 rounded-lg border border-sand-200 px-2.5 py-1.5 text-xs font-semibold text-navy-800/70 hover:bg-sand-100"
+            >
+              <Pencil className="h-3.5 w-3.5" /> Editar
+            </Link>
+            <JobPostingStatusToggle jobId={jobPosting.id} isActive={jobPosting.isActive} />
+          </div>
+        </div>
+        {!jobPosting.isActive && (
+          <p className="mt-1 text-xs font-semibold text-navy-800/50">
+            Esta vacante está cerrada: ya no aparece en búsquedas ni recibe nuevas aplicaciones.
+          </p>
+        )}
 
         <div className="mt-5 flex flex-col gap-3">
           {jobPosting.applications.length === 0 && (
