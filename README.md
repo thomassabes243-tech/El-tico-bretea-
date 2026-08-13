@@ -6,10 +6,10 @@ panel administrativo.
 
 Cubierto hasta ahora: autenticación por correo/contraseña, tipos de usuario
 (trabajador, empresa, moderador, admin), registro de trabajador y de
-empresa, perfil profesional, vacantes empresariales con aplicaciones, chat
-en vivo por comunidad (con fotos efímeras y límites diarios), edición del
-perfil propio (trabajador y empresa) con control de privacidad de contacto,
-moderación de salas, reportes de usuarios/empresas, panel administrador (usuarios,
+empresa, perfil profesional, vacantes empresariales con aplicaciones que la
+empresa puede editar y cerrar, chat en vivo por comunidad (con fotos
+efímeras y límites diarios), edición del perfil propio (trabajador y
+empresa) con control de privacidad de contacto, moderación de salas, reportes de usuarios/empresas, panel administrador (usuarios,
 empresas, vacantes, moderadores, reportes, publicidad, precios/límites y
 almacenamiento), descarga real del CV en PDF (gratis por ahora, mientras no
 hay procesador de pagos conectado), Premium activable manualmente desde el
@@ -98,3 +98,7 @@ Rica) y categorías editables desde el panel.
   defecto salvo la visibilidad general del perfil. Si una empresa
   verificada cambia su identificación legal, la verificación se revoca
   automáticamente hasta que el admin la revise de nuevo.
+- Vacantes propias: desde `/vacantes/[id]/aplicantes` (el panel de gestión
+  de cada vacante) la empresa puede editar cualquier campo o cerrarla. Una
+  vacante cerrada desaparece de las búsquedas y deja de aceptar
+  aplicaciones nuevas, sin necesidad de pasar por el admin.
