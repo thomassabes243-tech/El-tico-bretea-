@@ -31,8 +31,9 @@ Rica) y categorías editables desde el panel.
 - Next.js (App Router) + TypeScript + Tailwind CSS
 - PostgreSQL + Prisma
 - Auth.js (next-auth v5) con credenciales (correo + contraseña)
-- Almacenamiento local de objetos para fotos de chat (comprimidas con
-  `sharp`, TTL de 24h) — swappable a S3/R2 detrás de `src/lib/storage.ts`
+- Almacenamiento de objetos para fotos de chat (comprimidas con `sharp`,
+  TTL de 24h): disco local en desarrollo, S3-compatible (Cloudflare R2)
+  en producción — ver `src/lib/storage.ts` y la sección de despliegue
 
 ## Desarrollo local
 
@@ -73,9 +74,46 @@ Rica) y categorías editables desde el panel.
 
 ### Otras tareas
 
-- `npm run chat:cleanup` — borra del disco y la base de datos los archivos
-  de chat vencidos (pensado para correr como cron en producción; la app
-  también lo hace de forma perezosa).
+- `npm run chat:cleanup` — borra del almacenamiento y la base de datos los
+  archivos de chat vencidos (pensado para correr como cron en producción;
+  la app también lo hace de forma perezosa).
+
+## Despliegue en producción
+
+Pensado para Vercel + Neon (Postgres) + Cloudflare R2 (fotos de chat),
+todos con capa gratuita. `.env.example` documenta cada variable.
+
+1. **Base de datos — [neon.tech](https://neon.tech)**: creá un proyecto
+   gratis. Copiá dos cadenas de conexión: la de **"Pooled connection"**
+   (va en `DATABASE_URL`) y la de **"Direct connection"** (va en
+   `DIRECT_URL`, la usan las migraciones). Neon te las muestra por
+   separado en el panel del proyecto.
+
+2. **Vercel — [vercel.com](https://vercel.com)**: iniciá sesión con
+   GitHub, "Add New" → "Project", importá este repositorio, elegí la
+   rama a desplegar, y antes de darle a "Deploy" agregá las variables de
+   entorno (ver `.env.example`): `DATABASE_URL`, `DIRECT_URL`,
+   `AUTH_SECRET` (random, ej. `openssl rand -base64 32`),
+   `AUTH_TRUST_HOST=true`, y `NEXT_PUBLIC_SITE_URL` (el dominio que
+   Vercel te asigna; se puede completar después del primer deploy y
+   volver a desplegar).
+
+3. **Fotos del chat — [Cloudflare R2](https://dash.cloudflare.com)**
+   (opcional pero recomendado): sin esto, las fotos suben a disco local,
+   que en Vercel es efímero y no persiste entre invocaciones — las fotos
+   se perderían. Creá un bucket R2 gratis, generá credenciales de API
+   (S3-compatible) y agregá `STORAGE_S3_ENDPOINT`, `STORAGE_S3_BUCKET`,
+   `STORAGE_S3_ACCESS_KEY_ID`, `STORAGE_S3_SECRET_ACCESS_KEY` a las
+   variables de entorno de Vercel.
+
+Las migraciones de Prisma se aplican solas en cada build (`npm run
+build` corre `prisma migrate deploy` antes de `next build`), así que no
+hace falta correrlas a mano ni compartir la cadena de conexión con nadie
+más.
+
+Pendiente de definir para producción real (no depende de código): un
+procesador de pagos para Costa Rica (Premium/CV/donaciones cobran de
+verdad hoy solo se activan manualmente desde el admin).
 
 ## Notas de diseño
 
@@ -144,7 +182,16 @@ Rica) y categorías editables desde el panel.
   protección contra fuerza bruta en el login ni contra creación masiva de
   cuentas falsas. El login se limita por correo (8 intentos cada 15 min);
   el registro se limita por IP (10 por hora, compartido entre trabajador y
-  empresa). Es un limitador en memoria por proceso — suficiente para el
-  despliegue actual de un solo servidor; si la app llega a correr en
-  varias instancias habría que moverlo a un almacén compartido (Redis o
-  similar) para que el límite aplique de verdad entre todas.
+  empresa). Respaldado por la base de datos (tabla `RateLimitBucket`), no
+  en memoria de proceso, para que el límite funcione de verdad en
+  serverless (Vercel), donde cada visita puede caer en una instancia
+  distinta sin memoria compartida.
+- Pasada de preparación para producción: se detectó que el almacenamiento
+  de fotos del chat usaba disco local, que no persiste en Vercel — ahora
+  usa S3-compatible (Cloudflare R2) cuando hay credenciales configuradas,
+  con disco local como respaldo solo para desarrollo (ver sección de
+  despliegue). También se agregaron cabeceras de seguridad básicas
+  (`next.config.ts`), `robots.txt`/`sitemap.xml`, páginas de error/404
+  con la marca de la app, `.env.example`, y la separación de conexión
+  agrupada/directa de Prisma que recomienda Neon para entornos
+  serverless.

@@ -5,7 +5,7 @@ import { workerRegistrationSchema } from "@/lib/validations";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
-  const { allowed } = checkRateLimit(`registro:${getClientIp(request)}`, 10, 60 * 60 * 1000);
+  const { allowed } = await checkRateLimit(`registro:${getClientIp(request)}`, 10, 60 * 60 * 1000);
   if (!allowed) {
     return NextResponse.json(
       { error: "Demasiados intentos de registro. Probá de nuevo más tarde." },
