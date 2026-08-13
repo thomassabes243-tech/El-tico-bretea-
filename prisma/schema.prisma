@@ -3,8 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // DATABASE_URL: conexión agrupada (pooled/pgbouncer) — la que usa la app
+  // en tiempo de ejecución, pensada para serverless (muchas conexiones
+  // cortas y concurrentes). DIRECT_URL: conexión directa a Postgres, sin
+  // agrupar — la que usan las migraciones. En desarrollo local ambas
+  // pueden apuntar a la misma base; en Neon son dos cadenas distintas que
+  // el propio panel te da ("Pooled connection" y "Direct connection").
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ---------------------------------------------------------------------------
@@ -405,6 +412,21 @@ model AppSettings {
   updatedAt             DateTime @updatedAt
 
   @@map("app_settings")
+}
+
+// ---------------------------------------------------------------------------
+// Limitador de tasa (login, registro) respaldado por base de datos: en un
+// entorno serverless (Vercel) cada invocación puede correr en una instancia
+// distinta sin memoria compartida, así que un limitador en memoria de
+// proceso no protege de verdad. La base de datos sí es compartida.
+// ---------------------------------------------------------------------------
+
+model RateLimitBucket {
+  key     String   @id
+  count   Int      @default(1)
+  resetAt DateTime
+
+  @@map("rate_limit_buckets")
 }
 
 // ---------------------------------------------------------------------------

@@ -27,7 +27,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // Limita intentos por correo (no por IP): protege una cuenta puntual
         // de fuerza bruta sin depender de la IP del cliente, que el
         // provider de credenciales no expone de forma confiable acá.
-        const { allowed } = checkRateLimit(`login:${email}`, LOGIN_MAX_ATTEMPTS, LOGIN_WINDOW_MS);
+        const { allowed } = await checkRateLimit(`login:${email}`, LOGIN_MAX_ATTEMPTS, LOGIN_WINDOW_MS);
         if (!allowed) return null;
 
         const user = await prisma.user.findUnique({ where: { email } });

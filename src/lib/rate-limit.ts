@@ -1,21 +1,9 @@
-// Limitador de tasa en memoria, por proceso. Suficiente para un solo
-// servidor (el despliegue actual); si la app corre en varias instancias o
-// serverless, esto habría que moverlo a un almacén compartido (Redis, etc.)
-// para que el límite aplique de verdad entre instancias.
-type Bucket = { count: number; resetAt: number };
+import { prisma } from "@/lib/prisma";
 
-const buckets = new Map<string, Bucket>();
-
-let lastSweep = Date.now();
-const SWEEP_INTERVAL_MS = 5 * 60 * 1000;
-
-function sweepExpired(now: number) {
-  if (now - lastSweep < SWEEP_INTERVAL_MS) return;
-  lastSweep = now;
-  for (const [key, bucket] of buckets) {
-    if (bucket.resetAt <= now) buckets.delete(key);
-  }
-}
+// Limitador de tasa respaldado por base de datos (tabla RateLimitBucket):
+// funciona igual en un solo servidor que en varias instancias serverless
+// (Vercel), a diferencia de un contador en memoria de proceso, que no se
+// comparte entre invocaciones.
 
 export function getClientIp(request: Request): string {
   const forwardedFor = request.headers.get("x-forwarded-for");
@@ -23,22 +11,37 @@ export function getClientIp(request: Request): string {
   return request.headers.get("x-real-ip") ?? "unknown";
 }
 
-export function checkRateLimit(
+export async function checkRateLimit(
   key: string,
   max: number,
   windowMs: number
-): { allowed: boolean; retryAfterMs: number } {
-  const now = Date.now();
-  sweepExpired(now);
+): Promise<{ allowed: boolean }> {
+  const now = new Date();
 
-  const bucket = buckets.get(key);
+  // Limpieza oportunista de buckets vencidos, sin necesidad de un cron
+  // aparte (misma idea que la limpieza perezosa de archivos de chat).
+  if (Math.random() < 0.02) {
+    await prisma.rateLimitBucket.deleteMany({ where: { resetAt: { lt: now } } }).catch(() => undefined);
+  }
+
+  const bucket = await prisma.rateLimitBucket.findUnique({ where: { key } });
+
   if (!bucket || bucket.resetAt <= now) {
-    buckets.set(key, { count: 1, resetAt: now + windowMs });
-    return { allowed: true, retryAfterMs: 0 };
+    await prisma.rateLimitBucket.upsert({
+      where: { key },
+      create: { key, count: 1, resetAt: new Date(now.getTime() + windowMs) },
+      update: { count: 1, resetAt: new Date(now.getTime() + windowMs) },
+    });
+    return { allowed: true };
   }
+
   if (bucket.count >= max) {
-    return { allowed: false, retryAfterMs: bucket.resetAt - now };
+    return { allowed: false };
   }
-  bucket.count += 1;
-  return { allowed: true, retryAfterMs: 0 };
+
+  await prisma.rateLimitBucket.update({
+    where: { key },
+    data: { count: { increment: 1 } },
+  });
+  return { allowed: true };
 }
