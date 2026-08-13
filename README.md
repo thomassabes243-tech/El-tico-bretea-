@@ -4,7 +4,8 @@ Plataforma para Costa Rica que conecta trabajadores con empresas: perfiles
 profesionales, currículums, vacantes, comunidades de empleo por gremio y un
 panel administrativo.
 
-Cubierto hasta ahora: autenticación por correo/contraseña, tipos de usuario
+Cubierto hasta ahora: autenticación por correo/contraseña con límite de
+intentos (anti fuerza bruta y anti spam de cuentas), tipos de usuario
 (trabajador, empresa, moderador, admin), registro de trabajador y de
 empresa, perfil profesional (con experiencia laboral visible), vacantes
 empresariales con aplicaciones que la empresa puede editar, cerrar y dar
@@ -139,3 +140,11 @@ Rica) y categorías editables desde el panel.
   y el panel admin ya tenía la etiqueta lista, pero nadie podía reportar
   una vacante — ahora hay un botón "Reportar" en cada vacante, igual que
   ya existía para perfiles de trabajador y empresa.
+- Límite de intentos (`src/lib/rate-limit.ts`): no había ninguna
+  protección contra fuerza bruta en el login ni contra creación masiva de
+  cuentas falsas. El login se limita por correo (8 intentos cada 15 min);
+  el registro se limita por IP (10 por hora, compartido entre trabajador y
+  empresa). Es un limitador en memoria por proceso — suficiente para el
+  despliegue actual de un solo servidor; si la app llega a correr en
+  varias instancias habría que moverlo a un almacén compartido (Redis o
+  similar) para que el límite aplique de verdad entre todas.
