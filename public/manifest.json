@@ -1,0 +1,18 @@
+{
+  "name": "El Tico Bretea",
+  "short_name": "Tico Bretea",
+  "description": "Conectá con trabajo en Costa Rica de forma directa y confiable.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f7fb",
+  "theme_color": "#0a2647",
+  "lang": "es-CR",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
