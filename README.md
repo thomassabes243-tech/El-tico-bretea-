@@ -10,10 +10,11 @@ empresa, perfil profesional, vacantes empresariales con aplicaciones, chat
 en vivo por comunidad (con fotos efímeras y límites diarios), moderación de
 salas, reportes de usuarios/empresas, panel administrador (usuarios,
 empresas, vacantes, moderadores, reportes, precios/límites y
-almacenamiento), y descarga real del CV en PDF (gratis por ahora, mientras
-no hay procesador de pagos conectado). Pendiente: pagos reales (falta
-definir procesador compatible con Costa Rica), publicidad y categorías
-editables desde el panel.
+almacenamiento), descarga real del CV en PDF (gratis por ahora, mientras no
+hay procesador de pagos conectado), y publicidad propia para cuentas
+gratuitas (máx. 1 anuncio cada ~5 min, nunca a pantalla completa). Pendiente:
+pagos reales (falta definir procesador compatible con Costa Rica) y
+categorías editables desde el panel.
 
 ## Stack
 
@@ -72,5 +73,9 @@ editables desde el panel.
   imágenes como Unsplash/Pexels, así que se optó por vectores originales
   sin ningún problema de derechos.
 - Ningún botón de la interfaz simula una función que no existe todavía: las
-  secciones aún no construidas (pagos, PDF del CV) muestran un estado
-  honesto de "próximamente" en lugar de una interacción falsa.
+  secciones aún no construidas (pagos) muestran un estado honesto de
+  "próximamente" en lugar de una interacción falsa.
+- Publicidad (`src/components/ads/AdSlot.tsx`): mientras no haya una red
+  publicitaria externa contratada, se muestran anuncios propios (promoción
+  de Premium, CV, comunidad, donaciones) solo a cuentas gratuitas. El mismo
+  componente se puede apuntar a un proveedor externo más adelante.
