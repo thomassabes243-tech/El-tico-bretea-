@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { ReportButton } from "@/components/forms/ReportButton";
+import { SaveWorkerButton } from "@/components/forms/SaveWorkerButton";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { MapPin, Briefcase, GraduationCap, Sparkles, Phone, Mail, Lock } from "lucide-react";
 
@@ -26,24 +27,40 @@ export default async function PublicWorkerProfilePage({
 
   if (!worker || !worker.isPublic) notFound();
 
+  let initialSaved = false;
+  if (session?.user?.role === "COMPANY") {
+    const company = await prisma.companyProfile.findUnique({ where: { userId: session.user.id } });
+    if (company) {
+      const existing = await prisma.savedWorker.findUnique({
+        where: { companyId_workerId: { companyId: company.id, workerId: worker.id } },
+      });
+      initialSaved = Boolean(existing);
+    }
+  }
+
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <TopBar />
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
         <Card className="p-5">
-          <div className="flex items-center gap-4">
-            <CategoryIcon category={worker.laborCategory} size="lg" />
-            <div>
-              <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
-                {worker.fullName}
-                {worker.isPremium && (
-                  <span className="rounded-full bg-colon-100 px-1.5 py-0.5 text-[10px] font-bold text-colon-700">
-                    PREMIUM
-                  </span>
-                )}
-              </h1>
-              <p className="text-sm text-navy-800/60">{worker.profession}</p>
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-4">
+              <CategoryIcon category={worker.laborCategory} size="lg" />
+              <div>
+                <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
+                  {worker.fullName}
+                  {worker.isPremium && (
+                    <span className="rounded-full bg-colon-100 px-1.5 py-0.5 text-[10px] font-bold text-colon-700">
+                      PREMIUM
+                    </span>
+                  )}
+                </h1>
+                <p className="text-sm text-navy-800/60">{worker.profession}</p>
+              </div>
             </div>
+            {session?.user?.role === "COMPANY" && (
+              <SaveWorkerButton workerId={worker.id} initialSaved={initialSaved} />
+            )}
           </div>
           <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-navy-800/70">
             <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
