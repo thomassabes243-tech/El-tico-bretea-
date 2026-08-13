@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
+import { ReportButton } from "@/components/forms/ReportButton";
 import { ShieldCheck, MapPin, ChevronRight } from "lucide-react";
 
 export default async function EmpresaPublicPage({
@@ -13,15 +15,18 @@ export default async function EmpresaPublicPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const company = await prisma.companyProfile.findUnique({
-    where: { id },
-    include: {
-      jobPostings: {
-        where: { isActive: true },
-        orderBy: { createdAt: "desc" },
+  const [company, session] = await Promise.all([
+    prisma.companyProfile.findUnique({
+      where: { id },
+      include: {
+        jobPostings: {
+          where: { isActive: true },
+          orderBy: { createdAt: "desc" },
+        },
       },
-    },
-  });
+    }),
+    auth(),
+  ]);
   if (!company) notFound();
 
   return (
@@ -50,6 +55,9 @@ export default async function EmpresaPublicPage({
           <p className="mt-3 text-xs font-semibold text-navy-800/50">
             {company.isVerified ? "Empresa verificada ✓" : "Verificación pendiente de revisión"}
           </p>
+          <div className="mt-3">
+            <ReportButton targetUserId={company.userId} targetType="COMPANY" isLoggedIn={Boolean(session?.user)} />
+          </div>
         </Card>
 
         <section className="mt-5">

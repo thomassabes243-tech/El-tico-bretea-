@@ -7,6 +7,8 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { PriceTag } from "@/components/ui/PriceTag";
+import { getAppSettings } from "@/lib/settings";
+import { formatColones } from "@/lib/format";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { Sparkles } from "lucide-react";
 
@@ -37,6 +39,9 @@ export default async function CvPage() {
     include: { references: true },
   });
   if (!worker) redirect("/registro/trabajador");
+
+  const settings = await getAppSettings();
+  const cvPrice = formatColones(settings.cvPriceColones);
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
@@ -106,7 +111,7 @@ export default async function CvPage() {
         </Card>
 
         <Card className="mt-4 flex items-start gap-3.5 border-colon-600/20 bg-colon-100/40 p-4">
-          <PriceTag amount="~1,090" size="lg" />
+          <PriceTag amount={cvPrice} size="lg" />
           <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
             Descarga en PDF, equivalente a US$2 cobrados en colones (monto configurable desde
             el panel administrativo). Llega en una próxima entrega, una vez esté conectado un

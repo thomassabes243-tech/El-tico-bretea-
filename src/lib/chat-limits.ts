@@ -1,8 +1,9 @@
 import { prisma } from "@/lib/prisma";
+import { getAppSettings } from "@/lib/settings";
 
-// Sección 8: límites diarios de archivos en el chat.
-export const FREE_DAILY_FILE_LIMIT = 5;
-export const COMPANY_DAILY_FILE_LIMIT = 10;
+// Sección 8: límites diarios de archivos en el chat. Los valores por
+// defecto viven en AppSettings y son editables desde /admin sin necesidad
+// de actualizar la app (Sección 20).
 export const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // 8MB antes de comprimir
 
 type LimitCheck = {
@@ -12,17 +13,20 @@ type LimitCheck = {
 };
 
 export async function checkDailyFileLimit(userId: string): Promise<LimitCheck> {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: { workerProfile: { select: { isPremium: true } } },
-  });
+  const [user, settings] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      include: { workerProfile: { select: { isPremium: true } } },
+    }),
+    getAppSettings(),
+  ]);
 
   const isPremium = user?.workerProfile?.isPremium ?? false;
   const limit = isPremium
     ? null
     : user?.role === "COMPANY"
-      ? COMPANY_DAILY_FILE_LIMIT
-      : FREE_DAILY_FILE_LIMIT;
+      ? settings.companyDailyFileLimit
+      : settings.freeDailyFileLimit;
 
   if (limit === null) {
     return { allowed: true, limit: null, usedToday: 0 };

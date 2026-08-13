@@ -11,6 +11,8 @@ const COMMUNITIES: { name: string; category: "CONSTRUCCION" | "HOTELES_TURISMO" 
 
 const DEMO_MODERATOR_EMAIL = "moderador.demo@eltico.cr";
 const DEMO_MODERATOR_PASSWORD = "moderador12345";
+const DEMO_ADMIN_EMAIL = "admin.demo@eltico.cr";
+const DEMO_ADMIN_PASSWORD = "admin12345";
 
 async function main() {
   const rooms = [];
@@ -45,6 +47,21 @@ async function main() {
   console.log(
     `Moderador demo listo: ${DEMO_MODERATOR_EMAIL} / ${DEMO_MODERATOR_PASSWORD} (asignado a las 3 salas)`
   );
+
+  const adminPasswordHash = await bcrypt.hash(DEMO_ADMIN_PASSWORD, 10);
+  await prisma.user.upsert({
+    where: { email: DEMO_ADMIN_EMAIL },
+    create: { email: DEMO_ADMIN_EMAIL, passwordHash: adminPasswordHash, role: "ADMIN" },
+    update: {},
+  });
+  console.log(`Admin demo listo: ${DEMO_ADMIN_EMAIL} / ${DEMO_ADMIN_PASSWORD}`);
+
+  await prisma.appSettings.upsert({
+    where: { id: "singleton" },
+    create: { id: "singleton" },
+    update: {},
+  });
+  console.log("Configuración de precios/límites inicializada.");
 }
 
 main()

@@ -17,6 +17,7 @@ function labelFor(list: readonly { value: string; label: string }[], value: stri
 export default async function PerfilPage() {
   const session = await auth();
   if (!session?.user) redirect("/iniciar-sesion");
+  if (session.user.role === "ADMIN") redirect("/admin");
 
   if (session.user.role === "WORKER") {
     const worker = await prisma.workerProfile.findUnique({
