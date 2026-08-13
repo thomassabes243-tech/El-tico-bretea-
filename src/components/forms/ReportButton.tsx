@@ -7,10 +7,13 @@ export function ReportButton({
   targetUserId,
   targetType,
   isLoggedIn,
+  contextLabel,
 }: {
   targetUserId: string;
-  targetType: "USER" | "COMPANY";
+  targetType: "USER" | "COMPANY" | "JOB_POSTING";
   isLoggedIn: boolean;
+  /** Se antepone al motivo enviado, ej. el título de la vacante, para que quede claro a qué se refiere el reporte. */
+  contextLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
@@ -50,10 +53,11 @@ export function ReportButton({
     setSubmitting(true);
     setError(null);
     try {
+      const fullReason = contextLabel ? `[${contextLabel}] ${reason.trim()}` : reason.trim();
       const res = await fetch("/api/reportes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ targetUserId, targetType, reason: reason.trim() }),
+        body: JSON.stringify({ targetUserId, targetType, reason: fullReason }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));

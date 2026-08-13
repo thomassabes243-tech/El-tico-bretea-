@@ -162,7 +162,7 @@ export const chatMessageSchema = z.object({
 
 export const reportSchema = z.object({
   targetUserId: z.string().min(1),
-  targetType: z.enum(["USER", "COMPANY"]),
+  targetType: z.enum(["USER", "COMPANY", "JOB_POSTING"]),
   reason: z.string().trim().min(5, "Contanos brevemente el motivo").max(500),
 });
 

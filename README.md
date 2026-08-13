@@ -129,3 +129,13 @@ Rica) y categorías editables desde el panel.
   vacante en el chat de su gremio y luego la cierra, la tarjeta en el
   chat se actualiza sola a "Vacante cerrada" (antes seguía mostrándose
   como activa aunque ya no lo estuviera).
+- Foto de trabajador y logo de empresa: se pedían en el registro pero no
+  se mostraban en ningún lado. Ahora aparecen como avatar real en el
+  perfil propio y público (`AvatarImage`, con vuelta automática a las
+  iniciales si la URL no carga). No se agregaron al CV en PDF: es texto
+  libre sin validar que sea una imagen real, y una URL inválida podría
+  romper la generación del PDF.
+- Reportar vacantes: `ReportTargetType.JOB_POSTING` existía en el modelo
+  y el panel admin ya tenía la etiqueta lista, pero nadie podía reportar
+  una vacante — ahora hay un botón "Reportar" en cada vacante, igual que
+  ya existía para perfiles de trabajador y empresa.

@@ -5,6 +5,7 @@ import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
+import { AvatarImage } from "@/components/brand/AvatarImage";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { SaveWorkerButton } from "@/components/forms/SaveWorkerButton";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
@@ -45,7 +46,12 @@ export default async function PublicWorkerProfilePage({
         <Card className="p-5">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-4">
-              <CategoryIcon category={worker.laborCategory} size="lg" />
+              <AvatarImage
+                src={worker.formalPhotoUrl}
+                alt={worker.fullName}
+                className="h-16 w-16 shrink-0 rounded-2xl object-cover"
+                fallback={<CategoryIcon category={worker.laborCategory} size="lg" />}
+              />
               <div>
                 <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
                   {worker.fullName}
