@@ -7,7 +7,7 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
-import { getAdEligibility } from "@/lib/ads";
+import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
 import type { LaborCategory } from "@prisma/client";
 
@@ -24,7 +24,7 @@ export default async function BuscarCategoriaPage({
   const category = LABOR_CATEGORIES.find((c) => c.value.toLowerCase() === categoria);
   if (!category) notFound();
 
-  const [jobPostings, adEligible] = await Promise.all([
+  const [jobPostings, adEligible, ads] = await Promise.all([
     prisma.jobPosting.findMany({
       where: { laborCategory: category.value as LaborCategory, isActive: true },
       include: { company: true },
@@ -32,6 +32,7 @@ export default async function BuscarCategoriaPage({
       take: 30,
     }),
     getAdEligibility(),
+    getActiveAds(),
   ]);
 
   return (
@@ -90,7 +91,7 @@ export default async function BuscarCategoriaPage({
           ))}
         </div>
 
-        <AdSlot eligible={adEligible} />
+        <AdSlot eligible={adEligible} ads={ads} />
       </main>
       <BottomNav />
     </div>

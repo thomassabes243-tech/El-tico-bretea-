@@ -11,7 +11,7 @@ import { MonteverdeScene } from "@/components/brand/scenery/MonteverdeScene";
 import { CoffeeMountainsScene } from "@/components/brand/scenery/CoffeeMountainsScene";
 import { COMMUNITY_CATEGORIES } from "@/lib/constants";
 import { getDailyQuote } from "@/lib/motivational-quotes";
-import { getAdEligibility } from "@/lib/ads";
+import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
 
 const COMMUNITY_SCENES: Record<string, ComponentType<{ className?: string }>> = {
@@ -61,7 +61,7 @@ export default async function Home({
   searchParams: Promise<{ "cuenta-eliminada"?: string }>;
 }) {
   const quote = getDailyQuote();
-  const adEligible = await getAdEligibility();
+  const [adEligible, ads] = await Promise.all([getAdEligibility(), getActiveAds()]);
   const { "cuenta-eliminada": cuentaEliminada } = await searchParams;
 
   return (
@@ -156,7 +156,7 @@ export default async function Home({
         </section>
 
         {/* Publicidad (solo cuentas gratuitas, Sección 10) */}
-        <AdSlot eligible={adEligible} />
+        <AdSlot eligible={adEligible} ads={ads} />
 
         {/* Confianza / transparencia */}
         <section className="mt-8">

@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
-import { HOUSE_ADS } from "@/lib/ads";
+import { X, Sparkles } from "lucide-react";
+import { ICON_OPTIONS, type AdItem, type IconKey } from "@/lib/ad-icons";
 
 const LAST_SHOWN_KEY = "eltico:lastAdShownAt";
 const MIN_GAP_MS = 5 * 60 * 1000; // Sección 10: máximo ~1 anuncio cada 5 minutos
@@ -13,27 +13,28 @@ const MIN_GAP_MS = 5 * 60 * 1000; // Sección 10: máximo ~1 anuncio cada 5 minu
  * pantalla completa: siempre una tarjeta pequeña e inline. Si hay varios
  * AdSlot montados en la misma sesión de navegación, comparten el mismo
  * temporizador en localStorage — solo uno se muestra por ventana de 5 min.
+ * Los anuncios en sí vienen de /admin/publicidad (editables sin tocar código).
  */
-export function AdSlot({ eligible }: { eligible: boolean }) {
-  const [ad, setAd] = useState<(typeof HOUSE_ADS)[number] | null>(null);
+export function AdSlot({ eligible, ads }: { eligible: boolean; ads: AdItem[] }) {
+  const [ad, setAd] = useState<AdItem | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    if (!eligible) return;
+    if (!eligible || ads.length === 0) return;
     try {
       const lastShown = Number(localStorage.getItem(LAST_SHOWN_KEY) || 0);
       if (Date.now() - lastShown < MIN_GAP_MS) return;
       localStorage.setItem(LAST_SHOWN_KEY, String(Date.now()));
       // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza con localStorage (sistema externo), no hay forma de leerlo antes del mount sin romper SSR
-      setAd(HOUSE_ADS[Math.floor(Math.random() * HOUSE_ADS.length)]);
+      setAd(ads[Math.floor(Math.random() * ads.length)]);
     } catch {
       // localStorage no disponible (modo privado, etc.): no mostramos anuncio
     }
-  }, [eligible]);
+  }, [eligible, ads]);
 
   if (!eligible || !ad || dismissed) return null;
 
-  const Icon = ad.icon;
+  const Icon = ICON_OPTIONS[ad.iconKey as IconKey]?.icon ?? Sparkles;
 
   return (
     <div className="mt-8 rounded-2xl border border-sand-200 bg-white p-3.5">
@@ -58,7 +59,7 @@ export function AdSlot({ eligible }: { eligible: boolean }) {
           <p className="truncate text-xs text-navy-800/50">{ad.description}</p>
         </div>
         <Link href={ad.href} className="shrink-0 text-xs font-bold text-cr-red-600">
-          {ad.cta}
+          {ad.ctaLabel}
         </Link>
       </div>
     </div>

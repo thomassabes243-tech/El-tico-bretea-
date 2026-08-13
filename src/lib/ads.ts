@@ -1,45 +1,40 @@
-import { Sparkles, FileText, MessagesSquare, HeartHandshake } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import type { AdItem } from "@/lib/ad-icons";
 
-// Anuncios propios ("house ads"): mientras no haya una red publicitaria
-// externa contratada, promocionamos funciones de la propia app. El mismo
-// AdSlot se puede apuntar más adelante a un proveedor externo sin cambiar
-// el resto de la app.
-export const HOUSE_ADS = [
+// Sección 10/20: publicidad propia ("house ads"), editable desde
+// /admin/publicidad. Mientras no haya una red publicitaria externa
+// contratada, promocionamos funciones de la propia app. El mismo AdSlot se
+// puede apuntar más adelante a un proveedor externo sin cambiar el resto
+// de la app.
+
+const FALLBACK_ADS: Omit<AdItem, "id">[] = [
   {
-    id: "premium",
-    icon: Sparkles,
     title: "Sin anuncios con Premium",
     description: "Perfil destacado, prioridad en recomendaciones y más.",
     href: "/premium",
-    cta: "Ver Premium",
+    ctaLabel: "Ver Premium",
+    iconKey: "sparkles",
   },
   {
-    id: "cv",
-    icon: FileText,
     title: "Tu CV profesional en PDF",
     description: "Generalo gratis por ahora, al momento, con tus datos actuales.",
     href: "/cv",
-    cta: "Crear mi CV",
+    ctaLabel: "Crear mi CV",
+    iconKey: "file-text",
   },
-  {
-    id: "comunidad",
-    icon: MessagesSquare,
-    title: "Sumate a tu comunidad",
-    description: "Chateá en vivo con gente de tu mismo gremio.",
-    href: "/comunidad",
-    cta: "Ver comunidades",
-  },
-  {
-    id: "donar",
-    icon: HeartHandshake,
-    title: "¿Te sirvió El Tico Bretea?",
-    description: "Una donación voluntaria ayuda a mantener la app funcionando.",
-    href: "/donar",
-    cta: "Donar",
-  },
-] as const;
+];
+
+/** Anuncios activos. Si todavía no hay ninguno cargado en el panel, usamos un par por defecto. */
+export async function getActiveAds(): Promise<AdItem[]> {
+  const ads = await prisma.advertisement.findMany({
+    where: { isActive: true },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (ads.length > 0) return ads;
+  return FALLBACK_ADS.map((ad, i) => ({ id: `fallback-${i}`, ...ad }));
+}
 
 // Sección 10: publicidad solo para cuentas gratuitas. Moderadores y admins
 // nunca ven anuncios (no son el público de la app); Premium tampoco.

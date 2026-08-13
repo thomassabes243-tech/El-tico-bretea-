@@ -9,7 +9,7 @@ import { MonteverdeScene } from "@/components/brand/scenery/MonteverdeScene";
 import { CoffeeMountainsScene } from "@/components/brand/scenery/CoffeeMountainsScene";
 import { COMMUNITY_CATEGORIES } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
-import { getAdEligibility } from "@/lib/ads";
+import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { ChevronRight } from "lucide-react";
 import type { CommunityCategory } from "@prisma/client";
@@ -21,9 +21,10 @@ const COMMUNITY_SCENES: Record<string, ComponentType<{ className?: string }>> = 
 };
 
 export default async function ComunidadPage() {
-  const [rooms, adEligible] = await Promise.all([
+  const [rooms, adEligible, ads] = await Promise.all([
     prisma.chatRoom.findMany({ include: { _count: { select: { messages: true } } } }),
     getAdEligibility(),
+    getActiveAds(),
   ]);
   const countByCategory = new Map(rooms.map((r) => [r.category, r._count.messages]));
 
@@ -67,7 +68,7 @@ export default async function ComunidadPage() {
           })}
         </div>
 
-        <AdSlot eligible={adEligible} />
+        <AdSlot eligible={adEligible} ads={ads} />
       </main>
       <BottomNav />
     </div>
