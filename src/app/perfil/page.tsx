@@ -10,7 +10,7 @@ import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { recommendJobsForWorker } from "@/lib/recommendations";
 import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
-import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send, Info } from "lucide-react";
+import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send, Info, Pencil } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -41,14 +41,22 @@ export default async function PerfilPage() {
         <TopBar />
         <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
           <Card className="p-5">
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-navy-900/[0.07] text-xl font-extrabold text-navy-800">
-                {worker.fullName.slice(0, 1).toUpperCase()}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-4">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-navy-900/[0.07] text-xl font-extrabold text-navy-800">
+                  {worker.fullName.slice(0, 1).toUpperCase()}
+                </div>
+                <div>
+                  <h1 className="text-lg font-extrabold text-navy-900">{worker.fullName}</h1>
+                  <p className="text-sm text-navy-800/60">{worker.profession}</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-lg font-extrabold text-navy-900">{worker.fullName}</h1>
-                <p className="text-sm text-navy-800/60">{worker.profession}</p>
-              </div>
+              <Link
+                href="/perfil/editar"
+                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-sand-200 px-2.5 py-1.5 text-xs font-semibold text-navy-800/70 hover:bg-sand-100"
+              >
+                <Pencil className="h-3.5 w-3.5" /> Editar
+              </Link>
             </div>
             <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-navy-800/70">
               <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
@@ -60,6 +68,11 @@ export default async function PerfilPage() {
               <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
                 {worker.yearsExperience} años de experiencia
               </span>
+              {!worker.isPublic && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-navy-900/[0.06] px-2.5 py-1 text-navy-800/60">
+                  Perfil no visible para empresas
+                </span>
+              )}
             </div>
           </Card>
 
@@ -227,17 +240,25 @@ export default async function PerfilPage() {
         <TopBar />
         <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
           <Card className="p-5">
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-cr-red-600/[0.09] text-xl font-extrabold text-cr-red-600">
-                {company.commercialName.slice(0, 1).toUpperCase()}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-4">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-cr-red-600/[0.09] text-xl font-extrabold text-cr-red-600">
+                  {company.commercialName.slice(0, 1).toUpperCase()}
+                </div>
+                <div>
+                  <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
+                    {company.commercialName}
+                    {company.isVerified && <ShieldCheck className="h-4 w-4 text-success-600" />}
+                  </h1>
+                  <p className="text-sm text-navy-800/60">{company.activity}</p>
+                </div>
               </div>
-              <div>
-                <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
-                  {company.commercialName}
-                  {company.isVerified && <ShieldCheck className="h-4 w-4 text-success-600" />}
-                </h1>
-                <p className="text-sm text-navy-800/60">{company.activity}</p>
-              </div>
+              <Link
+                href="/perfil/editar"
+                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-sand-200 px-2.5 py-1.5 text-xs font-semibold text-navy-800/70 hover:bg-sand-100"
+              >
+                <Pencil className="h-3.5 w-3.5" /> Editar
+              </Link>
             </div>
             <p className="mt-2 text-xs font-semibold text-navy-800/50">
               {company.isVerified ? "Empresa verificada ✓" : "Verificación pendiente de revisión"}

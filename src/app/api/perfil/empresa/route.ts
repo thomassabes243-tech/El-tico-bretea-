@@ -1,0 +1,51 @@
+import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { companyProfileUpdateSchema } from "@/lib/validations";
+
+export async function PATCH(request: Request) {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "COMPANY") {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const parsed = companyProfileUpdateSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Datos inválidos", issues: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+
+  const company = await prisma.companyProfile.findUnique({
+    where: { userId: session.user.id },
+    select: { id: true, legalId: true, isVerified: true },
+  });
+  if (!company) {
+    return NextResponse.json({ error: "Perfil no encontrado" }, { status: 404 });
+  }
+
+  const data = parsed.data;
+  const legalIdChanged = data.legalId !== company.legalId;
+
+  await prisma.companyProfile.update({
+    where: { id: company.id },
+    data: {
+      commercialName: data.commercialName,
+      legalId: data.legalId,
+      responsibleName: data.responsibleName,
+      contactPhone: data.contactPhone,
+      contactEmail: data.contactEmail,
+      location: data.location,
+      activity: data.activity,
+      logoUrl: data.logoUrl || null,
+      description: data.description || null,
+      // Cambiar la identificación legal invalida una verificación previa: estaba
+      // atada a esos datos específicos y debe revisarse de nuevo.
+      ...(legalIdChanged && company.isVerified ? { isVerified: false, verifiedAt: null } : {}),
+    },
+  });
+
+  return NextResponse.json({ ok: true });
+}
