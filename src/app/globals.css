@@ -22,6 +22,13 @@
 
   --color-success-600: #16803d;
   --color-warning-600: #b45309;
+
+  /* Acento "colón": morado/violeta inspirado en el billete de ₡10,000,
+     reservado para precios, Premium y CV — nunca reproduce el billete. */
+  --color-colon-700: #4a2472;
+  --color-colon-600: #6b3fa0;
+  --color-colon-500: #8657bd;
+  --color-colon-100: #f1e8f9;
 }
 
 @theme inline {
@@ -46,6 +53,11 @@
 
   --color-success-600: var(--color-success-600);
   --color-warning-600: var(--color-warning-600);
+
+  --color-colon-700: var(--color-colon-700);
+  --color-colon-600: var(--color-colon-600);
+  --color-colon-500: var(--color-colon-500);
+  --color-colon-100: var(--color-colon-100);
 }
 
 body {

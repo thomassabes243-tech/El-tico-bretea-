@@ -1,11 +1,22 @@
 import Link from "next/link";
+import type { ComponentType } from "react";
 import { Search, FileText, Users, MessagesSquare, ShieldCheck, HeartHandshake, Sparkles } from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
+import { ArenalScene } from "@/components/brand/scenery/ArenalScene";
+import { GuanacasteScene } from "@/components/brand/scenery/GuanacasteScene";
+import { MonteverdeScene } from "@/components/brand/scenery/MonteverdeScene";
+import { CoffeeMountainsScene } from "@/components/brand/scenery/CoffeeMountainsScene";
 import { COMMUNITY_CATEGORIES } from "@/lib/constants";
 import { getDailyQuote } from "@/lib/motivational-quotes";
+
+const COMMUNITY_SCENES: Record<string, ComponentType<{ className?: string }>> = {
+  CONSTRUCCION: CoffeeMountainsScene,
+  HOTELES_TURISMO: GuanacasteScene,
+  PROFESIONALES: MonteverdeScene,
+};
 
 const QUICK_ACTIONS = [
   {
@@ -51,12 +62,16 @@ export default function Home() {
 
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
         {/* Hero */}
-        <section className="animate-fade-in-up overflow-hidden rounded-3xl bg-gradient-to-br from-navy-900 via-navy-900 to-navy-800 px-6 py-7 text-white shadow-lg shadow-navy-900/20">
-          <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/85">
-            <Sparkles className="h-3.5 w-3.5 text-cr-red-500" />
-            Mensaje del día
+        <section className="animate-fade-in-up relative overflow-hidden rounded-3xl text-white shadow-lg shadow-navy-900/20">
+          <ArenalScene className="absolute inset-0 h-full w-full" />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/40 to-transparent" />
+          <div className="relative px-6 py-8">
+            <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/85 backdrop-blur-sm">
+              <Sparkles className="h-3.5 w-3.5 text-cr-red-500" />
+              Mensaje del día
+            </div>
+            <p className="text-lg font-semibold leading-snug drop-shadow-sm">{quote}</p>
           </div>
-          <p className="text-lg font-semibold leading-snug">{quote}</p>
         </section>
 
         {/* Pregunta principal */}
@@ -104,14 +119,25 @@ export default function Home() {
             </Link>
           </div>
           <div className="mt-3 flex gap-3 overflow-x-auto pb-1 scrollbar-none">
-            {COMMUNITY_CATEGORIES.map((cat) => (
-              <Link key={cat.value} href={`/comunidad/${cat.value.toLowerCase()}`}>
-                <Card className="flex w-36 shrink-0 flex-col items-start gap-2.5 p-4">
-                  <CategoryIcon category={cat.value} size="md" />
-                  <span className="text-sm font-semibold text-navy-900">{cat.label}</span>
-                </Card>
-              </Link>
-            ))}
+            {COMMUNITY_CATEGORIES.map((cat) => {
+              const Scene = COMMUNITY_SCENES[cat.value];
+              return (
+                <Link key={cat.value} href={`/comunidad/${cat.value.toLowerCase()}`}>
+                  <Card className="relative w-36 shrink-0 overflow-hidden p-4">
+                    {Scene && (
+                      <>
+                        <Scene className="absolute inset-0 h-full w-full opacity-25" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/70 to-transparent" />
+                      </>
+                    )}
+                    <div className="relative flex flex-col items-start gap-2.5">
+                      <CategoryIcon category={cat.value} size="md" />
+                      <span className="text-sm font-semibold text-navy-900">{cat.label}</span>
+                    </div>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         </section>
 

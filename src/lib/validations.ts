@@ -107,3 +107,35 @@ export const loginSchema = z.object({
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
+
+export const jobPostingSchema = z.object({
+  title: z.string().min(3, "El título es requerido"),
+  description: z.string().min(10, "Agregá una descripción del puesto"),
+  laborCategory: z.enum(laborCategoryValues),
+  location: z.string().min(2, "La ubicación es requerida"),
+  contractType: z.enum(jobTypeValues),
+  quantity: z.preprocess(
+    (val) => (val === "" || val === undefined || val === null ? undefined : val),
+    z.coerce
+      .number("Ingresá un número válido")
+      .int()
+      .min(1, "Debe ser al menos 1")
+      .max(999, "Máximo 999")
+      .optional()
+  ),
+  salary: z.string().optional().or(z.literal("")),
+  schedule: z.string().optional().or(z.literal("")),
+  experienceRequired: z.string().optional().or(z.literal("")),
+  educationRequired: z.string().optional().or(z.literal("")),
+  requirements: z.string().optional().or(z.literal("")),
+  whatsapp: z.string().optional().or(z.literal("")),
+  contactEmail: z.string().email("Correo inválido").optional().or(z.literal("")),
+  deadline: z.string().optional().or(z.literal("")),
+});
+
+export type JobPostingInput = z.infer<typeof jobPostingSchema>;
+export type JobPostingFormValues = z.input<typeof jobPostingSchema>;
+
+export const chatMessageSchema = z.object({
+  content: z.string().trim().min(1).max(2000),
+});

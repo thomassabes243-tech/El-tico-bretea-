@@ -1,12 +1,14 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { PriceTag } from "@/components/ui/PriceTag";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
-import { Info } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -103,19 +105,30 @@ export default async function CvPage() {
           )}
         </Card>
 
-        <Card className="mt-4 flex gap-2.5 border-navy-700/15 bg-navy-900/[0.03] p-4">
-          <Info className="h-4 w-4 shrink-0 text-navy-700" />
-          <p className="text-xs leading-relaxed text-navy-800/70">
-            La descarga en PDF (US$2, cobrado en colones) llega en una próxima entrega, una
-            vez esté conectado un procesador de pagos compatible con Costa Rica. El PDF
-            generado se elimina automáticamente a los 3 meses; los datos de tu perfil se
-            mantienen.
+        <Card className="mt-4 flex items-start gap-3.5 border-colon-600/20 bg-colon-100/40 p-4">
+          <PriceTag amount="~1,090" size="lg" />
+          <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
+            Descarga en PDF, equivalente a US$2 cobrados en colones (monto configurable desde
+            el panel administrativo). Llega en una próxima entrega, una vez esté conectado un
+            procesador de pagos compatible con Costa Rica. El PDF generado se elimina
+            automáticamente a los 3 meses; los datos de tu perfil se mantienen.
           </p>
         </Card>
 
         <Button variant="outline" fullWidth className="mt-4" disabled>
           Descargar PDF — próximamente
         </Button>
+
+        <Card className="mt-4 flex items-center gap-3.5 p-4">
+          <Sparkles className="h-5 w-5 shrink-0 text-colon-600" />
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-navy-900">Destacá tu CV con Premium</p>
+            <p className="text-xs text-navy-800/50">Perfil destacado, sin límites y más.</p>
+          </div>
+          <Link href="/premium" className="shrink-0 text-xs font-bold text-colon-600">
+            Ver Premium
+          </Link>
+        </Card>
       </main>
       <BottomNav />
     </div>

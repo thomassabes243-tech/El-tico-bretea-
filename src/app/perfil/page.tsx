@@ -5,8 +5,10 @@ import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
-import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck } from "lucide-react";
+import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -19,7 +21,13 @@ export default async function PerfilPage() {
   if (session.user.role === "WORKER") {
     const worker = await prisma.workerProfile.findUnique({
       where: { userId: session.user.id },
-      include: { references: true },
+      include: {
+        references: true,
+        applications: {
+          orderBy: { createdAt: "desc" },
+          include: { jobPosting: { include: { company: true } } },
+        },
+      },
     });
     if (!worker) redirect("/registro/trabajador");
 
@@ -114,6 +122,46 @@ export default async function PerfilPage() {
             </Card>
           )}
 
+          <Card className="mt-4 p-5">
+            <h2 className="flex items-center gap-2 text-sm font-bold text-navy-900">
+              <Send className="h-4 w-4" /> Mis aplicaciones
+            </h2>
+            {worker.applications.length === 0 ? (
+              <p className="mt-2 text-xs text-navy-800/50">
+                Todavía no aplicaste a ninguna vacante.{" "}
+                <Link href="/buscar" className="font-semibold text-cr-red-600">Buscar trabajo</Link>
+              </p>
+            ) : (
+              <div className="mt-3 flex flex-col gap-2.5">
+                {worker.applications.map((app) => (
+                  <Link key={app.id} href={`/vacantes/${app.jobPosting.id}`}>
+                    <div className="flex items-center gap-3 rounded-xl border border-sand-200 p-3">
+                      <CategoryIcon category={app.jobPosting.laborCategory} size="sm" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-navy-900">{app.jobPosting.title}</p>
+                        <p className="truncate text-xs text-navy-800/50">{app.jobPosting.company.commercialName}</p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-navy-800/30" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </Card>
+
+          {!worker.isPremium && (
+            <Card className="mt-4 flex items-center gap-3.5 border-colon-600/20 bg-colon-100/40 p-4">
+              <Sparkles className="h-5 w-5 shrink-0 text-colon-600" />
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-navy-900">Hacete Premium</p>
+                <p className="text-xs text-navy-800/50">Perfil destacado, sin publicidad y más.</p>
+              </div>
+              <Link href="/premium" className="shrink-0 text-xs font-bold text-colon-600">
+                Ver planes
+              </Link>
+            </Card>
+          )}
+
           <Card className="mt-4 flex items-start gap-3 border-navy-700/15 bg-navy-900/[0.03] p-4">
             <ShieldCheck className="h-4 w-4 shrink-0 text-navy-700" />
             <p className="text-xs leading-relaxed text-navy-800/70">
@@ -128,7 +176,15 @@ export default async function PerfilPage() {
   }
 
   if (session.user.role === "COMPANY") {
-    const company = await prisma.companyProfile.findUnique({ where: { userId: session.user.id } });
+    const company = await prisma.companyProfile.findUnique({
+      where: { userId: session.user.id },
+      include: {
+        jobPostings: {
+          orderBy: { createdAt: "desc" },
+          include: { _count: { select: { applications: true } } },
+        },
+      },
+    });
     if (!company) redirect("/registro/empresa");
 
     return (
@@ -164,14 +220,44 @@ export default async function PerfilPage() {
           </Card>
 
           <Card className="mt-4 p-5">
-            <h2 className="text-sm font-bold text-navy-900">Vacantes</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-bold text-navy-900">Mis vacantes</h2>
+              <Button href="/empresa/vacantes/nueva" size="sm" variant="secondary">
+                <Plus className="h-3.5 w-3.5" /> Publicar
+              </Button>
+            </div>
+            {company.jobPostings.length === 0 ? (
+              <p className="mt-3 text-xs text-navy-800/50">
+                Todavía no has publicado ninguna vacante.
+              </p>
+            ) : (
+              <div className="mt-3 flex flex-col gap-2.5">
+                {company.jobPostings.map((job) => (
+                  <Link key={job.id} href={`/vacantes/${job.id}/aplicantes`}>
+                    <div className="flex items-center gap-3 rounded-xl border border-sand-200 p-3">
+                      <CategoryIcon category={job.laborCategory} size="sm" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-navy-900">{job.title}</p>
+                        <p className="text-xs text-navy-800/50">
+                          {job._count.applications} aplicante{job._count.applications !== 1 ? "s" : ""}
+                          {!job.isActive && " · Inactiva"}
+                        </p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-navy-800/30" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </Card>
+
+          <Card className="mt-4 p-5">
+            <h2 className="text-sm font-bold text-navy-900">Buscar personal</h2>
             <p className="mt-1 text-xs text-navy-800/50">
-              La publicación de vacantes llega en una próxima entrega. Mientras tanto podés
-              usar{" "}
+              También podés explorar perfiles de trabajadores directamente en{" "}
               <Link href="/buscar-personal" className="font-semibold text-cr-red-600">
                 Buscar personal
-              </Link>{" "}
-              para ver perfiles de trabajadores.
+              </Link>.
             </p>
           </Card>
         </main>
@@ -180,6 +266,11 @@ export default async function PerfilPage() {
     );
   }
 
+  const moderator = await prisma.moderator.findUnique({
+    where: { userId: session.user.id },
+    include: { assignments: { include: { chatRoom: true } } },
+  });
+
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <TopBar />
@@ -187,15 +278,40 @@ export default async function PerfilPage() {
         <Card className="p-5">
           <h1 className="text-lg font-extrabold text-navy-900">Panel de moderación</h1>
           <p className="mt-2 text-sm text-navy-800/60">
-            Como moderador podés bloquear el acceso de un usuario a las salas de chat que
-            tenés asignadas. Esta herramienta llega en una próxima entrega.
+            Tu única función es bloquear el acceso de un usuario a las salas de chat que
+            tenés asignadas. No tenés acceso a información administrativa sensible.
           </p>
+        </Card>
+
+        <Card className="mt-4 p-5">
+          <h2 className="text-sm font-bold text-navy-900">Mis salas asignadas</h2>
+          {!moderator || moderator.assignments.length === 0 ? (
+            <p className="mt-2 text-xs text-navy-800/50">
+              Todavía no tenés salas asignadas.
+            </p>
+          ) : (
+            <div className="mt-3 flex flex-col gap-2.5">
+              {moderator.assignments.map((a) => (
+                <Link key={a.id} href={`/comunidad/${a.chatRoom.category.toLowerCase()}/moderacion`}>
+                  <div className="flex items-center gap-3 rounded-xl border border-sand-200 p-3">
+                    <CategoryIcon category={a.chatRoom.category} size="sm" />
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-navy-900">{a.chatRoom.name}</p>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-navy-800/30" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </Card>
+
+        <Card className="mt-4 p-5">
           <form
             action={async () => {
               "use server";
               await signOut({ redirectTo: "/" });
             }}
-            className="mt-4"
           >
             <button className="text-sm font-semibold text-cr-red-600">Cerrar sesión</button>
           </form>
