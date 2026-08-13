@@ -17,6 +17,7 @@ type ChatMessage = {
     location: string;
     companyName: string;
     companyVerified: boolean;
+    isActive: boolean;
   } | null;
   files: { id: string; width: number | null; height: number | null }[];
 };
@@ -195,15 +196,33 @@ export function ChatRoomView({
           {messages.map((m) => {
             const isMine = m.author.id === currentUserId;
             if (m.type === "JOB_SHARE" && m.jobPosting) {
+              const isClosed = !m.jobPosting.isActive;
               return (
-                <Card key={m.id} className="border-cr-red-600/20 bg-cr-red-100/30 p-3.5">
-                  <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wide text-cr-red-700">
-                    {m.jobPosting.companyVerified
-                      ? "Vacante empresarial verificada ✓"
-                      : "Vacante empresarial"}
+                <Card
+                  key={m.id}
+                  className={
+                    isClosed
+                      ? "border-sand-200 bg-sand-100/60 p-3.5 opacity-70"
+                      : "border-cr-red-600/20 bg-cr-red-100/30 p-3.5"
+                  }
+                >
+                  <p
+                    className={`mb-1.5 text-[11px] font-bold uppercase tracking-wide ${
+                      isClosed ? "text-navy-800/50" : "text-cr-red-700"
+                    }`}
+                  >
+                    {isClosed
+                      ? "Vacante cerrada"
+                      : m.jobPosting.companyVerified
+                        ? "Vacante empresarial verificada ✓"
+                        : "Vacante empresarial"}
                   </p>
                   <Link href={`/vacantes/${m.jobPosting.id}`} className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-cr-red-600">
+                    <div
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white ${
+                        isClosed ? "text-navy-800/40" : "text-cr-red-600"
+                      }`}
+                    >
                       <Briefcase className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">

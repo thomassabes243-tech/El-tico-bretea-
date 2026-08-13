@@ -61,6 +61,7 @@ export function serializeChatMessage(m: ChatMessageWithRelations) {
           location: m.jobPosting.location,
           companyName: m.jobPosting.company.commercialName,
           companyVerified: m.jobPosting.company.isVerified,
+          isActive: m.jobPosting.isActive,
         }
       : null,
     files: m.files,
