@@ -9,6 +9,7 @@ import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { recommendWorkersForJob } from "@/lib/recommendations";
 import { JobPostingStatusToggle } from "@/components/forms/JobPostingStatusToggle";
 import { ApplicationStatusSelect } from "@/components/forms/ApplicationStatusSelect";
+import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { MapPin, Briefcase, Sparkles, Info, Pencil } from "lucide-react";
 
 export default async function AplicantesPage({
@@ -61,7 +62,9 @@ export default async function AplicantesPage({
         </div>
         {!jobPosting.isActive && (
           <p className="mt-1 text-xs font-semibold text-navy-800/50">
-            Esta vacante está cerrada: ya no aparece en búsquedas ni recibe nuevas aplicaciones.
+            Vacante cerrada
+            {closureReasonLabel(jobPosting.closureReason) && ` · ${closureReasonLabel(jobPosting.closureReason)}`}
+            : ya no aparece en búsquedas ni recibe nuevas aplicaciones.
           </p>
         )}
 
