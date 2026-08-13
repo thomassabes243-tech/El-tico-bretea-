@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Providers } from "@/components/Providers";
+import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -10,6 +11,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: "El Tico Bretea — Conseguí trabajo en Costa Rica",
   description:
     "El Tico Bretea conecta a trabajadores ticos con empresas de forma directa y confiable: perfiles profesionales, currículums, vacantes y comunidades por gremio.",
