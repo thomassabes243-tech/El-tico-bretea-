@@ -7,6 +7,8 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
+import { getAdEligibility } from "@/lib/ads";
+import { AdSlot } from "@/components/ads/AdSlot";
 import type { LaborCategory } from "@prisma/client";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
@@ -22,12 +24,15 @@ export default async function BuscarCategoriaPage({
   const category = LABOR_CATEGORIES.find((c) => c.value.toLowerCase() === categoria);
   if (!category) notFound();
 
-  const jobPostings = await prisma.jobPosting.findMany({
-    where: { laborCategory: category.value as LaborCategory, isActive: true },
-    include: { company: true },
-    orderBy: { createdAt: "desc" },
-    take: 30,
-  });
+  const [jobPostings, adEligible] = await Promise.all([
+    prisma.jobPosting.findMany({
+      where: { laborCategory: category.value as LaborCategory, isActive: true },
+      include: { company: true },
+      orderBy: { createdAt: "desc" },
+      take: 30,
+    }),
+    getAdEligibility(),
+  ]);
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
@@ -84,6 +89,8 @@ export default async function BuscarCategoriaPage({
             </Link>
           ))}
         </div>
+
+        <AdSlot eligible={adEligible} />
       </main>
       <BottomNav />
     </div>

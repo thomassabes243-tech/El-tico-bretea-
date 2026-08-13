@@ -11,6 +11,8 @@ import { MonteverdeScene } from "@/components/brand/scenery/MonteverdeScene";
 import { CoffeeMountainsScene } from "@/components/brand/scenery/CoffeeMountainsScene";
 import { COMMUNITY_CATEGORIES } from "@/lib/constants";
 import { getDailyQuote } from "@/lib/motivational-quotes";
+import { getAdEligibility } from "@/lib/ads";
+import { AdSlot } from "@/components/ads/AdSlot";
 
 const COMMUNITY_SCENES: Record<string, ComponentType<{ className?: string }>> = {
   CONSTRUCCION: CoffeeMountainsScene,
@@ -53,8 +55,9 @@ const QUICK_ACTIONS = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
   const quote = getDailyQuote();
+  const adEligible = await getAdEligibility();
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
@@ -140,6 +143,9 @@ export default function Home() {
             })}
           </div>
         </section>
+
+        {/* Publicidad (solo cuentas gratuitas, Sección 10) */}
+        <AdSlot eligible={adEligible} />
 
         {/* Confianza / transparencia */}
         <section className="mt-8">
