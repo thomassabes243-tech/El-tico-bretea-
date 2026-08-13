@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Section 1: Tipos de usuario (Trabajador, Empresa, Moderador) + Admin
+// ---------------------------------------------------------------------------
+
+enum UserRole {
+  WORKER
+  COMPANY
+  MODERATOR
+  ADMIN
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         UserRole
+  isBlocked    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  workerProfile  WorkerProfile?
+  companyProfile CompanyProfile?
+  moderator      Moderator?
+
+  reportsFiled    Report[] @relation("ReportsFiled")
+  reportsReceived Report[] @relation("ReportsReceived")
+
+  @@map("users")
+}
+
+// ---------------------------------------------------------------------------
+// Section 13: Categorías laborales usadas en búsqueda y perfiles
+// ---------------------------------------------------------------------------
+
+enum LaborCategory {
+  CONSTRUCCION
+  HOTELES_TURISMO
+  RESTAURANTES
+  LIMPIEZA
+  TRANSPORTE
+  SEGURIDAD
+  OFICINAS_ADMINISTRACION
+  VENTAS_COMERCIO
+  TECNOLOGIA
+  PROFESIONALES
+}
+
+enum JobType {
+  TIEMPO_COMPLETO
+  MEDIO_TIEMPO
+  TEMPORAL
+  POR_HORAS
+  FREELANCE
+}
+
+enum Availability {
+  INMEDIATA
+  UNA_SEMANA
+  DOS_SEMANAS
+  UN_MES
+  A_CONVENIR
+}
+
+// ---------------------------------------------------------------------------
+// Section 2 & 3: Registro y perfil profesional del trabajador
+//
+// Privacy note (Section 16): contact fields (phone/whatsapp/email) and
+// salary expectation are private by default. The worker decides what is
+// shown on the public profile via the show* flags. No criminal-record
+// document is ever collected here (see Section 2).
+// ---------------------------------------------------------------------------
+
+model WorkerProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Identity
+  fullName        String
+  formalPhotoUrl  String?
+  age             Int
+  residence       String
+
+  // Contact (private by default, see show* flags below)
+  phone    String
+  whatsapp String?
+  email    String
+
+  // Profession & category
+  profession    String
+  laborCategory LaborCategory
+
+  // Experience
+  yearsExperience    Int
+  workExperience     String? // free-text summary of roles/duties
+  companiesWorkedAt  String? // comma or newline separated
+  previousPositions  String?
+
+  // Education
+  education       String?
+  degrees         String?
+  courses         String?
+  certifications  String?
+
+  // Skills & languages
+  skills    String? // comma separated
+  languages String? // comma separated
+
+  // Availability & job preferences
+  availability       Availability
+  willingToRelocate  Boolean @default(false)
+  jobTypeSought      JobType
+  salaryExpectation  String?
+
+  // Visibility controls — worker chooses what appears on the public profile
+  isPublic               Boolean @default(true)
+  showPhone              Boolean @default(false)
+  showWhatsapp           Boolean @default(false)
+  showEmail              Boolean @default(false)
+  showSalaryExpectation  Boolean @default(false)
+
+  isPremium  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  references   WorkerReference[]
+  savedBy      SavedWorker[]
+
+  @@map("worker_profiles")
+}
+
+model WorkerReference {
+  id       String        @id @default(cuid())
+  workerId String
+  worker   WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  name    String
+  company String
+  phone   String?
+  email   String?
+
+  @@map("worker_references")
+}
+
+// ---------------------------------------------------------------------------
+// Section 11: Empresas
+// ---------------------------------------------------------------------------
+
+model CompanyProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  commercialName  String
+  legalId         String // identificación / cédula jurídica
+  responsibleName String
+  contactPhone    String
+  contactEmail    String
+  location        String
+  activity        String
+  logoUrl         String?
+  description     String?
+
+  isVerified   Boolean   @default(false)
+  verifiedAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  savedWorkers SavedWorker[]
+
+  @@map("company_profiles")
+}
+
+model SavedWorker {
+  id        String   @id @default(cuid())
+  companyId String
+  company   CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  workerId  String
+  worker    WorkerProfile  @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([companyId, workerId])
+  @@map("saved_workers")
+}
+
+// ---------------------------------------------------------------------------
+// Section 9: Comunidades de chat (estructura base; moderador solo bloquea
+// acceso a la sala, sin acceso a datos administrativos sensibles)
+// ---------------------------------------------------------------------------
+
+enum CommunityCategory {
+  CONSTRUCCION
+  HOTELES_TURISMO
+  PROFESIONALES
+}
+
+model ChatRoom {
+  id       String            @id @default(cuid())
+  name     String
+  category CommunityCategory
+  createdAt DateTime @default(now())
+
+  moderators ModeratorAssignment[]
+
+  @@map("chat_rooms")
+}
+
+model Moderator {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  assignments ModeratorAssignment[]
+
+  @@map("moderators")
+}
+
+model ModeratorAssignment {
+  id          String    @id @default(cuid())
+  moderatorId String
+  moderator   Moderator @relation(fields: [moderatorId], references: [id], onDelete: Cascade)
+  chatRoomId  String
+  chatRoom    ChatRoom  @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+
+  @@unique([moderatorId, chatRoomId])
+  @@map("moderator_assignments")
+}
+
+// ---------------------------------------------------------------------------
+// Section 16: Reportes y bloqueos (privacidad y seguridad)
+// ---------------------------------------------------------------------------
+
+enum ReportTargetType {
+  USER
+  COMPANY
+  JOB_POSTING
+}
+
+model Report {
+  id         String           @id @default(cuid())
+  reporterId String
+  reporter   User             @relation("ReportsFiled", fields: [reporterId], references: [id], onDelete: Cascade)
+  targetId   String?
+  target     User?            @relation("ReportsReceived", fields: [targetId], references: [id], onDelete: SetNull)
+  targetType ReportTargetType
+  reason     String
+  createdAt  DateTime         @default(now())
+  resolved   Boolean          @default(false)
+
+  @@map("reports")
+}

@@ -1,0 +1,77 @@
+import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
+import { workerRegistrationSchema } from "@/lib/validations";
+
+export async function POST(request: Request) {
+  const body = await request.json();
+  const parsed = workerRegistrationSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Datos inválidos", issues: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+
+  const data = parsed.data;
+  const email = data.email.toLowerCase();
+
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing) {
+    return NextResponse.json(
+      { error: "Ya existe una cuenta con ese correo" },
+      { status: 409 }
+    );
+  }
+
+  const passwordHash = await bcrypt.hash(data.password, 10);
+
+  const user = await prisma.user.create({
+    data: {
+      email,
+      passwordHash,
+      role: "WORKER",
+      workerProfile: {
+        create: {
+          fullName: data.fullName,
+          formalPhotoUrl: data.formalPhotoUrl || null,
+          age: data.age,
+          residence: data.residence,
+          phone: data.phone,
+          whatsapp: data.whatsapp || null,
+          email,
+          profession: data.profession,
+          laborCategory: data.laborCategory,
+          yearsExperience: data.yearsExperience,
+          workExperience: data.workExperience || null,
+          companiesWorkedAt: data.companiesWorkedAt || null,
+          previousPositions: data.previousPositions || null,
+          education: data.education || null,
+          degrees: data.degrees || null,
+          courses: data.courses || null,
+          certifications: data.certifications || null,
+          skills: data.skills || null,
+          languages: data.languages || null,
+          availability: data.availability,
+          willingToRelocate: data.willingToRelocate,
+          jobTypeSought: data.jobTypeSought,
+          salaryExpectation: data.salaryExpectation || null,
+          references: {
+            create: (data.references ?? [])
+              .filter((r) => r.name && r.company)
+              .map((r) => ({
+                name: r.name,
+                company: r.company,
+                phone: r.phone || null,
+                email: r.email || null,
+              })),
+          },
+        },
+      },
+    },
+    select: { id: true, email: true },
+  });
+
+  return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });
+}
