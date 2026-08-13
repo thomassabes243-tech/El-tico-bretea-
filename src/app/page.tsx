@@ -55,15 +55,26 @@ const QUICK_ACTIONS = [
   },
 ];
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ "cuenta-eliminada"?: string }>;
+}) {
   const quote = getDailyQuote();
   const adEligible = await getAdEligibility();
+  const { "cuenta-eliminada": cuentaEliminada } = await searchParams;
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <TopBar />
 
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
+        {cuentaEliminada && (
+          <div className="mb-4 rounded-2xl border border-success-600/25 bg-success-600/10 px-4 py-3 text-sm font-medium text-success-600">
+            Tu cuenta fue eliminada. Gracias por haber usado El Tico Bretea.
+          </div>
+        )}
+
         {/* Hero */}
         <section className="animate-fade-in-up relative overflow-hidden rounded-3xl text-white shadow-lg shadow-navy-900/20">
           <ArenalScene className="absolute inset-0 h-full w-full" />

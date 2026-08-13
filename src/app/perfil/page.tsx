@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { recommendJobsForWorker } from "@/lib/recommendations";
+import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send, Info } from "lucide-react";
 
@@ -201,6 +202,8 @@ export default async function PerfilPage() {
               si una empresa lo requiere, se maneja directo entre ambas partes.
             </p>
           </Card>
+
+          <DeleteAccountCard />
         </main>
         <BottomNav />
       </div>
@@ -296,6 +299,8 @@ export default async function PerfilPage() {
               </Link>.
             </p>
           </Card>
+
+          <DeleteAccountCard />
         </main>
         <BottomNav />
       </div>
