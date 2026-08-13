@@ -8,7 +8,8 @@ Cubierto hasta ahora: autenticación por correo/contraseña, tipos de usuario
 (trabajador, empresa, moderador, admin), registro de trabajador y de
 empresa, perfil profesional (con experiencia laboral visible), vacantes
 empresariales con aplicaciones que la empresa puede editar, cerrar y dar
-seguimiento (enviada/vista/contactada/descartada), chat en vivo por
+seguimiento (enviada/vista/contactada/descartada), compartir vacantes a
+WhatsApp/Facebook con vista previa, chat en vivo por
 comunidad (con fotos efímeras y límites diarios), edición del perfil
 propio (trabajador y empresa) con control de privacidad de contacto,
 moderación de salas, reportes de usuarios/empresas, panel administrador (usuarios,
@@ -35,7 +36,12 @@ Rica) y categorías editables desde el panel.
 ## Desarrollo local
 
 1. Tené una base de datos PostgreSQL corriendo y configurá `DATABASE_URL`
-   en `.env` (ver `.env` de ejemplo en este repo).
+   en `.env` (ver `.env` de ejemplo en este repo). Cuando la app tenga un
+   dominio público, actualizá también `NEXT_PUBLIC_SITE_URL` a ese dominio
+   — se usa para generar los enlaces para compartir vacantes y sus
+   tarjetas de vista previa (Open Graph); mientras quede en
+   `http://localhost:3000` esos enlaces no van a funcionar fuera de esta
+   máquina.
 2. Instalá dependencias:
 
    ```bash
@@ -113,3 +119,9 @@ Rica) y categorías editables desde el panel.
   puestos previos que se piden en el registro ahora se muestran en el
   perfil propio, el perfil público y el CV en PDF (antes se guardaban
   pero no aparecían en ningún lado).
+- Compartir vacante (`/vacantes/[id]`): botones directos a WhatsApp y
+  Facebook, más copiar enlace. Cada vacante genera su propia tarjeta de
+  vista previa (Open Graph, `opengraph-image.tsx`) con el puesto, la
+  empresa y la categoría, para que al pegar el link en esas apps se vea
+  una tarjeta con marca en vez de un link pelado. Depende de
+  `NEXT_PUBLIC_SITE_URL` — ver sección de Desarrollo local.

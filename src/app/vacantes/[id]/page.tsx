@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
@@ -7,12 +8,36 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { ApplyButton } from "@/components/forms/ApplyButton";
+import { ShareJobButton } from "@/components/forms/ShareJobButton";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import { MapPin, Briefcase, Users, Calendar, ShieldCheck, Phone, Mail } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const jobPosting = await prisma.jobPosting.findUnique({
+    where: { id },
+    include: { company: { select: { commercialName: true } } },
+  });
+  if (!jobPosting) return {};
+
+  const title = `${jobPosting.title} en ${jobPosting.company.commercialName} — El Tico Bretea`;
+  const description = `${labelFor(LABOR_CATEGORIES, jobPosting.laborCategory)} en ${jobPosting.location}. ${jobPosting.description}`.slice(0, 200);
+
+  return {
+    title,
+    description,
+    openGraph: { title, description, url: `/vacantes/${id}`, type: "website" },
+    twitter: { card: "summary_large_image", title, description },
+  };
 }
 
 export default async function VacanteDetailPage({
@@ -86,6 +111,10 @@ export default async function VacanteDetailPage({
                 <Calendar className="h-3.5 w-3.5" /> Hasta {jobPosting.deadline.toLocaleDateString("es-CR")}
               </span>
             )}
+          </div>
+
+          <div className="mt-4 border-t border-sand-200 pt-4">
+            <ShareJobButton jobId={jobPosting.id} title={jobPosting.title} />
           </div>
         </Card>
 
