@@ -224,14 +224,20 @@ model JobPosting {
   contactEmail       String?
   deadline           DateTime?
 
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isActive      Boolean            @default(true)
+  closureReason JobClosureReason?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
 
   applications   JobApplication[]
   communityPosts ChatMessage[]
 
   @@map("job_postings")
+}
+
+enum JobClosureReason {
+  PUESTO_LLENO
+  CADUCADA
 }
 
 enum ApplicationStatus {

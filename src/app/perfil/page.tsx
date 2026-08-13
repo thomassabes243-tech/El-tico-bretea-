@@ -11,6 +11,7 @@ import { recommendJobsForWorker } from "@/lib/recommendations";
 import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { applicationStatusMeta } from "@/lib/application-status";
+import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send, Info, Pencil, History } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
@@ -322,7 +323,8 @@ export default async function PerfilPage() {
                         <p className="truncate text-sm font-semibold text-navy-900">{job.title}</p>
                         <p className="text-xs text-navy-800/50">
                           {job._count.applications} aplicante{job._count.applications !== 1 ? "s" : ""}
-                          {!job.isActive && " · Inactiva"}
+                          {!job.isActive &&
+                            ` · Cerrada${closureReasonLabel(job.closureReason) ? ` (${closureReasonLabel(job.closureReason)})` : ""}`}
                         </p>
                       </div>
                       <ChevronRight className="h-4 w-4 text-navy-800/30" />

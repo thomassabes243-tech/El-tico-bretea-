@@ -101,9 +101,11 @@ Rica) y categorías editables desde el panel.
   verificada cambia su identificación legal, la verificación se revoca
   automáticamente hasta que el admin la revise de nuevo.
 - Vacantes propias: desde `/vacantes/[id]/aplicantes` (el panel de gestión
-  de cada vacante) la empresa puede editar cualquier campo o cerrarla. Una
-  vacante cerrada desaparece de las búsquedas y deja de aceptar
-  aplicaciones nuevas, sin necesidad de pasar por el admin.
+  de cada vacante) la empresa puede editar cualquier campo o cerrarla. Al
+  cerrar elige el motivo (puesto lleno o búsqueda caducada), que se
+  muestra en la vista pública, en el panel de gestión y en "Mis vacantes"
+  del perfil. Una vacante cerrada desaparece de las búsquedas y deja de
+  aceptar aplicaciones nuevas, sin necesidad de pasar por el admin.
 - Estado de aplicaciones: en ese mismo panel la empresa marca cada
   aplicante como vista, contactada o descartada; el trabajador ve ese
   estado reflejado en "Mis aplicaciones" dentro de su perfil.

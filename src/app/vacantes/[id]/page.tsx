@@ -7,6 +7,7 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { ApplyButton } from "@/components/forms/ApplyButton";
+import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import { MapPin, Briefcase, Users, Calendar, ShieldCheck, Phone, Mail } from "lucide-react";
 
@@ -61,6 +62,7 @@ export default async function VacanteDetailPage({
           {!jobPosting.isActive && (
             <p className="mt-3 rounded-lg bg-sand-100 px-3 py-1.5 text-xs font-semibold text-navy-800/60">
               Esta vacante ya no está activa
+              {closureReasonLabel(jobPosting.closureReason) && `: ${closureReasonLabel(jobPosting.closureReason)}`}
             </p>
           )}
 
