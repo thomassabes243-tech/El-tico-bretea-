@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { PriceTag } from "@/components/ui/PriceTag";
 import { getAppSettings } from "@/lib/settings";
 import { formatColones } from "@/lib/format";
@@ -113,16 +112,19 @@ export default async function CvPage() {
         <Card className="mt-4 flex items-start gap-3.5 border-colon-600/20 bg-colon-100/40 p-4">
           <PriceTag amount={cvPrice} size="lg" />
           <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
-            Descarga en PDF, equivalente a US$2 cobrados en colones (monto configurable desde
-            el panel administrativo). Llega en una próxima entrega, una vez esté conectado un
-            procesador de pagos compatible con Costa Rica. El PDF generado se elimina
-            automáticamente a los 3 meses; los datos de tu perfil se mantienen.
+            El precio normal es equivalente a US$2 cobrados en colones (monto configurable
+            desde el panel administrativo), pero <strong>por ahora la descarga es gratuita</strong>{" "}
+            mientras conectamos un procesador de pagos compatible con Costa Rica. El PDF se
+            genera al momento con los datos actuales de tu perfil.
           </p>
         </Card>
 
-        <Button variant="outline" fullWidth className="mt-4" disabled>
-          Descargar PDF — próximamente
-        </Button>
+        <a
+          href="/api/cv/descargar"
+          className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-cr-red-600 text-sm font-semibold text-white shadow-sm shadow-cr-red-600/25 transition-all hover:bg-cr-red-700 active:scale-[0.98]"
+        >
+          Descargar PDF (gratis por ahora)
+        </a>
 
         <Card className="mt-4 flex items-center gap-3.5 p-4">
           <Sparkles className="h-5 w-5 shrink-0 text-colon-600" />
