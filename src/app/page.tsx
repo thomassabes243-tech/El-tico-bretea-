@@ -5,7 +5,7 @@ import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
-import { ArenalScene } from "@/components/brand/scenery/ArenalScene";
+import { PoasScene } from "@/components/brand/scenery/PoasScene";
 import { GuanacasteScene } from "@/components/brand/scenery/GuanacasteScene";
 import { MonteverdeScene } from "@/components/brand/scenery/MonteverdeScene";
 import { CoffeeMountainsScene } from "@/components/brand/scenery/CoffeeMountainsScene";
@@ -77,7 +77,7 @@ export default async function Home({
 
         {/* Hero */}
         <section className="animate-fade-in-up relative overflow-hidden rounded-3xl text-white shadow-lg shadow-navy-900/20">
-          <ArenalScene className="absolute inset-0 h-full w-full" />
+          <PoasScene className="absolute inset-0 h-full w-full" />
           <div className="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/40 to-transparent" />
           <div className="relative px-6 py-8">
             <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/85 backdrop-blur-sm">

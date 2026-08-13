@@ -1,12 +1,12 @@
 export const MOTIVATIONAL_QUOTES = [
-  "Hoy es un buen día para dar el siguiente paso en tu carrera.",
-  "Cada aplicación es una puerta que se abre. ¡Seguí adelante!",
-  "El esfuerzo de hoy es la oportunidad de mañana.",
+  "Un perfil completo y honesto abre más puertas que uno exagerado.",
+  "Buscar trabajo también es trabajo. Un paso a la vez, sin apurarse.",
+  "Tu experiencia cuenta, aunque no tengas título. Mostrala con claridad.",
   "Costa Rica se mueve gracias a gente como vos. ¡Pura vida y a brechar!",
-  "Un buen perfil abre puertas que ni imaginás.",
-  "No dejés de intentarlo: el trabajo correcto está más cerca de lo que creés.",
-  "Tu experiencia vale. Mostrala con orgullo.",
-  "Las oportunidades llegan a quienes se preparan. Hoy es un buen día para prepararte.",
+  "Las empresas serias valoran la constancia. Seguí postulando.",
+  "Nadie va a saber lo que sabés hacer si tu perfil no lo dice.",
+  "Hoy podés postularte a una vacante más. Puede ser la que te cambie el mes.",
+  "El trabajo correcto no siempre llega rápido, pero llega a quien insiste.",
 ];
 
 export function getDailyQuote(): string {
