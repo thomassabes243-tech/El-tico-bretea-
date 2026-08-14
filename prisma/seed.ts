@@ -9,10 +9,19 @@ const COMMUNITIES: { name: string; category: "CONSTRUCCION" | "HOTELES_TURISMO" 
   { name: "Profesionales", category: "PROFESIONALES" },
 ];
 
-const DEMO_MODERATOR_EMAIL = "moderador.demo@eltico.cr";
-const DEMO_MODERATOR_PASSWORD = "moderador12345";
-const DEMO_ADMIN_EMAIL = "admin.demo@eltico.cr";
-const DEMO_ADMIN_PASSWORD = "admin12345";
+const DEMO_MODERATOR_EMAIL = process.env.SEED_MODERATOR_EMAIL || "moderador.demo@eltico.cr";
+const DEMO_MODERATOR_PASSWORD = process.env.SEED_MODERATOR_PASSWORD || "moderador12345";
+const DEMO_ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL || "admin.demo@eltico.cr";
+const DEMO_ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || "admin12345";
+
+// Las contraseñas de arriba (admin12345 / moderador12345) son las de
+// desarrollo, documentadas públicamente en el README. Si SEED_ADMIN_PASSWORD
+// / SEED_MODERATOR_PASSWORD (y opcionalmente los *_EMAIL) están configuradas
+// como variables de entorno, se usan esas en su lugar — así una cuenta de
+// producción no queda con una contraseña conocida por cualquiera que lea
+// el repo. El seed es idempotente (upsert): si la cuenta ya existe, no le
+// toca la contraseña — así que para CAMBIAR una contraseña ya sembrada hay
+// que hacerlo desde el panel admin, no volviendo a correr el seed.
 
 async function main() {
   const rooms = [];
