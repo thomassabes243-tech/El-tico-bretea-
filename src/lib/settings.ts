@@ -11,8 +11,6 @@ export async function getAppSettings() {
 export async function updateAppSettings(data: {
   cvPriceColones: number;
   premiumPriceColones: number;
-  freeDailyFileLimit: number;
-  companyDailyFileLimit: number;
 }) {
   return prisma.appSettings.upsert({
     where: { id: SETTINGS_ID },

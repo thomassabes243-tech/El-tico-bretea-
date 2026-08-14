@@ -9,22 +9,14 @@ export async function saveSettings(formData: FormData) {
 
   const cvPriceColones = Number(formData.get("cvPriceColones"));
   const premiumPriceColones = Number(formData.get("premiumPriceColones"));
-  const freeDailyFileLimit = Number(formData.get("freeDailyFileLimit"));
-  const companyDailyFileLimit = Number(formData.get("companyDailyFileLimit"));
 
-  if (
-    [cvPriceColones, premiumPriceColones, freeDailyFileLimit, companyDailyFileLimit].some(
-      (n) => !Number.isFinite(n) || n < 0
-    )
-  ) {
+  if ([cvPriceColones, premiumPriceColones].some((n) => !Number.isFinite(n) || n < 0)) {
     throw new Error("Todos los valores deben ser números válidos mayores o iguales a 0");
   }
 
   await updateAppSettings({
     cvPriceColones: Math.round(cvPriceColones),
     premiumPriceColones: Math.round(premiumPriceColones),
-    freeDailyFileLimit: Math.round(freeDailyFileLimit),
-    companyDailyFileLimit: Math.round(companyDailyFileLimit),
   });
 
   revalidatePath("/admin/configuracion");

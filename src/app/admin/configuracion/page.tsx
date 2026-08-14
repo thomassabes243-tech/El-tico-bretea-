@@ -49,33 +49,6 @@ export default async function AdminConfiguracionPage() {
           </div>
         </Card>
 
-        <Card className="p-4">
-          <h2 className="text-sm font-bold text-navy-900">Límite diario de fotos en el chat</h2>
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <div>
-              <FieldLabel label="Cuenta gratuita" />
-              <input
-                name="freeDailyFileLimit"
-                type="number"
-                min={0}
-                defaultValue={settings.freeDailyFileLimit}
-                className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
-              />
-            </div>
-            <div>
-              <FieldLabel label="Empresa" />
-              <input
-                name="companyDailyFileLimit"
-                type="number"
-                min={0}
-                defaultValue={settings.companyDailyFileLimit}
-                className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
-              />
-            </div>
-          </div>
-          <p className="mt-2 text-xs text-navy-800/45">Premium siempre queda sin límite.</p>
-        </Card>
-
         <Button type="submit" className="self-start">Guardar cambios</Button>
       </form>
     </div>
