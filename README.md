@@ -34,7 +34,11 @@ se muestra en el perfil público). Premium está desactivado de la interfaz
 por ahora (no se puede comprar ni se muestra a los usuarios) — el código y
 el campo `isPremium` se conservan para reactivarlo más adelante, y el
 admin todavía puede activarlo manualmente por cuenta si hace falta. El único
-cobro activo hoy es la descarga del CV en PDF.
+cobro activo hoy es la descarga del CV en PDF. Desde /admin/usuarios,
+cualquier Administrador puede buscar cuentas por correo o nombre y
+darle/quitarle el rol de Administrador a cualquiera (sin límite de cuántos
+puede haber a la vez); no se puede quitar el rol a sí mismo, para no dejar
+el panel sin acceso por accidente.
 Pendiente: pagos reales (falta definir procesador compatible con Costa
 Rica) y categorías editables desde el panel.
 
