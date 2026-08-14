@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getChatRoomBySlug, isUserBlockedFromRoom, CHAT_MESSAGE_INCLUDE, serializeChatMessage } from "@/lib/chat-rooms";
 import { MAX_UPLOAD_BYTES } from "@/lib/chat-limits";
-import { saveChatImage } from "@/lib/storage";
+import { saveChatImage, StorageNotConfiguredError } from "@/lib/storage";
 
 export async function POST(request: Request, { params }: { params: Promise<{ category: string }> }) {
   const session = await auth();
@@ -36,7 +36,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ cat
   let saved;
   try {
     saved = await saveChatImage(buffer);
-  } catch {
+  } catch (err) {
+    console.error("[comunidad/foto] No se pudo guardar la imagen:", err);
+    if (err instanceof StorageNotConfiguredError) {
+      return NextResponse.json(
+        { error: "Subir fotos todavía no está disponible en este servidor. Avisale al administrador." },
+        { status: 503 }
+      );
+    }
     return NextResponse.json({ error: "No se pudo procesar la imagen" }, { status: 400 });
   }
 

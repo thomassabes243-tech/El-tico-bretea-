@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { HardDrive, Trash2 } from "lucide-react";
+import { HardDrive, Trash2, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { isCloudStorageConfigured } from "@/lib/storage";
 import { runCleanupNow } from "./actions";
 
 function formatBytes(bytes: number) {
@@ -18,6 +19,9 @@ export default async function AdminAlmacenamientoPage() {
     prisma.chatFile.count({ where: { expiresAt: { gt: now } } }),
   ]);
 
+  const cloudConfigured = isCloudStorageConfigured();
+  const onVercel = Boolean(process.env.VERCEL);
+
   return (
     <div>
       <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Almacenamiento</h1>
@@ -25,6 +29,37 @@ export default async function AdminAlmacenamientoPage() {
         Archivos efímeros del chat: se comprimen automáticamente y se eliminan 24h después de
         subirse. El perfil y el CV nunca se borran por este mecanismo.
       </p>
+
+      {cloudConfigured ? (
+        <Card className="mt-4 flex items-start gap-3 border-success-600/25 bg-success-600/5 p-4">
+          <CheckCircle2 className="mt-0.5 h-4.5 w-4.5 shrink-0 text-success-600" />
+          <div>
+            <p className="text-sm font-semibold text-navy-900">Almacenamiento en la nube configurado</p>
+            <p className="mt-0.5 text-xs text-navy-800/60">
+              Las fotos del chat y los documentos del CV se guardan en el bucket S3-compatible
+              configurado (STORAGE_S3_*).
+            </p>
+          </div>
+        </Card>
+      ) : (
+        <Card className="mt-4 flex items-start gap-3 border-cr-red-600/25 bg-cr-red-100/40 p-4">
+          <AlertTriangle className="mt-0.5 h-4.5 w-4.5 shrink-0 text-cr-red-600" />
+          <div>
+            <p className="text-sm font-semibold text-navy-900">Almacenamiento en la nube no configurado</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-navy-800/70">
+              {onVercel
+                ? "Ahora mismo, subir fotos en el chat o el documento del CV va a fallar con un aviso de \"almacenamiento no disponible\": este servidor (Vercel) no tiene disco propio para guardarlas."
+                : "En desarrollo local las fotos se guardan en disco (.data/chat-uploads), pero eso no funciona en producción (Vercel)."}
+              {" "}Agregá las variables <code className="rounded bg-white/60 px-1 py-0.5">STORAGE_S3_ENDPOINT</code>,{" "}
+              <code className="rounded bg-white/60 px-1 py-0.5">STORAGE_S3_BUCKET</code>,{" "}
+              <code className="rounded bg-white/60 px-1 py-0.5">STORAGE_S3_ACCESS_KEY_ID</code> y{" "}
+              <code className="rounded bg-white/60 px-1 py-0.5">STORAGE_S3_SECRET_ACCESS_KEY</code>{" "}
+              en Vercel (un bucket de Cloudflare R2 gratis alcanza) y volvé a desplegar. Instrucciones
+              completas en el README, sección &quot;Despliegue en producción&quot;.
+            </p>
+          </div>
+        </Card>
+      )}
 
       <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Card className="p-4">

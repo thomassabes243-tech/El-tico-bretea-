@@ -15,10 +15,11 @@ import { prisma } from "@/lib/prisma";
 // (clave, tipo, tamaño, expiración).
 //
 // Usa almacenamiento S3-compatible (Cloudflare R2, S3, etc.) cuando están
-// configuradas STORAGE_S3_*; si no, cae a disco local. El disco local NO
-// sirve en Vercel u otros entornos serverless (el filesystem es efímero y
-// no se comparte entre invocaciones), así que en producción hace falta
-// configurar las variables de entorno — ver README.
+// configuradas STORAGE_S3_*; si no, cae a disco local (solo para
+// desarrollo). En Vercel u otros entornos serverless sin STORAGE_S3_*
+// configuradas, en vez de intentar el disco local (que ahí falla o se
+// pierde entre invocaciones) se lanza StorageNotConfiguredError de una vez
+// — ver README para configurar Cloudflare R2.
 
 const CHAT_FILE_TTL_MS = 24 * 60 * 60 * 1000;
 const MAX_DIMENSION = 1600;
@@ -35,6 +36,33 @@ const s3Config = {
 const useS3 = Boolean(
   s3Config.endpoint && s3Config.bucket && s3Config.accessKeyId && s3Config.secretAccessKey
 );
+
+/** Para mostrar el estado real en /admin/almacenamiento. */
+export function isCloudStorageConfigured() {
+  return useS3;
+}
+
+/**
+ * En Vercel (y cualquier entorno serverless) el filesystem de la función es
+ * de solo lectura salvo /tmp, y /tmp no se comparte entre invocaciones ni
+ * sobrevive un cold start -- así que sin STORAGE_S3_* configuradas, subir o
+ * leer un archivo ahí falla o se pierde. En vez de dejar que eso reviente
+ * como un error de filesystem críptico, lo detectamos antes y lanzamos un
+ * error identificable para poder darle al usuario un mensaje claro (ver las
+ * rutas de subida) en lugar de un genérico "no se pudo procesar la imagen".
+ */
+export class StorageNotConfiguredError extends Error {
+  constructor() {
+    super("El almacenamiento de archivos (STORAGE_S3_*) no está configurado en este servidor.");
+    this.name = "StorageNotConfiguredError";
+  }
+}
+
+function assertLocalDiskUsable() {
+  if (process.env.VERCEL) {
+    throw new StorageNotConfiguredError();
+  }
+}
 
 let s3Client: S3Client | null = null;
 function getS3Client() {
@@ -74,6 +102,7 @@ async function writeObject(key: string, data: Buffer, mimeType: string) {
     );
     return;
   }
+  assertLocalDiskUsable();
   await mkdir(UPLOADS_ROOT, { recursive: true });
   await writeFile(keyToLocalPath(key), data);
 }
@@ -87,6 +116,7 @@ async function readObject(key: string): Promise<Buffer> {
     if (!bytes) throw new Error("Archivo vacío");
     return Buffer.from(bytes);
   }
+  assertLocalDiskUsable();
   return readFile(keyToLocalPath(key));
 }
 
@@ -97,6 +127,7 @@ async function deleteObject(key: string) {
     );
     return;
   }
+  assertLocalDiskUsable();
   try {
     await unlink(keyToLocalPath(key));
   } catch (err) {

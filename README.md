@@ -114,13 +114,16 @@ todos con capa gratuita. `.env.example` documenta cada variable.
    Vercel te asigna; se puede completar después del primer deploy y
    volver a desplegar).
 
-3. **Fotos del chat — [Cloudflare R2](https://dash.cloudflare.com)**
-   (opcional pero recomendado): sin esto, las fotos suben a disco local,
-   que en Vercel es efímero y no persiste entre invocaciones — las fotos
-   se perderían. Creá un bucket R2 gratis, generá credenciales de API
-   (S3-compatible) y agregá `STORAGE_S3_ENDPOINT`, `STORAGE_S3_BUCKET`,
-   `STORAGE_S3_ACCESS_KEY_ID`, `STORAGE_S3_SECRET_ACCESS_KEY` a las
-   variables de entorno de Vercel.
+3. **Fotos del chat y documentos del CV — [Cloudflare R2](https://dash.cloudflare.com)**
+   (necesario para poder subir fotos/documentos; sin esto esa función
+   directamente no funciona): Vercel no tiene disco propio para guardar
+   archivos, así que sin esto subir una foto en el chat o el documento del
+   CV falla con un aviso claro de "almacenamiento no disponible" (podés
+   confirmar el estado en `/admin/almacenamiento`). Creá un bucket R2
+   gratis, generá credenciales de API (S3-compatible) y agregá
+   `STORAGE_S3_ENDPOINT`, `STORAGE_S3_BUCKET`, `STORAGE_S3_ACCESS_KEY_ID`,
+   `STORAGE_S3_SECRET_ACCESS_KEY` a las variables de entorno de Vercel, y
+   volvé a desplegar.
 
 4. **Cuenta admin propia** (opcional, recomendado): el build también
    corre el seed automáticamente (comunidades de chat, configuración de

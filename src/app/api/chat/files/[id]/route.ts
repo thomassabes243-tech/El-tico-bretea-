@@ -29,7 +29,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         "Cache-Control": "private, max-age=3600",
       },
     });
-  } catch {
+  } catch (err) {
+    console.error("[chat/files] No se pudo leer la imagen:", err);
     return NextResponse.json({ error: "Archivo no disponible" }, { status: 404 });
   }
 }
