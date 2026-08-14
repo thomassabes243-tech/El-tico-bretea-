@@ -11,10 +11,11 @@ empresa, perfil profesional (con experiencia laboral visible), vacantes
 empresariales con aplicaciones que la empresa puede editar, cerrar y dar
 seguimiento (enviada/vista/contactada/descartada), compartir vacantes a
 WhatsApp/Facebook con vista previa, chat en vivo por
-comunidad (con fotos efímeras y límites diarios), edición del perfil
+comunidad (con nombre del autor junto a cada mensaje y fotos efímeras sin
+límite de cantidad), edición del perfil
 propio (trabajador y empresa) con control de privacidad de contacto,
 moderación de salas, reportes de usuarios/empresas, panel administrador (usuarios,
-empresas, vacantes, moderadores, reportes, publicidad, precios/límites y
+empresas, vacantes, moderadores, reportes, publicidad, precios y
 almacenamiento), descarga real del CV en PDF (gratis por ahora, mientras no
 hay procesador de pagos conectado), Premium activable manualmente desde el
 admin (mientras no hay cobro automático), publicidad propia editable desde

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getChatRoomBySlug, isUserBlockedFromRoom, CHAT_MESSAGE_INCLUDE, serializeChatMessage } from "@/lib/chat-rooms";
-import { checkDailyFileLimit, MAX_UPLOAD_BYTES } from "@/lib/chat-limits";
+import { MAX_UPLOAD_BYTES } from "@/lib/chat-limits";
 import { saveChatImage } from "@/lib/storage";
 
 export async function POST(request: Request, { params }: { params: Promise<{ category: string }> }) {
@@ -15,19 +15,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ cat
 
   if (await isUserBlockedFromRoom(room.id, session.user.id)) {
     return NextResponse.json({ error: "Un moderador te bloqueó el acceso a esta sala" }, { status: 403 });
-  }
-
-  const limitCheck = await checkDailyFileLimit(session.user.id);
-  if (!limitCheck.allowed) {
-    return NextResponse.json(
-      {
-        error:
-          limitCheck.limit !== null
-            ? `Llegaste al límite de ${limitCheck.limit} fotos en 24 horas. Probá de nuevo mañana.`
-            : "Límite alcanzado",
-      },
-      { status: 429 }
-    );
   }
 
   const formData = await request.formData().catch(() => null);
