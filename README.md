@@ -106,10 +106,21 @@ todos con capa gratuita. `.env.example` documenta cada variable.
    `STORAGE_S3_ACCESS_KEY_ID`, `STORAGE_S3_SECRET_ACCESS_KEY` a las
    variables de entorno de Vercel.
 
-Las migraciones de Prisma se aplican solas en cada build (`npm run
-build` corre `prisma migrate deploy` antes de `next build`), así que no
-hace falta correrlas a mano ni compartir la cadena de conexión con nadie
-más.
+4. **Cuenta admin propia** (opcional, recomendado): el build también
+   corre el seed automáticamente (comunidades de chat, configuración de
+   precios/límites, cuenta admin + moderador). Sin más configuración,
+   esa cuenta admin queda con el correo/contraseña de desarrollo que
+   están documentados en este mismo README — o sea, públicos. Antes del
+   primer deploy, agregá `SEED_ADMIN_EMAIL` y `SEED_ADMIN_PASSWORD` (y
+   opcionalmente `SEED_MODERATOR_EMAIL`/`SEED_MODERATOR_PASSWORD`) en
+   Vercel para que tu admin real tenga una contraseña propia desde el
+   inicio (ver `.env.example`).
+
+Las migraciones de Prisma y el seed se aplican solos en cada build
+(`npm run build` corre `prisma migrate deploy && tsx prisma/seed.ts`
+antes de `next build`), así que no hace falta correr nada a mano ni
+compartir ninguna cadena de conexión con nadie más — el seed es
+idempotente, no le toca nada a una cuenta que ya existe.
 
 Pendiente de definir para producción real (no depende de código): un
 procesador de pagos para Costa Rica (Premium/CV/donaciones cobran de
