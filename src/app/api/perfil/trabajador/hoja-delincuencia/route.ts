@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { MAX_UPLOAD_BYTES } from "@/lib/chat-limits";
-import { saveCriminalRecordImage, deleteCriminalRecordImage, readCriminalRecordImage } from "@/lib/storage";
+import {
+  saveCriminalRecordImage,
+  deleteCriminalRecordImage,
+  readCriminalRecordImage,
+  StorageNotConfiguredError,
+} from "@/lib/storage";
 
 // Documento privado y sensible (Sección 4 del pedido del producto): solo el
 // propio trabajador puede subirlo, verlo o borrarlo. Nunca se expone en el
@@ -28,7 +33,8 @@ export async function GET() {
     return new NextResponse(new Uint8Array(bytes), {
       headers: { "Content-Type": "image/jpeg", "Cache-Control": "private, no-store" },
     });
-  } catch {
+  } catch (err) {
+    console.error("[hoja-delincuencia] No se pudo leer la imagen:", err);
     return NextResponse.json({ error: "Archivo no disponible" }, { status: 404 });
   }
 }
@@ -65,7 +71,14 @@ export async function POST(request: Request) {
   let key: string;
   try {
     key = await saveCriminalRecordImage(worker.id, buffer);
-  } catch {
+  } catch (err) {
+    console.error("[hoja-delincuencia] No se pudo guardar la imagen:", err);
+    if (err instanceof StorageNotConfiguredError) {
+      return NextResponse.json(
+        { error: "Subir documentos todavía no está disponible en este servidor. Avisale al administrador." },
+        { status: 503 }
+      );
+    }
     return NextResponse.json({ error: "No se pudo procesar la imagen" }, { status: 400 });
   }
 
