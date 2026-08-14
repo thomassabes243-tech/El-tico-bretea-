@@ -82,8 +82,8 @@ export default async function AdminPublicidadPage() {
       <div className="mt-5 flex flex-col gap-2.5">
         {ads.length === 0 && (
           <Card className="p-6 text-center text-sm text-navy-800/60">
-            Todavía no creaste ningún anuncio. Mientras tanto se muestran dos por defecto
-            (Premium y CV).
+            Todavía no creaste ningún anuncio. Mientras tanto se muestra uno por defecto
+            (CV) -- el de Premium está desactivado mientras Premium no esté disponible.
           </Card>
         )}
         {ads.map((ad) => {

@@ -119,11 +119,6 @@ export default async function AplicantesPage({
                     <div className="min-w-0 flex-1">
                       <p className="flex items-center gap-1.5 truncate text-sm font-semibold text-navy-900">
                         {w.fullName}
-                        {w.isPremium && (
-                          <span className="shrink-0 rounded-full bg-colon-100 px-1.5 py-0.5 text-[9px] font-bold text-colon-700">
-                            PREMIUM
-                          </span>
-                        )}
                       </p>
                       <p className="truncate text-xs text-navy-800/50">
                         {w.profession} · {w.residence}

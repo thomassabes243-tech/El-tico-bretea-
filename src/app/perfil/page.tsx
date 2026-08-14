@@ -92,7 +92,9 @@ export default async function PerfilPage() {
               Solo vos decidís qué contacto se muestra públicamente. Por ahora es visible solo para vos.
             </p>
             <div className="mt-3 flex flex-col gap-2 text-sm text-navy-800/80">
-              <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-navy-800/40" /> {worker.phone}</span>
+              {worker.phone && (
+                <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-navy-800/40" /> {worker.phone}</span>
+              )}
               <span className="flex items-center gap-2"><Mail className="h-4 w-4 text-navy-800/40" /> {worker.email}</span>
             </div>
           </Card>
@@ -230,19 +232,6 @@ export default async function PerfilPage() {
             )}
           </Card>
 
-          {!worker.isPremium && (
-            <Card className="mt-4 flex items-center gap-3.5 border-colon-600/20 bg-colon-100/40 p-4">
-              <Sparkles className="h-5 w-5 shrink-0 text-colon-600" />
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-navy-900">Hacete Premium</p>
-                <p className="text-xs text-navy-800/50">Perfil destacado, sin publicidad y más.</p>
-              </div>
-              <Link href="/premium" className="shrink-0 text-xs font-bold text-colon-600">
-                Ver planes
-              </Link>
-            </Card>
-          )}
-
           <Card className="mt-4 flex items-start gap-3 border-navy-700/15 bg-navy-900/[0.03] p-4">
             <ShieldCheck className="h-4 w-4 shrink-0 text-navy-700" />
             <p className="text-xs leading-relaxed text-navy-800/70">
@@ -312,7 +301,7 @@ export default async function PerfilPage() {
             <dl className="mt-3 flex flex-col gap-2 text-sm text-navy-800/70">
               <div><dt className="font-semibold text-navy-900">Responsable</dt><dd>{company.responsibleName}</dd></div>
               <div><dt className="font-semibold text-navy-900">Ubicación</dt><dd>{company.location}</dd></div>
-              <div><dt className="font-semibold text-navy-900">Contacto</dt><dd>{company.contactPhone} · {company.contactEmail}</dd></div>
+              <div><dt className="font-semibold text-navy-900">Contacto</dt><dd>{[company.contactPhone, company.contactEmail].filter(Boolean).join(" · ")}</dd></div>
               {company.description && <div><dt className="font-semibold text-navy-900">Descripción</dt><dd>{company.description}</dd></div>}
             </dl>
           </Card>

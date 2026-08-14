@@ -87,8 +87,12 @@ enum Availability {
 //
 // Privacy note (Section 16): contact fields (phone/whatsapp/email) and
 // salary expectation are private by default. The worker decides what is
-// shown on the public profile via the show* flags. No criminal-record
-// document is ever collected here (see Section 2).
+// shown on the public profile via the show* flags.
+//
+// Hoja de delincuencia (antecedentes penales): opcional, a pedido
+// explícito del producto. Nunca se muestra en el perfil público ni a
+// otras cuentas — solo el propio trabajador puede subirla/verla/borrarla,
+// y solo se incluye en su CV en PDF si él mismo lo elige al descargar.
 // ---------------------------------------------------------------------------
 
 model WorkerProfile {
@@ -103,7 +107,7 @@ model WorkerProfile {
   residence       String
 
   // Contact (private by default, see show* flags below)
-  phone    String
+  phone    String?
   whatsapp String?
   email    String
 
@@ -139,6 +143,10 @@ model WorkerProfile {
   showWhatsapp           Boolean @default(false)
   showEmail              Boolean @default(false)
   showSalaryExpectation  Boolean @default(false)
+
+  // Hoja de delincuencia (opcional, privada — ver nota arriba)
+  criminalRecordKey        String?
+  criminalRecordUploadedAt DateTime?
 
   isPremium  Boolean  @default(false)
   createdAt  DateTime @default(now())
@@ -176,7 +184,7 @@ model CompanyProfile {
   commercialName  String
   legalId         String // identificación / cédula jurídica
   responsibleName String
-  contactPhone    String
+  contactPhone    String?
   contactEmail    String
   location        String
   activity        String

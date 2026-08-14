@@ -36,7 +36,7 @@ export async function PATCH(request: Request) {
         formalPhotoUrl: data.formalPhotoUrl || null,
         age: data.age,
         residence: data.residence,
-        phone: data.phone,
+        phone: data.phone || null,
         whatsapp: data.whatsapp || null,
         profession: data.profession,
         laborCategory: data.laborCategory,

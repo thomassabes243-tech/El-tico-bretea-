@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { Share2, Link2, Check } from "lucide-react";
 
-export function ShareJobButton({ jobId, title }: { jobId: string; title: string }) {
+export function ShareJobButton({ jobId, title, siteUrl }: { jobId: string; title: string; siteUrl: string }) {
   const [copied, setCopied] = useState(false);
 
-  const url = typeof window !== "undefined" ? `${window.location.origin}/vacantes/${jobId}` : "";
+  const url = `${siteUrl}/vacantes/${jobId}`;
   const shareText = `${title} — mirá esta vacante en El Tico Bretea`;
 
   const whatsappHref = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n${url}`)}`;

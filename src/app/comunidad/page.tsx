@@ -11,6 +11,7 @@ import { COMMUNITY_CATEGORIES } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
+import { CommunityInviteBanner } from "@/components/community/CommunityInviteBanner";
 import { ChevronRight } from "lucide-react";
 import type { CommunityCategory } from "@prisma/client";
 
@@ -38,6 +39,8 @@ export default async function ComunidadPage() {
           &ldquo;Publicación comunitaria&rdquo;; vacantes de empresas verificadas, como
           &ldquo;Vacante empresarial verificada ✓&rdquo;.
         </p>
+
+        <CommunityInviteBanner />
 
         <div className="mt-5 flex flex-col gap-3">
           {COMMUNITY_CATEGORIES.map((cat) => {

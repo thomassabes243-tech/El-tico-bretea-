@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
@@ -9,7 +8,7 @@ import { PriceTag } from "@/components/ui/PriceTag";
 import { getAppSettings } from "@/lib/settings";
 import { formatColones } from "@/lib/format";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
-import { Sparkles } from "lucide-react";
+import { CriminalRecordSection } from "@/components/forms/CriminalRecordSection";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -119,22 +118,18 @@ export default async function CvPage() {
           </p>
         </Card>
 
-        <a
-          href="/api/cv/descargar"
-          className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-cr-red-600 text-sm font-semibold text-white shadow-sm shadow-cr-red-600/25 transition-all hover:bg-cr-red-700 active:scale-[0.98]"
-        >
-          Descargar PDF (gratis por ahora)
-        </a>
-
-        <Card className="mt-4 flex items-center gap-3.5 p-4">
-          <Sparkles className="h-5 w-5 shrink-0 text-colon-600" />
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-navy-900">Destacá tu CV con Premium</p>
-            <p className="text-xs text-navy-800/50">Perfil destacado, sin límites y más.</p>
+        <Card className="mt-4 flex flex-col gap-3 p-4">
+          <div>
+            <h3 className="text-sm font-bold text-navy-900">Hoja de delincuencia (opcional)</h3>
+            <p className="mt-0.5 text-xs text-navy-800/50">
+              Podés adjuntarla a tu CV si querés. Es completamente opcional.
+            </p>
           </div>
-          <Link href="/premium" className="shrink-0 text-xs font-bold text-colon-600">
-            Ver Premium
-          </Link>
+          <CriminalRecordSection
+            initialUploaded={Boolean(worker.criminalRecordKey)}
+            initialUploadedAt={worker.criminalRecordUploadedAt?.toISOString() ?? null}
+            downloadLabel="Descargar PDF (gratis por ahora)"
+          />
         </Card>
       </main>
       <BottomNav />

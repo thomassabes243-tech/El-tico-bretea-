@@ -55,11 +55,6 @@ export default async function PublicWorkerProfilePage({
               <div>
                 <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
                   {worker.fullName}
-                  {worker.isPremium && (
-                    <span className="rounded-full bg-colon-100 px-1.5 py-0.5 text-[10px] font-bold text-colon-700">
-                      PREMIUM
-                    </span>
-                  )}
                 </h1>
                 <p className="text-sm text-navy-800/60">{worker.profession}</p>
               </div>
@@ -85,7 +80,7 @@ export default async function PublicWorkerProfilePage({
           <h2 className="text-sm font-bold text-navy-900">Contacto</h2>
           {worker.showPhone || worker.showWhatsapp || worker.showEmail ? (
             <div className="mt-3 flex flex-col gap-2 text-sm text-navy-800/80">
-              {worker.showPhone && <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-navy-800/40" /> {worker.phone}</span>}
+              {worker.showPhone && worker.phone && <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-navy-800/40" /> {worker.phone}</span>}
               {worker.showEmail && <span className="flex items-center gap-2"><Mail className="h-4 w-4 text-navy-800/40" /> {worker.email}</span>}
             </div>
           ) : (

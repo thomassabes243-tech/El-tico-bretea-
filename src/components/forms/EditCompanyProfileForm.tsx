@@ -79,7 +79,7 @@ export function EditCompanyProfileForm({
         <TextInput id="responsibleName" {...register("responsibleName")} />
       </FieldWrapper>
       <div className="grid grid-cols-2 gap-3">
-        <FieldWrapper label="Teléfono de contacto" htmlFor="contactPhone" required error={errors.contactPhone?.message}>
+        <FieldWrapper label="Teléfono de contacto" htmlFor="contactPhone" error={errors.contactPhone?.message}>
           <TextInput id="contactPhone" {...register("contactPhone")} />
         </FieldWrapper>
         <FieldWrapper label="Correo de contacto" htmlFor="contactEmail" required error={errors.contactEmail?.message}>

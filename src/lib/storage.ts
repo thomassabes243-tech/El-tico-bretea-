@@ -128,6 +128,31 @@ export async function readChatImage(key: string) {
   return readObject(key);
 }
 
+// Hoja de delincuencia: documento privado y de largo plazo (no tiene TTL de
+// 24h como las fotos del chat). Clave estable por trabajador — volver a
+// subir reemplaza el archivo anterior en la misma clave.
+const CRIMINAL_RECORD_QUALITY = 85;
+
+export async function saveCriminalRecordImage(workerId: string, buffer: Buffer) {
+  const compressed = await sharp(buffer)
+    .rotate()
+    .resize({ width: MAX_DIMENSION, height: MAX_DIMENSION, fit: "inside", withoutEnlargement: true })
+    .jpeg({ quality: CRIMINAL_RECORD_QUALITY, mozjpeg: true })
+    .toBuffer();
+
+  const key = `criminal-record-${workerId}.jpg`;
+  await writeObject(key, compressed, "image/jpeg");
+  return key;
+}
+
+export async function readCriminalRecordImage(key: string) {
+  return readObject(key);
+}
+
+export async function deleteCriminalRecordImage(key: string) {
+  await deleteObject(key);
+}
+
 export async function deleteChatImage(key: string) {
   await deleteObject(key);
 }

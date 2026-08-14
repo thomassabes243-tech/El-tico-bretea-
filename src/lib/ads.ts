@@ -8,14 +8,11 @@ import type { AdItem } from "@/lib/ad-icons";
 // puede apuntar más adelante a un proveedor externo sin cambiar el resto
 // de la app.
 
+// El anuncio de Premium queda desactivado (Sección 5 de "Ajustes de
+// usabilidad y monetización"): mientras Premium no se pueda comprar, no se
+// promociona en la publicidad propia. El único anuncio por defecto es el
+// del CV, que es el único cobro activo.
 const FALLBACK_ADS: Omit<AdItem, "id">[] = [
-  {
-    title: "Sin anuncios con Premium",
-    description: "Perfil destacado, prioridad en recomendaciones y más.",
-    href: "/premium",
-    ctaLabel: "Ver Premium",
-    iconKey: "sparkles",
-  },
   {
     title: "Tu CV profesional en PDF",
     description: "Generalo gratis por ahora, al momento, con tus datos actuales.",

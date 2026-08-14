@@ -46,7 +46,7 @@ export async function POST(request: Request) {
           commercialName: data.commercialName,
           legalId: data.legalId,
           responsibleName: data.responsibleName,
-          contactPhone: data.contactPhone,
+          contactPhone: data.contactPhone || null,
           contactEmail: data.contactEmail,
           location: data.location,
           activity: data.activity,
