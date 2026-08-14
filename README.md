@@ -21,8 +21,19 @@ admin (mientras no hay cobro automático), publicidad propia editable desde
 el panel para cuentas gratuitas (máx. 1 anuncio cada ~5 min, nunca a
 pantalla completa), perfiles guardados para empresas, recomendaciones
 (vacantes para el trabajador, candidatos para la empresa) por
-categoría/ubicación con prioridad Premium, y eliminación de cuenta con
-confirmación explícita.
+categoría/ubicación con prioridad Premium (uso interno, ver nota abajo), y
+eliminación de cuenta con confirmación explícita. Teléfono opcional en el
+registro (trabajador y empresa). Navegación sin login obligatorio: se puede
+explorar vacantes, perfiles públicos y comunidades sin cuenta; el login solo
+se pide al intentar aplicar, publicar, chatear o cualquier acción que
+modifique datos. Mensaje rotativo invitando a participar en la sección
+Comunidades. Hoja de delincuencia opcional y privada en el CV (el
+trabajador decide si la sube y si la incluye en cada descarga del PDF; nunca
+se muestra en el perfil público). Premium está desactivado de la interfaz
+por ahora (no se puede comprar ni se muestra a los usuarios) — el código y
+el campo `isPremium` se conservan para reactivarlo más adelante, y el
+admin todavía puede activarlo manualmente por cuenta si hace falta. El único
+cobro activo hoy es la descarga del CV en PDF.
 Pendiente: pagos reales (falta definir procesador compatible con Costa
 Rica) y categorías editables desde el panel.
 

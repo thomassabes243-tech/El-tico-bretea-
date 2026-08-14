@@ -1,4 +1,4 @@
-import { Document, Page, View, Text, StyleSheet, renderToBuffer } from "@react-pdf/renderer";
+import { Document, Page, View, Text, Image, StyleSheet, renderToBuffer } from "@react-pdf/renderer";
 import type { WorkerProfile, WorkerReference } from "@prisma/client";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 
@@ -30,11 +30,19 @@ const styles = StyleSheet.create({
   text: { fontSize: 10, color: "#1f2937", lineHeight: 1.5 },
   referenceRow: { fontSize: 10, marginBottom: 2 },
   footer: { position: "absolute", bottom: 24, left: 40, right: 40, fontSize: 8, color: "#9ca3af", textAlign: "center" },
+  attachmentTitle: { fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 10 },
+  attachmentImage: { maxWidth: "100%", maxHeight: 700, objectFit: "contain" },
 });
 
 type WorkerWithReferences = WorkerProfile & { references: WorkerReference[] };
 
-function CvDocument({ worker }: { worker: WorkerWithReferences }) {
+function CvDocument({
+  worker,
+  criminalRecordImage,
+}: {
+  worker: WorkerWithReferences;
+  criminalRecordImage?: Buffer;
+}) {
   const studies = [worker.education, worker.degrees, worker.courses, worker.certifications]
     .filter(Boolean)
     .join(" · ");
@@ -112,10 +120,24 @@ function CvDocument({ worker }: { worker: WorkerWithReferences }) {
           momento de la descarga.
         </Text>
       </Page>
+
+      {criminalRecordImage && (
+        <Page size="A4" style={styles.page}>
+          <Text style={styles.attachmentTitle}>Hoja de delincuencia</Text>
+          {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf's Image (PDF renderer), not an HTML img; has no alt prop */}
+          <Image
+            style={styles.attachmentImage}
+            src={{ data: criminalRecordImage, format: "jpg" }}
+          />
+        </Page>
+      )}
     </Document>
   );
 }
 
-export async function generateCvPdfBuffer(worker: WorkerWithReferences): Promise<Buffer> {
-  return renderToBuffer(<CvDocument worker={worker} />);
+export async function generateCvPdfBuffer(
+  worker: WorkerWithReferences,
+  criminalRecordImage?: Buffer
+): Promise<Buffer> {
+  return renderToBuffer(<CvDocument worker={worker} criminalRecordImage={criminalRecordImage} />);
 }

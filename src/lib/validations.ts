@@ -50,7 +50,7 @@ export const workerRegistrationSchema = z.object({
   formalPhotoUrl: z.string().optional().or(z.literal("")),
   age: z.coerce.number().int().min(15, "Edad mínima 15 años").max(100),
   residence: z.string().min(2, "El lugar de residencia es requerido"),
-  phone: z.string().min(8, "Teléfono inválido"),
+  phone: z.string().optional().or(z.literal("")),
   whatsapp: z.string().optional().or(z.literal("")),
 
   // Profesión
@@ -91,7 +91,7 @@ export const companyRegistrationSchema = z.object({
   commercialName: z.string().min(2, "El nombre comercial es requerido"),
   legalId: z.string().min(2, "La identificación es requerida"),
   responsibleName: z.string().min(2, "El nombre del responsable es requerido"),
-  contactPhone: z.string().min(8, "Teléfono inválido"),
+  contactPhone: z.string().optional().or(z.literal("")),
   contactEmail: z.string().email("Correo de contacto inválido"),
   location: z.string().min(2, "La ubicación es requerida"),
   activity: z.string().min(2, "La actividad comercial es requerida"),

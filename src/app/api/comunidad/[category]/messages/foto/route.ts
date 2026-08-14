@@ -23,7 +23,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ cat
       {
         error:
           limitCheck.limit !== null
-            ? `Llegaste al límite de ${limitCheck.limit} fotos en 24 horas. Con Premium el límite desaparece.`
+            ? `Llegaste al límite de ${limitCheck.limit} fotos en 24 horas. Probá de nuevo mañana.`
             : "Límite alcanzado",
       },
       { status: 429 }

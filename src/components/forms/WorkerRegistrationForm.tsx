@@ -145,7 +145,7 @@ export function WorkerRegistrationForm() {
             </FieldWrapper>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <FieldWrapper label="Teléfono" htmlFor="phone" required error={errors.phone?.message}>
+            <FieldWrapper label="Teléfono" htmlFor="phone" error={errors.phone?.message}>
               <TextInput id="phone" placeholder="8888-8888" {...register("phone")} />
             </FieldWrapper>
             <FieldWrapper label="WhatsApp" htmlFor="whatsapp" error={errors.whatsapp?.message}>

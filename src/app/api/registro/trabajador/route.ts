@@ -47,7 +47,7 @@ export async function POST(request: Request) {
           formalPhotoUrl: data.formalPhotoUrl || null,
           age: data.age,
           residence: data.residence,
-          phone: data.phone,
+          phone: data.phone || null,
           whatsapp: data.whatsapp || null,
           email,
           profession: data.profession,

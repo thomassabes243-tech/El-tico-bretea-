@@ -74,7 +74,7 @@ export function CompanyRegistrationForm() {
         <TextInput id="responsibleName" {...register("responsibleName")} />
       </FieldWrapper>
       <div className="grid grid-cols-2 gap-3">
-        <FieldWrapper label="Teléfono de contacto" htmlFor="contactPhone" required error={errors.contactPhone?.message}>
+        <FieldWrapper label="Teléfono de contacto" htmlFor="contactPhone" error={errors.contactPhone?.message}>
           <TextInput id="contactPhone" placeholder="8888-8888" {...register("contactPhone")} />
         </FieldWrapper>
         <FieldWrapper label="Correo de contacto" htmlFor="contactEmail" required error={errors.contactEmail?.message}>

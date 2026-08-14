@@ -11,6 +11,7 @@ import { ApplyButton } from "@/components/forms/ApplyButton";
 import { ShareJobButton } from "@/components/forms/ShareJobButton";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
+import { getSiteUrl } from "@/lib/site";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import { MapPin, Briefcase, Users, Calendar, ShieldCheck, Phone, Mail } from "lucide-react";
 
@@ -115,7 +116,7 @@ export default async function VacanteDetailPage({
           </div>
 
           <div className="mt-4 border-t border-sand-200 pt-4">
-            <ShareJobButton jobId={jobPosting.id} title={jobPosting.title} />
+            <ShareJobButton jobId={jobPosting.id} title={jobPosting.title} siteUrl={getSiteUrl()} />
           </div>
         </Card>
 

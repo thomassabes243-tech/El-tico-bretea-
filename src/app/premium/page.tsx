@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { Sparkles, EyeOff, TrendingUp, BarChart3, FileText, ImagePlus, BadgeCheck, Info } from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
@@ -6,6 +7,12 @@ import { Button } from "@/components/ui/Button";
 import { PriceTag } from "@/components/ui/PriceTag";
 import { getAppSettings } from "@/lib/settings";
 import { formatColones } from "@/lib/format";
+
+// Premium queda desactivado de la interfaz por ahora (no se puede comprar ni
+// se muestra a los usuarios) mientras el único cobro activo es el PDF del
+// CV. El código de la membresía se conserva tal cual para reactivarla más
+// adelante -- solo se corta el acceso a esta ruta.
+const PREMIUM_ENABLED = false;
 
 const BENEFITS = [
   { icon: EyeOff, text: "Sin publicidad" },
@@ -17,6 +24,8 @@ const BENEFITS = [
 ];
 
 export default async function PremiumPage() {
+  if (!PREMIUM_ENABLED) redirect("/");
+
   const settings = await getAppSettings();
   const price = formatColones(settings.premiumPriceColones);
 
