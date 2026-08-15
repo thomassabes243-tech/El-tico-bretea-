@@ -35,4 +35,4 @@ export const COMMUNITY_CATEGORIES = [
   { value: "PROFESIONALES", label: "Profesionales" },
 ] as const;
 
-export const CONTACT_EMAIL = "tg321920@gmail.com";
+export const CONTACT_EMAIL = "contacto@mexicosinhambre.com";

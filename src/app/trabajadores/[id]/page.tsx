@@ -130,7 +130,7 @@ export default async function PublicWorkerProfilePage({
             </h2>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {worker.skills.split(",").map((s) => s.trim()).filter(Boolean).map((s) => (
-                <span key={s} className="rounded-full bg-cr-red-100 px-2.5 py-1 text-xs font-medium text-cr-red-700">
+                <span key={s} className="rounded-full bg-mx-red-100 px-2.5 py-1 text-xs font-medium text-mx-red-700">
                   {s}
                 </span>
               ))}

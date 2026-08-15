@@ -51,7 +51,7 @@ export default function IniciarSesionPage() {
         </FieldWrapper>
 
         {submitError && (
-          <p className="rounded-xl bg-cr-red-100 px-3.5 py-2.5 text-sm font-medium text-cr-red-700">
+          <p className="rounded-xl bg-mx-red-100 px-3.5 py-2.5 text-sm font-medium text-mx-red-700">
             {submitError}
           </p>
         )}
@@ -63,7 +63,7 @@ export default function IniciarSesionPage() {
 
       <p className="mt-6 text-center text-sm text-navy-800/60">
         ¿Todavía no tenés cuenta?{" "}
-        <Link href="/registro" className="font-semibold text-cr-red-600">
+        <Link href="/registro" className="font-semibold text-mx-red-600">
           Creá una cuenta
         </Link>
       </p>

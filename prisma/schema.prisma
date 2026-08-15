@@ -89,7 +89,7 @@ enum Availability {
 // salary expectation are private by default. The worker decides what is
 // shown on the public profile via the show* flags.
 //
-// Hoja de delincuencia (antecedentes penales): opcional, a pedido
+// Carta de antecedentes penales: opcional, a pedido
 // explícito del producto. Nunca se muestra en el perfil público ni a
 // otras cuentas — solo el propio trabajador puede subirla/verla/borrarla,
 // y solo se incluye en su CV en PDF si él mismo lo elige al descargar.
@@ -144,7 +144,7 @@ model WorkerProfile {
   showEmail              Boolean @default(false)
   showSalaryExpectation  Boolean @default(false)
 
-  // Hoja de delincuencia (opcional, privada — ver nota arriba)
+  // Carta de antecedentes penales (opcional, privada — ver nota arriba)
   criminalRecordKey        String?
   criminalRecordUploadedAt DateTime?
 
@@ -182,7 +182,7 @@ model CompanyProfile {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   commercialName  String
-  legalId         String // identificación / cédula jurídica
+  legalId         String // identificación / RFC
   responsibleName String
   contactPhone    String?
   contactEmail    String
@@ -230,7 +230,7 @@ model JobPosting {
   location           String
   contractType       JobType
   quantity           Int?
-  salary             String? // texto libre, ej. "₡350,000 - ₡400,000"
+  salary             String? // texto libre, ej. "$350,000 - $400,000"
   schedule           String?
   experienceRequired String?
   educationRequired  String?

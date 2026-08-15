@@ -159,7 +159,7 @@ export async function readChatImage(key: string) {
   return readObject(key);
 }
 
-// Hoja de delincuencia: documento privado y de largo plazo (no tiene TTL de
+// Carta de antecedentes penales: documento privado y de largo plazo (no tiene TTL de
 // 24h como las fotos del chat). Clave estable por trabajador — volver a
 // subir reemplaza el archivo anterior en la misma clave.
 const CRIMINAL_RECORD_QUALITY = 85;

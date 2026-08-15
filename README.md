@@ -1,6 +1,6 @@
-# El Tico Bretea
+# Méxicosinhambre
 
-Plataforma para Costa Rica que conecta trabajadores con empresas: perfiles
+Plataforma para México que conecta trabajadores con empresas: perfiles
 profesionales, currículums, vacantes, comunidades de empleo por gremio y un
 panel administrativo.
 
@@ -28,7 +28,7 @@ registro (trabajador y empresa). Navegación sin login obligatorio: se puede
 explorar vacantes, perfiles públicos y comunidades sin cuenta; el login solo
 se pide al intentar aplicar, publicar, chatear o cualquier acción que
 modifique datos. Mensaje rotativo invitando a participar en la sección
-Comunidades. Hoja de delincuencia opcional y privada en el CV (el
+Comunidades. Carta de antecedentes penales opcional y privada en el CV (el
 trabajador decide si la sube y si la incluye en cada descarga del PDF; nunca
 se muestra en el perfil público). Premium está desactivado de la interfaz
 por ahora (no se puede comprar ni se muestra a los usuarios) — el código y
@@ -39,8 +39,8 @@ cualquier Administrador puede buscar cuentas por correo o nombre y
 darle/quitarle el rol de Administrador a cualquiera (sin límite de cuántos
 puede haber a la vez); no se puede quitar el rol a sí mismo, para no dejar
 el panel sin acceso por accidente.
-Pendiente: pagos reales (falta definir procesador compatible con Costa
-Rica) y categorías editables desde el panel.
+Pendiente: pagos reales (falta definir procesador compatible con México)
+y categorías editables desde el panel.
 
 ## Stack
 
@@ -76,9 +76,9 @@ Rica) y categorías editables desde el panel.
    El seed crea las 3 comunidades, la configuración de precios/límites por
    defecto, y dos cuentas demo:
 
-   - Moderador: `moderador.demo@eltico.cr` / `moderador12345` (asignado a
+   - Moderador: `moderador.demo@mexicosinhambre.com` / `moderador12345` (asignado a
      las 3 salas)
-   - Admin: `admin.demo@eltico.cr` / `admin12345` (acceso a `/admin`)
+   - Admin: `admin.demo@mexicosinhambre.com` / `admin12345` (acceso a `/admin`)
 
 4. Levantá el servidor de desarrollo:
 
@@ -142,15 +142,15 @@ compartir ninguna cadena de conexión con nadie más — el seed es
 idempotente, no le toca nada a una cuenta que ya existe.
 
 Pendiente de definir para producción real (no depende de código): un
-procesador de pagos para Costa Rica (Premium/CV/donaciones cobran de
+procesador de pagos para México (Premium/CV/donaciones cobran de
 verdad hoy solo se activan manualmente desde el admin).
 
 ## Notas de diseño
 
-- Identidad: azul marino + rojo (bandera de Costa Rica) para la marca, y un
-  acento morado inspirado en el billete de ₡10,000 (sin reproducirlo) para
-  precios/Premium.
-- Las escenas de Arenal, Guanacaste, Monteverde y montañas cafetaleras son
+- Identidad: azul marino + verde/rojo (bandera de México) para la marca, y
+  un acento morado inspirado en el billete de $500 MXN (sin reproducirlo)
+  para precios/Premium.
+- Las escenas del Popocatépetl, Cancún, Chiapas y montañas cafetaleras son
   ilustraciones vectoriales propias (`src/components/brand/scenery/`), no
   fotografías: este entorno de desarrollo bloquea el acceso a bancos de
   imágenes como Unsplash/Pexels, así que se optó por vectores originales

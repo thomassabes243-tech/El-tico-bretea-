@@ -7,7 +7,7 @@ export function ShareJobButton({ jobId, title, siteUrl }: { jobId: string; title
   const [copied, setCopied] = useState(false);
 
   const url = `${siteUrl}/vacantes/${jobId}`;
-  const shareText = `${title} — mirá esta vacante en El Tico Bretea`;
+  const shareText = `${title} — mirá esta vacante en Méxicosinhambre`;
 
   const whatsappHref = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n${url}`)}`;
   const facebookHref = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;

@@ -63,12 +63,12 @@ export function EditCompanyProfileForm({
       <FieldWrapper label="Nombre comercial" htmlFor="commercialName" required error={errors.commercialName?.message}>
         <TextInput id="commercialName" {...register("commercialName")} />
       </FieldWrapper>
-      <FieldWrapper label="Identificación / cédula jurídica" htmlFor="legalId" required error={errors.legalId?.message}>
+      <FieldWrapper label="Identificación / RFC" htmlFor="legalId" required error={errors.legalId?.message}>
         <TextInput id="legalId" {...register("legalId")} />
       </FieldWrapper>
       {legalIdChanged && (
-        <Card className="flex gap-2.5 border-colon-600/25 bg-colon-100/40 p-3.5">
-          <Info className="h-4 w-4 shrink-0 text-colon-600" />
+        <Card className="flex gap-2.5 border-peso-600/25 bg-peso-100/40 p-3.5">
+          <Info className="h-4 w-4 shrink-0 text-peso-600" />
           <p className="text-xs leading-relaxed text-navy-800/70">
             Tu empresa está verificada. Si cambiás la identificación legal, se quitará la
             verificación hasta que el equipo la revise de nuevo.
@@ -100,7 +100,7 @@ export function EditCompanyProfileForm({
       </FieldWrapper>
 
       {submitError && (
-        <p className="rounded-xl bg-cr-red-100 px-3.5 py-2.5 text-sm font-medium text-cr-red-700">
+        <p className="rounded-xl bg-mx-red-100 px-3.5 py-2.5 text-sm font-medium text-mx-red-700">
           {submitError}
         </p>
       )}

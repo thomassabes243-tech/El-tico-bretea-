@@ -41,7 +41,7 @@ export default function PrivacidadPage() {
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
         <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Política de privacidad</h1>
         <p className="mt-2 text-sm text-navy-800/60">
-          Cómo cuidamos tu información en El Tico Bretea.
+          Cómo cuidamos tu información en Méxicosinhambre.
         </p>
 
         <div className="mt-5 flex flex-col gap-3">
@@ -55,7 +55,7 @@ export default function PrivacidadPage() {
 
         <p className="mt-6 text-center text-xs text-navy-800/50">
           ¿Preguntas sobre tu privacidad? Escribinos a{" "}
-          <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-cr-red-600">
+          <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-mx-red-600">
             {CONTACT_EMAIL}
           </a>
         </p>

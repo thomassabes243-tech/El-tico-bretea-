@@ -1,4 +1,4 @@
-export function GuanacasteScene({ className }: { className?: string }) {
+export function CancunScene({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 800 300"
@@ -8,23 +8,23 @@ export function GuanacasteScene({ className }: { className?: string }) {
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id="guanaSky" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id="cancunSky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#2a63a3" />
           <stop offset="55%" stopColor="#6fb3d9" />
           <stop offset="100%" stopColor="#ffd58a" />
         </linearGradient>
-        <linearGradient id="guanaSea" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id="cancunSea" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#0a6e8a" />
           <stop offset="100%" stopColor="#0a2647" />
         </linearGradient>
       </defs>
 
-      <rect width="800" height="300" fill="url(#guanaSky)" />
+      <rect width="800" height="300" fill="url(#cancunSky)" />
       <circle cx="640" cy="90" r="46" fill="#fff3d6" opacity="0.9" />
       <circle cx="640" cy="90" r="70" fill="#fff3d6" opacity="0.25" />
 
       {/* mar */}
-      <rect y="170" width="800" height="60" fill="url(#guanaSea)" />
+      <rect y="170" width="800" height="60" fill="url(#cancunSea)" />
       <path d="M0 178 Q40 172 80 178 T160 178 T240 178 T320 178 T400 178 T480 178 T560 178 T640 178 T720 178 T800 178" stroke="#ffffff" strokeOpacity="0.35" strokeWidth="2" fill="none" />
       <path d="M0 196 Q40 190 80 196 T160 196 T240 196 T320 196 T400 196 T480 196 T560 196 T640 196 T720 196 T800 196" stroke="#ffffff" strokeOpacity="0.25" strokeWidth="2" fill="none" />
 

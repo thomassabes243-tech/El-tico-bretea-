@@ -79,12 +79,12 @@ export default async function AdminUsuariosPage({
                     {ROLE_LABELS[u.role] ?? u.role}
                   </span>
                   {u.isBlocked && (
-                    <span className="shrink-0 rounded-full bg-cr-red-100 px-2 py-0.5 text-[10px] font-bold uppercase text-cr-red-700">
+                    <span className="shrink-0 rounded-full bg-mx-red-100 px-2 py-0.5 text-[10px] font-bold uppercase text-mx-red-700">
                       Bloqueado
                     </span>
                   )}
                   {u.workerProfile?.isPremium && (
-                    <span className="flex shrink-0 items-center gap-0.5 rounded-full bg-colon-100 px-2 py-0.5 text-[10px] font-bold uppercase text-colon-700">
+                    <span className="flex shrink-0 items-center gap-0.5 rounded-full bg-peso-100 px-2 py-0.5 text-[10px] font-bold uppercase text-peso-700">
                       <Sparkles className="h-2.5 w-2.5" /> Premium
                     </span>
                   )}
@@ -130,7 +130,7 @@ export default async function AdminUsuariosPage({
                       className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-semibold ${
                         u.workerProfile.isPremium
                           ? "border-sand-200 text-navy-800/70"
-                          : "border-colon-600/30 text-colon-600"
+                          : "border-peso-600/30 text-peso-600"
                       }`}
                     >
                       <Sparkles className="h-3.5 w-3.5" />

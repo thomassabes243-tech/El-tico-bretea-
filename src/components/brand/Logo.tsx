@@ -5,9 +5,9 @@ type LogoProps = {
 };
 
 /**
- * Marca "El Tico Bretea": insignia circular con silueta de trabajador
+ * Marca "Méxicosinhambre": insignia circular con silueta de trabajador
  * (gorra + hombros) en azul marino/rojo, con un detalle tipo bandera
- * de Costa Rica como listón inferior.
+ * de México (verde/blanco/rojo) como listón inferior.
  */
 export function LogoMark({ size = 40, className }: { size?: number; className?: string }) {
   return (
@@ -19,7 +19,7 @@ export function LogoMark({ size = 40, className }: { size?: number; className?: 
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       role="img"
-      aria-label="El Tico Bretea"
+      aria-label="Méxicosinhambre"
     >
       <circle cx="50" cy="48" r="48" fill="#0a2647" />
       <circle cx="50" cy="48" r="48" fill="url(#logoGradient)" fillOpacity="0.25" />
@@ -41,16 +41,14 @@ export function LogoMark({ size = 40, className }: { size?: number; className?: 
         <circle cx="0" cy="16" r="6" fill="none" stroke="#f6f7fb" strokeWidth="4" />
       </g>
 
-      {/* Listón bandera de Costa Rica */}
+      {/* Listón bandera de México */}
       <clipPath id="flagClip">
         <rect x="14" y="100" width="72" height="10" rx="5" />
       </clipPath>
       <g clipPath="url(#flagClip)">
-        <rect x="14" y="100" width="72" height="2" fill="#1c4d80" />
-        <rect x="14" y="102" width="72" height="2" fill="#f6f7fb" />
-        <rect x="14" y="104" width="72" height="2" fill="#ce1126" />
-        <rect x="14" y="106" width="72" height="2" fill="#f6f7fb" />
-        <rect x="14" y="108" width="72" height="2" fill="#1c4d80" />
+        <rect x="14" y="100" width="24" height="10" fill="#006341" />
+        <rect x="38" y="100" width="24" height="10" fill="#f6f7fb" />
+        <rect x="62" y="100" width="24" height="10" fill="#ce1126" />
       </g>
 
       <defs>
@@ -69,8 +67,8 @@ export function Logo({ size = 40, showWordmark = true, className }: LogoProps) {
       <LogoMark size={size} />
       {showWordmark && (
         <span className="font-extrabold leading-tight tracking-tight text-navy-900" style={{ fontSize: size * 0.42 }}>
-          El Tico<br className="hidden" />
-          <span className="text-cr-red-600"> Bretea</span>
+          México<br className="hidden" />
+          <span className="text-mx-red-600">SinHambre</span>
         </span>
       )}
     </div>

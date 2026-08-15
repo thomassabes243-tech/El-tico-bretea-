@@ -41,7 +41,7 @@ export default async function EmpresaPublicPage({
               alt={company.commercialName}
               className="h-16 w-16 shrink-0 rounded-2xl object-cover"
               fallback={
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-cr-red-600/[0.09] text-xl font-extrabold text-cr-red-600">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-mx-red-600/[0.09] text-xl font-extrabold text-mx-red-600">
                   {company.commercialName.slice(0, 1).toUpperCase()}
                 </div>
               }

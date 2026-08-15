@@ -8,8 +8,8 @@ import { cleanupExpiredChatFiles } from "@/lib/storage";
 import { TopBar } from "@/components/nav/TopBar";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { ChatRoomView } from "@/components/chat/ChatRoomView";
-import { GuanacasteScene } from "@/components/brand/scenery/GuanacasteScene";
-import { MonteverdeScene } from "@/components/brand/scenery/MonteverdeScene";
+import { CancunScene } from "@/components/brand/scenery/CancunScene";
+import { ChiapasScene } from "@/components/brand/scenery/ChiapasScene";
 import { CoffeeMountainsScene } from "@/components/brand/scenery/CoffeeMountainsScene";
 import { COMMUNITY_CATEGORIES } from "@/lib/constants";
 import type { LaborCategory } from "@prisma/client";
@@ -17,8 +17,8 @@ import type { ComponentType } from "react";
 
 const COMMUNITY_SCENES: Record<string, ComponentType<{ className?: string }>> = {
   CONSTRUCCION: CoffeeMountainsScene,
-  HOTELES_TURISMO: GuanacasteScene,
-  PROFESIONALES: MonteverdeScene,
+  HOTELES_TURISMO: CancunScene,
+  PROFESIONALES: ChiapasScene,
 };
 
 export default async function ComunidadCategoriaPage({

@@ -139,7 +139,7 @@ export default async function PerfilPage() {
               </h2>
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {worker.skills.split(",").map((s) => s.trim()).filter(Boolean).map((s) => (
-                  <span key={s} className="rounded-full bg-cr-red-100 px-2.5 py-1 text-xs font-medium text-cr-red-700">
+                  <span key={s} className="rounded-full bg-mx-red-100 px-2.5 py-1 text-xs font-medium text-mx-red-700">
                     {s}
                   </span>
                 ))}
@@ -174,7 +174,7 @@ export default async function PerfilPage() {
           {recommendedJobs.length > 0 && (
             <Card className="mt-4 p-5">
               <h2 className="flex items-center gap-2 text-sm font-bold text-navy-900">
-                <Sparkles className="h-4 w-4 text-colon-600" /> Vacantes recomendadas para vos
+                <Sparkles className="h-4 w-4 text-peso-600" /> Vacantes recomendadas para vos
               </h2>
               <p className="mt-1 text-xs text-navy-800/50">Por tu categoría y ubicación.</p>
               <div className="mt-3 flex flex-col gap-2.5">
@@ -206,7 +206,7 @@ export default async function PerfilPage() {
             {worker.applications.length === 0 ? (
               <p className="mt-2 text-xs text-navy-800/50">
                 Todavía no aplicaste a ninguna vacante.{" "}
-                <Link href="/buscar" className="font-semibold text-cr-red-600">Buscar trabajo</Link>
+                <Link href="/buscar" className="font-semibold text-mx-red-600">Buscar trabajo</Link>
               </p>
             ) : (
               <div className="mt-3 flex flex-col gap-2.5">
@@ -271,7 +271,7 @@ export default async function PerfilPage() {
                   alt={company.commercialName}
                   className="h-16 w-16 shrink-0 rounded-2xl object-cover"
                   fallback={
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-cr-red-600/[0.09] text-xl font-extrabold text-cr-red-600">
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-mx-red-600/[0.09] text-xl font-extrabold text-mx-red-600">
                       {company.commercialName.slice(0, 1).toUpperCase()}
                     </div>
                   }
@@ -343,11 +343,11 @@ export default async function PerfilPage() {
             <h2 className="text-sm font-bold text-navy-900">Buscar personal</h2>
             <p className="mt-1 text-xs text-navy-800/50">
               También podés explorar perfiles de trabajadores directamente en{" "}
-              <Link href="/buscar-personal" className="font-semibold text-cr-red-600">
+              <Link href="/buscar-personal" className="font-semibold text-mx-red-600">
                 Buscar personal
               </Link>{" "}
               o revisar tus{" "}
-              <Link href="/empresa/guardados" className="font-semibold text-cr-red-600">
+              <Link href="/empresa/guardados" className="font-semibold text-mx-red-600">
                 trabajadores guardados
               </Link>.
             </p>
@@ -407,7 +407,7 @@ export default async function PerfilPage() {
               await signOut({ redirectTo: "/" });
             }}
           >
-            <button className="text-sm font-semibold text-cr-red-600">Cerrar sesión</button>
+            <button className="text-sm font-semibold text-mx-red-600">Cerrar sesión</button>
           </form>
         </Card>
       </main>

@@ -47,7 +47,7 @@ const sizeClasses = {
 
 const toneClasses = {
   navy: "bg-navy-900/[0.07] text-navy-800",
-  red: "bg-cr-red-600/[0.09] text-cr-red-600",
+  red: "bg-mx-red-600/[0.09] text-mx-red-600",
 };
 
 export function CategoryIcon({ category, size = "md", tone = "navy", className }: CategoryIconProps) {

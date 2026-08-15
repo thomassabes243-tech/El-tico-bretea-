@@ -51,7 +51,7 @@ export function ApplyButton({ jobPostingId }: { jobPostingId: string }) {
         placeholder="Mensaje para la empresa (opcional)"
         className="h-20 w-full resize-none rounded-xl border border-sand-200 bg-white px-3.5 py-2.5 text-sm text-navy-900 placeholder:text-navy-800/35 outline-none focus:border-navy-700 focus:ring-2 focus:ring-navy-700/10"
       />
-      {error && <p className="text-xs font-medium text-cr-red-600">{error}</p>}
+      {error && <p className="text-xs font-medium text-mx-red-600">{error}</p>}
       <Button onClick={apply} disabled={isSubmitting} fullWidth>
         {isSubmitting ? "Enviando..." : "Aplicar a esta vacante"} <Send className="h-4 w-4" />
       </Button>

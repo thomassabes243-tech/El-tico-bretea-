@@ -14,11 +14,11 @@ export function FieldWrapper({ label, htmlFor, error, hint, required, children }
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={htmlFor} className="text-sm font-semibold text-navy-900">
-        {label} {required && <span className="text-cr-red-600">*</span>}
+        {label} {required && <span className="text-mx-red-600">*</span>}
       </label>
       {children}
       {hint && !error && <p className="text-xs text-navy-800/50">{hint}</p>}
-      {error && <p className="text-xs font-medium text-cr-red-600">{error}</p>}
+      {error && <p className="text-xs font-medium text-mx-red-600">{error}</p>}
     </div>
   );
 }

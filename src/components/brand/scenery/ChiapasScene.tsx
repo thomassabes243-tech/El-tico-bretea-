@@ -1,4 +1,4 @@
-export function MonteverdeScene({ className }: { className?: string }) {
+export function ChiapasScene({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 800 300"
@@ -8,13 +8,13 @@ export function MonteverdeScene({ className }: { className?: string }) {
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id="monteSky" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id="chiapasSky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#123a63" />
           <stop offset="100%" stopColor="#bcd6cf" />
         </linearGradient>
       </defs>
 
-      <rect width="800" height="300" fill="url(#monteSky)" />
+      <rect width="800" height="300" fill="url(#chiapasSky)" />
 
       {/* niebla capas de montañas, de atrás hacia adelante */}
       <path d="M0 150 L100 100 L220 145 L330 90 L430 140 L560 95 L660 150 L800 110 L800 300 L0 300 Z" fill="#5c8778" opacity="0.55" />

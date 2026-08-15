@@ -44,7 +44,7 @@ export function ModerationPanel({ categorySlug }: { categorySlug: string }) {
   };
 
   if (error) {
-    return <p className="p-4 text-sm text-cr-red-600">{error}</p>;
+    return <p className="p-4 text-sm text-mx-red-600">{error}</p>;
   }
 
   if (blocks === null) {

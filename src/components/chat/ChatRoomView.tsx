@@ -203,12 +203,12 @@ export function ChatRoomView({
                   className={
                     isClosed
                       ? "border-sand-200 bg-sand-100/60 p-3.5 opacity-70"
-                      : "border-cr-red-600/20 bg-cr-red-100/30 p-3.5"
+                      : "border-mx-red-600/20 bg-mx-red-100/30 p-3.5"
                   }
                 >
                   <p
                     className={`mb-1.5 text-[11px] font-bold uppercase tracking-wide ${
-                      isClosed ? "text-navy-800/50" : "text-cr-red-700"
+                      isClosed ? "text-navy-800/50" : "text-mx-red-700"
                     }`}
                   >
                     {isClosed
@@ -220,7 +220,7 @@ export function ChatRoomView({
                   <Link href={`/vacantes/${m.jobPosting.id}`} className="flex items-center gap-3">
                     <div
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white ${
-                        isClosed ? "text-navy-800/40" : "text-cr-red-600"
+                        isClosed ? "text-navy-800/40" : "text-mx-red-600"
                       }`}
                     >
                       <Briefcase className="h-5 w-5" />
@@ -265,13 +265,13 @@ export function ChatRoomView({
                 </div>
                 {canModerate && !isMine && m.author.role !== "MODERATOR" && (
                   blockedAuthorIds.has(m.author.id) ? (
-                    <span className="mt-1 px-1 text-[11px] font-semibold text-cr-red-600">
+                    <span className="mt-1 px-1 text-[11px] font-semibold text-mx-red-600">
                       Bloqueado de esta sala
                     </span>
                   ) : (
                     <button
                       onClick={() => blockAuthor(m.author.id)}
-                      className="mt-1 flex items-center gap-1 px-1 text-[11px] font-medium text-navy-800/40 hover:text-cr-red-600"
+                      className="mt-1 flex items-center gap-1 px-1 text-[11px] font-medium text-navy-800/40 hover:text-mx-red-600"
                     >
                       <ShieldBan className="h-3 w-3" /> Bloquear de esta sala
                     </button>
@@ -284,7 +284,7 @@ export function ChatRoomView({
       </div>
 
       {error && (
-        <p className="mx-4 mb-2 rounded-lg bg-cr-red-100 px-3 py-1.5 text-xs font-medium text-cr-red-700">
+        <p className="mx-4 mb-2 rounded-lg bg-mx-red-100 px-3 py-1.5 text-xs font-medium text-mx-red-700">
           {error}
         </p>
       )}

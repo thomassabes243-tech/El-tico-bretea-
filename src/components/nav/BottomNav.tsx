@@ -31,7 +31,7 @@ export function BottomNav() {
                 strokeWidth={isActive ? 2.4 : 2}
                 className={clsx(
                   "h-5.5 w-5.5 transition-colors",
-                  isActive ? "text-cr-red-600" : "text-navy-800/50"
+                  isActive ? "text-mx-red-600" : "text-navy-800/50"
                 )}
               />
               <span className={clsx(isActive ? "text-navy-900" : "text-navy-800/50")}>

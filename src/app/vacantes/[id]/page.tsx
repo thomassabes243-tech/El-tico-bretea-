@@ -31,7 +31,7 @@ export async function generateMetadata({
   });
   if (!jobPosting) return {};
 
-  const title = `${jobPosting.title} en ${jobPosting.company.commercialName} — El Tico Bretea`;
+  const title = `${jobPosting.title} en ${jobPosting.company.commercialName} — Méxicosinhambre`;
   const description = `${labelFor(LABOR_CATEGORIES, jobPosting.laborCategory)} en ${jobPosting.location}. ${jobPosting.description}`.slice(0, 200);
 
   return {
@@ -110,7 +110,7 @@ export default async function VacanteDetailPage({
             )}
             {jobPosting.deadline && (
               <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
-                <Calendar className="h-3.5 w-3.5" /> Hasta {jobPosting.deadline.toLocaleDateString("es-CR")}
+                <Calendar className="h-3.5 w-3.5" /> Hasta {jobPosting.deadline.toLocaleDateString("es-MX")}
               </span>
             )}
           </div>
@@ -150,7 +150,7 @@ export default async function VacanteDetailPage({
             <div className="mt-3">
               {!session?.user ? (
                 <p className="text-sm text-navy-800/60">
-                  <Link href="/iniciar-sesion" className="font-semibold text-cr-red-600">Iniciá sesión</Link> como
+                  <Link href="/iniciar-sesion" className="font-semibold text-mx-red-600">Iniciá sesión</Link> como
                   trabajador para aplicar a esta vacante.
                 </p>
               ) : session.user.role !== "WORKER" ? (

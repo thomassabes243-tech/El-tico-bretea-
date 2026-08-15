@@ -61,8 +61,8 @@ export function CriminalRecordUpload({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-start gap-2.5 rounded-xl border border-cr-red-600/20 bg-cr-red-100/40 p-3.5">
-        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-cr-red-600" />
+      <div className="flex items-start gap-2.5 rounded-xl border border-mx-red-600/20 bg-mx-red-100/40 p-3.5">
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-mx-red-600" />
         <p className="text-xs leading-relaxed text-navy-800/75">
           <strong className="text-navy-900">Es información sensible.</strong> Subirla es
           completamente opcional y es tu responsabilidad decidir si la incluís y a quién se la
@@ -78,7 +78,7 @@ export function CriminalRecordUpload({
             <p className="text-sm font-semibold text-navy-900">Documento subido</p>
             {uploadedAt && (
               <p className="truncate text-xs text-navy-800/50">
-                {new Date(uploadedAt).toLocaleDateString("es-CR")}
+                {new Date(uploadedAt).toLocaleDateString("es-MX")}
               </p>
             )}
           </div>
@@ -86,7 +86,7 @@ export function CriminalRecordUpload({
             type="button"
             onClick={remove}
             disabled={busy}
-            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-cr-red-600/25 px-2.5 py-1.5 text-xs font-semibold text-cr-red-600 disabled:opacity-50"
+            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-mx-red-600/25 px-2.5 py-1.5 text-xs font-semibold text-mx-red-600 disabled:opacity-50"
           >
             <Trash2 className="h-3.5 w-3.5" /> Quitar
           </button>
@@ -109,12 +109,12 @@ export function CriminalRecordUpload({
             disabled={busy}
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-sand-200 py-3 text-sm font-semibold text-navy-800/60 hover:border-navy-700/40 hover:text-navy-800 disabled:opacity-50"
           >
-            <Upload className="h-4 w-4" /> {busy ? "Subiendo..." : "Subir hoja de delincuencia (foto o escaneo)"}
+            <Upload className="h-4 w-4" /> {busy ? "Subiendo..." : "Subir carta de antecedentes penales (foto o escaneo)"}
           </button>
         </div>
       )}
 
-      {error && <p className="text-xs font-medium text-cr-red-600">{error}</p>}
+      {error && <p className="text-xs font-medium text-mx-red-600">{error}</p>}
     </div>
   );
 }

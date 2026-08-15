@@ -41,7 +41,7 @@ export default async function GuardadosPage() {
           {saved.length === 0 && (
             <Card className="p-6 text-center text-sm text-navy-800/60">
               Todavía no guardaste ningún perfil.{" "}
-              <Link href="/buscar-personal" className="font-semibold text-cr-red-600">
+              <Link href="/buscar-personal" className="font-semibold text-mx-red-600">
                 Buscar personal
               </Link>
             </Card>

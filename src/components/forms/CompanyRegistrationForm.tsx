@@ -67,7 +67,7 @@ export function CompanyRegistrationForm() {
       <FieldWrapper label="Nombre comercial" htmlFor="commercialName" required error={errors.commercialName?.message}>
         <TextInput id="commercialName" placeholder="Ej. Constructora ABC" {...register("commercialName")} />
       </FieldWrapper>
-      <FieldWrapper label="Identificación / cédula jurídica" htmlFor="legalId" required error={errors.legalId?.message}>
+      <FieldWrapper label="Identificación / RFC" htmlFor="legalId" required error={errors.legalId?.message}>
         <TextInput id="legalId" placeholder="3-101-000000" {...register("legalId")} />
       </FieldWrapper>
       <FieldWrapper label="Nombre del responsable" htmlFor="responsibleName" required error={errors.responsibleName?.message}>
@@ -82,7 +82,7 @@ export function CompanyRegistrationForm() {
         </FieldWrapper>
       </div>
       <FieldWrapper label="Ubicación" htmlFor="location" required error={errors.location?.message}>
-        <TextInput id="location" placeholder="Ej. Heredia, Costa Rica" {...register("location")} />
+        <TextInput id="location" placeholder="Ej. Guadalajara, Jalisco" {...register("location")} />
       </FieldWrapper>
       <FieldWrapper label="Actividad comercial" htmlFor="activity" required error={errors.activity?.message}>
         <TextInput id="activity" placeholder="Ej. Construcción y remodelación" {...register("activity")} />
@@ -95,7 +95,7 @@ export function CompanyRegistrationForm() {
       </FieldWrapper>
 
       {submitError && (
-        <p className="rounded-xl bg-cr-red-100 px-3.5 py-2.5 text-sm font-medium text-cr-red-700">
+        <p className="rounded-xl bg-mx-red-100 px-3.5 py-2.5 text-sm font-medium text-mx-red-700">
           {submitError}
         </p>
       )}

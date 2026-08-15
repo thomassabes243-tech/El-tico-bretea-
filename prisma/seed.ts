@@ -9,9 +9,9 @@ const COMMUNITIES: { name: string; category: "CONSTRUCCION" | "HOTELES_TURISMO" 
   { name: "Profesionales", category: "PROFESIONALES" },
 ];
 
-const DEMO_MODERATOR_EMAIL = process.env.SEED_MODERATOR_EMAIL || "moderador.demo@eltico.cr";
+const DEMO_MODERATOR_EMAIL = process.env.SEED_MODERATOR_EMAIL || "moderador.demo@mexicosinhambre.com";
 const DEMO_MODERATOR_PASSWORD = process.env.SEED_MODERATOR_PASSWORD || "moderador12345";
-const DEMO_ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL || "admin.demo@eltico.cr";
+const DEMO_ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL || "admin.demo@mexicosinhambre.com";
 const DEMO_ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || "admin12345";
 
 // Las contraseñas de arriba (admin12345 / moderador12345) son las de

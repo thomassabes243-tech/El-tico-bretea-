@@ -74,15 +74,15 @@ export default async function AdminDashboardPage() {
       </div>
 
       {stats.unverifiedCompanies > 0 && (
-        <Card className="mt-5 flex items-center gap-3.5 border-cr-red-600/20 bg-cr-red-100/40 p-4">
-          <Building2 className="h-5 w-5 shrink-0 text-cr-red-600" />
+        <Card className="mt-5 flex items-center gap-3.5 border-mx-red-600/20 bg-mx-red-100/40 p-4">
+          <Building2 className="h-5 w-5 shrink-0 text-mx-red-600" />
           <div className="flex-1">
             <p className="text-sm font-semibold text-navy-900">
               {stats.unverifiedCompanies} empresa{stats.unverifiedCompanies !== 1 ? "s" : ""} sin verificar
             </p>
             <p className="text-xs text-navy-800/50">Revisá sus datos y activá la insignia de verificación.</p>
           </div>
-          <Link href="/admin/empresas" className="shrink-0 text-xs font-bold text-cr-red-600">
+          <Link href="/admin/empresas" className="shrink-0 text-xs font-bold text-mx-red-600">
             Revisar
           </Link>
         </Card>

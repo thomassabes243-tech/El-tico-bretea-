@@ -40,7 +40,7 @@ export default async function BuscarPersonalPage({
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
         <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Buscar personal</h1>
         <p className="mt-1 text-sm text-navy-800/60">
-          Explorá perfiles de trabajadores ticos disponibles.
+          Explorá perfiles de trabajadores mexicanos disponibles.
         </p>
 
         {!isCompany ? (
@@ -69,7 +69,7 @@ export default async function BuscarPersonalPage({
               <input
                 name="ubicacion"
                 defaultValue={ubicacion ?? ""}
-                placeholder="Ubicación (ej. San José)"
+                placeholder="Ubicación (ej. Ciudad de México)"
                 className="h-11 rounded-xl border border-sand-200 bg-white px-3.5 text-sm text-navy-900 placeholder:text-navy-800/35"
               />
               <Button type="submit">Filtrar</Button>
@@ -94,7 +94,7 @@ export default async function BuscarPersonalPage({
                       <span className="flex items-center gap-1"><Briefcase className="h-3 w-3" /> {w.yearsExperience} años</span>
                     </div>
                   </div>
-                  <Link href={`/trabajadores/${w.id}`} className="shrink-0 text-xs font-semibold text-cr-red-600">
+                  <Link href={`/trabajadores/${w.id}`} className="shrink-0 text-xs font-semibold text-mx-red-600">
                     Ver
                   </Link>
                 </Card>

@@ -158,11 +158,11 @@ export function EditWorkerProfileForm({
           </Select>
         </FieldWrapper>
         <label className="flex items-center gap-2.5 text-sm font-medium text-navy-900">
-          <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-cr-red-600" {...register("willingToRelocate")} />
+          <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-mx-red-600" {...register("willingToRelocate")} />
           Disponible para trasladarme de lugar de trabajo
         </label>
         <FieldWrapper label="Expectativa salarial" htmlFor="salaryExpectation" error={errors.salaryExpectation?.message}>
-          <TextInput id="salaryExpectation" placeholder="Ej. ₡350,000 mensuales" {...register("salaryExpectation")} />
+          <TextInput id="salaryExpectation" placeholder="Ej. $350,000 mensuales" {...register("salaryExpectation")} />
         </FieldWrapper>
       </Card>
 
@@ -173,23 +173,23 @@ export function EditWorkerProfileForm({
           Todo empieza oculto por defecto.
         </p>
         <label className="flex items-center gap-2.5 text-sm font-medium text-navy-900">
-          <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-cr-red-600" {...register("isPublic")} />
+          <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-mx-red-600" {...register("isPublic")} />
           Mostrar mi perfil en búsquedas de empresas
         </label>
         <label className="flex items-center gap-2.5 text-sm font-medium text-navy-900">
-          <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-cr-red-600" {...register("showPhone")} />
+          <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-mx-red-600" {...register("showPhone")} />
           Mostrar mi teléfono
         </label>
         <label className="flex items-center gap-2.5 text-sm font-medium text-navy-900">
-          <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-cr-red-600" {...register("showWhatsapp")} />
+          <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-mx-red-600" {...register("showWhatsapp")} />
           Mostrar mi WhatsApp
         </label>
         <label className="flex items-center gap-2.5 text-sm font-medium text-navy-900">
-          <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-cr-red-600" {...register("showEmail")} />
+          <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-mx-red-600" {...register("showEmail")} />
           Mostrar mi correo
         </label>
         <label className="flex items-center gap-2.5 text-sm font-medium text-navy-900">
-          <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-cr-red-600" {...register("showSalaryExpectation")} />
+          <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-mx-red-600" {...register("showSalaryExpectation")} />
           Mostrar mi expectativa salarial
         </label>
       </Card>
@@ -201,7 +201,7 @@ export function EditWorkerProfileForm({
             <button
               type="button"
               onClick={() => append({ name: "", company: "", phone: "", email: "" })}
-              className="flex items-center gap-1 text-xs font-semibold text-cr-red-600"
+              className="flex items-center gap-1 text-xs font-semibold text-mx-red-600"
             >
               <Plus className="h-3.5 w-3.5" /> Agregar
             </button>
@@ -214,7 +214,7 @@ export function EditWorkerProfileForm({
           <div key={field.id} className="flex flex-col gap-3 rounded-xl border border-sand-200 p-3.5">
             <div className="flex items-center justify-between">
               <p className="text-xs font-bold uppercase tracking-wide text-navy-800/50">Referencia {index + 1}</p>
-              <button type="button" onClick={() => remove(index)} className="text-navy-800/40 hover:text-cr-red-600">
+              <button type="button" onClick={() => remove(index)} className="text-navy-800/40 hover:text-mx-red-600">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -245,7 +245,7 @@ export function EditWorkerProfileForm({
       </Card>
 
       {submitError && (
-        <p className="rounded-xl bg-cr-red-100 px-3.5 py-2.5 text-sm font-medium text-cr-red-700">
+        <p className="rounded-xl bg-mx-red-100 px-3.5 py-2.5 text-sm font-medium text-mx-red-700">
           {submitError}
         </p>
       )}

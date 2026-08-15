@@ -103,7 +103,7 @@ export function WorkerRegistrationForm() {
           <div
             key={s.title}
             className={`h-1.5 flex-1 rounded-full transition-colors ${
-              i <= step ? "bg-cr-red-600" : "bg-sand-200"
+              i <= step ? "bg-mx-red-600" : "bg-sand-200"
             }`}
           />
         ))}
@@ -141,7 +141,7 @@ export function WorkerRegistrationForm() {
               <TextInput id="age" type="number" min={15} max={100} {...register("age")} />
             </FieldWrapper>
             <FieldWrapper label="Residencia" htmlFor="residence" required error={errors.residence?.message}>
-              <TextInput id="residence" placeholder="Ej. San José" {...register("residence")} />
+              <TextInput id="residence" placeholder="Ej. Ciudad de México" {...register("residence")} />
             </FieldWrapper>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -225,11 +225,11 @@ export function WorkerRegistrationForm() {
             </Select>
           </FieldWrapper>
           <label className="flex items-center gap-2.5 text-sm font-medium text-navy-900">
-            <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-cr-red-600" {...register("willingToRelocate")} />
+            <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-mx-red-600" {...register("willingToRelocate")} />
             Disponible para trasladarme de lugar de trabajo
           </label>
           <FieldWrapper label="Expectativa salarial" htmlFor="salaryExpectation" hint="Este dato es privado por defecto." error={errors.salaryExpectation?.message}>
-            <TextInput id="salaryExpectation" placeholder="Ej. ₡350,000 mensuales" {...register("salaryExpectation")} />
+            <TextInput id="salaryExpectation" placeholder="Ej. $350,000 mensuales" {...register("salaryExpectation")} />
           </FieldWrapper>
         </div>
       )}
@@ -249,7 +249,7 @@ export function WorkerRegistrationForm() {
                   <button
                     type="button"
                     onClick={() => remove(index)}
-                    className="text-navy-800/40 hover:text-cr-red-600"
+                    className="text-navy-800/40 hover:text-mx-red-600"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -295,7 +295,7 @@ export function WorkerRegistrationForm() {
       )}
 
       {submitError && (
-        <p className="rounded-xl bg-cr-red-100 px-3.5 py-2.5 text-sm font-medium text-cr-red-700">
+        <p className="rounded-xl bg-mx-red-100 px-3.5 py-2.5 text-sm font-medium text-mx-red-700">
           {submitError}
         </p>
       )}

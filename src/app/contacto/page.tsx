@@ -21,7 +21,7 @@ export default function ContactoPage() {
           </div>
           <div>
             <p className="text-xs text-navy-800/50">Publicidad y negocios</p>
-            <a href={`mailto:${CONTACT_EMAIL}`} className="text-sm font-bold text-cr-red-600">
+            <a href={`mailto:${CONTACT_EMAIL}`} className="text-sm font-bold text-mx-red-600">
               {CONTACT_EMAIL}
             </a>
           </div>

@@ -42,8 +42,8 @@ export default async function AdminAlmacenamientoPage() {
           </div>
         </Card>
       ) : (
-        <Card className="mt-4 flex items-start gap-3 border-cr-red-600/25 bg-cr-red-100/40 p-4">
-          <AlertTriangle className="mt-0.5 h-4.5 w-4.5 shrink-0 text-cr-red-600" />
+        <Card className="mt-4 flex items-start gap-3 border-mx-red-600/25 bg-mx-red-100/40 p-4">
+          <AlertTriangle className="mt-0.5 h-4.5 w-4.5 shrink-0 text-mx-red-600" />
           <div>
             <p className="text-sm font-semibold text-navy-900">Almacenamiento en la nube no configurado</p>
             <p className="mt-0.5 text-xs leading-relaxed text-navy-800/70">
@@ -75,7 +75,7 @@ export default async function AdminAlmacenamientoPage() {
           <p className="text-xs text-navy-800/50">Espacio en uso</p>
         </Card>
         <Card className="p-4">
-          <HardDrive className="h-5 w-5 text-cr-red-600" />
+          <HardDrive className="h-5 w-5 text-mx-red-600" />
           <p className="mt-3 text-2xl font-extrabold text-navy-900">{expiredCount}</p>
           <p className="text-xs text-navy-800/50">Vencidos, pendientes de borrar</p>
         </Card>

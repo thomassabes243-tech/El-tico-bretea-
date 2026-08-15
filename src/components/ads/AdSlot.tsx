@@ -5,7 +5,7 @@ import Link from "next/link";
 import { X, Sparkles } from "lucide-react";
 import { ICON_OPTIONS, type AdItem, type IconKey } from "@/lib/ad-icons";
 
-const LAST_SHOWN_KEY = "eltico:lastAdShownAt";
+const LAST_SHOWN_KEY = "mexicosinhambre:lastAdShownAt";
 const MIN_GAP_MS = 5 * 60 * 1000; // Sección 10: máximo ~1 anuncio cada 5 minutos
 
 /**
@@ -58,7 +58,7 @@ export function AdSlot({ eligible, ads }: { eligible: boolean; ads: AdItem[] }) 
           <p className="truncate text-sm font-semibold text-navy-900">{ad.title}</p>
           <p className="truncate text-xs text-navy-800/50">{ad.description}</p>
         </div>
-        <Link href={ad.href} className="shrink-0 text-xs font-bold text-cr-red-600">
+        <Link href={ad.href} className="shrink-0 text-xs font-bold text-mx-red-600">
           {ad.ctaLabel}
         </Link>
       </div>

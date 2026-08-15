@@ -24,7 +24,7 @@ export default async function AdminConfiguracionPage() {
 
       <form action={saveSettings} className="mt-5 flex flex-col gap-5">
         <Card className="p-4">
-          <h2 className="text-sm font-bold text-navy-900">Precios (₡)</h2>
+          <h2 className="text-sm font-bold text-navy-900">Precios ($ MXN)</h2>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <div>
               <FieldLabel label="Descarga de CV" hint="≈ US$2" />

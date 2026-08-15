@@ -33,7 +33,7 @@ export function ReportButton({
     return (
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-1.5 text-xs font-medium text-navy-800/40 hover:text-cr-red-600"
+        className="flex items-center gap-1.5 text-xs font-medium text-navy-800/40 hover:text-mx-red-600"
       >
         <Flag className="h-3.5 w-3.5" /> Reportar
       </button>
@@ -43,7 +43,7 @@ export function ReportButton({
   if (!isLoggedIn) {
     return (
       <p className="text-xs text-navy-800/50">
-        <a href="/iniciar-sesion" className="font-semibold text-cr-red-600">Iniciá sesión</a> para reportar.
+        <a href="/iniciar-sesion" className="font-semibold text-mx-red-600">Iniciá sesión</a> para reportar.
       </p>
     );
   }
@@ -79,12 +79,12 @@ export function ReportButton({
         placeholder="Contanos brevemente el motivo del reporte"
         className="h-16 w-full resize-none rounded-lg border border-sand-200 px-2.5 py-2 text-xs text-navy-900 placeholder:text-navy-800/35 outline-none focus:border-navy-700"
       />
-      {error && <p className="text-xs font-medium text-cr-red-600">{error}</p>}
+      {error && <p className="text-xs font-medium text-mx-red-600">{error}</p>}
       <div className="flex gap-2">
         <button
           onClick={submit}
           disabled={submitting || reason.trim().length < 5}
-          className="rounded-lg bg-cr-red-600 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+          className="rounded-lg bg-mx-red-600 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
         >
           {submitting ? "Enviando..." : "Enviar reporte"}
         </button>

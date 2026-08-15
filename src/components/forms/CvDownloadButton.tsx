@@ -24,15 +24,15 @@ export function CvDownloadButton({
             type="checkbox"
             checked={includeCriminalRecord}
             onChange={(e) => setIncludeCriminalRecord(e.target.checked)}
-            className="h-4 w-4 shrink-0 accent-cr-red-600"
+            className="h-4 w-4 shrink-0 accent-mx-red-600"
           />
-          Incluir mi hoja de delincuencia en este PDF
+          Incluir mi carta de antecedentes penales en este PDF
         </label>
       )}
 
       <a
         href={href}
-        className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-cr-red-600 text-sm font-semibold text-white shadow-sm shadow-cr-red-600/25 transition-all hover:bg-cr-red-700 active:scale-[0.98]"
+        className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-mx-red-600 text-sm font-semibold text-white shadow-sm shadow-mx-red-600/25 transition-all hover:bg-mx-red-700 active:scale-[0.98]"
       >
         <Download className="h-4 w-4" /> {label}
       </a>

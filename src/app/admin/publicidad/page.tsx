@@ -131,7 +131,7 @@ export default async function AdminPublicidadPage() {
               >
                 <button
                   type="submit"
-                  className="flex shrink-0 items-center gap-1.5 rounded-lg border border-cr-red-600/25 px-2.5 py-1.5 text-xs font-semibold text-cr-red-600"
+                  className="flex shrink-0 items-center gap-1.5 rounded-lg border border-mx-red-600/25 px-2.5 py-1.5 text-xs font-semibold text-mx-red-600"
                 >
                   <Trash2 className="h-3.5 w-3.5" /> Borrar
                 </button>

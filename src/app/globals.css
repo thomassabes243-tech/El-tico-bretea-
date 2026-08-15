@@ -4,17 +4,21 @@
   --background: #f6f7fb;
   --foreground: #101828;
 
-  /* Identidad El Tico Bretea: azul marino + rojo (bandera de Costa Rica) */
+  /* Identidad Méxicosinhambre: azul marino + verde/rojo (bandera de México) */
   --color-navy-950: #061b33;
   --color-navy-900: #0a2647;
   --color-navy-800: #123a63;
   --color-navy-700: #1c4d80;
   --color-navy-600: #2a63a3;
 
-  --color-cr-red-700: #a50e1f;
-  --color-cr-red-600: #ce1126;
-  --color-cr-red-500: #e02638;
-  --color-cr-red-100: #fde3e5;
+  --color-mx-red-700: #a50e1f;
+  --color-mx-red-600: #ce1126;
+  --color-mx-red-500: #e02638;
+  --color-mx-red-100: #fde3e5;
+
+  --color-mx-green-700: #00432c;
+  --color-mx-green-600: #006341;
+  --color-mx-green-500: #0b8058;
 
   --color-sand-50: #f6f7fb;
   --color-sand-100: #eef1f6;
@@ -23,12 +27,12 @@
   --color-success-600: #16803d;
   --color-warning-600: #b45309;
 
-  /* Acento "colón": morado/violeta inspirado en el billete de ₡10,000,
+  /* Acento morado inspirado en el billete de $500 MXN,
      reservado para precios, Premium y CV — nunca reproduce el billete. */
-  --color-colon-700: #4a2472;
-  --color-colon-600: #6b3fa0;
-  --color-colon-500: #8657bd;
-  --color-colon-100: #f1e8f9;
+  --color-peso-700: #4a2472;
+  --color-peso-600: #6b3fa0;
+  --color-peso-500: #8657bd;
+  --color-peso-100: #f1e8f9;
 }
 
 @theme inline {
@@ -42,10 +46,14 @@
   --color-navy-700: var(--color-navy-700);
   --color-navy-600: var(--color-navy-600);
 
-  --color-cr-red-700: var(--color-cr-red-700);
-  --color-cr-red-600: var(--color-cr-red-600);
-  --color-cr-red-500: var(--color-cr-red-500);
-  --color-cr-red-100: var(--color-cr-red-100);
+  --color-mx-red-700: var(--color-mx-red-700);
+  --color-mx-red-600: var(--color-mx-red-600);
+  --color-mx-red-500: var(--color-mx-red-500);
+  --color-mx-red-100: var(--color-mx-red-100);
+
+  --color-mx-green-700: var(--color-mx-green-700);
+  --color-mx-green-600: var(--color-mx-green-600);
+  --color-mx-green-500: var(--color-mx-green-500);
 
   --color-sand-50: var(--color-sand-50);
   --color-sand-100: var(--color-sand-100);
@@ -54,10 +62,10 @@
   --color-success-600: var(--color-success-600);
   --color-warning-600: var(--color-warning-600);
 
-  --color-colon-700: var(--color-colon-700);
-  --color-colon-600: var(--color-colon-600);
-  --color-colon-500: var(--color-colon-500);
-  --color-colon-100: var(--color-colon-100);
+  --color-peso-700: var(--color-peso-700);
+  --color-peso-600: var(--color-peso-600);
+  --color-peso-500: var(--color-peso-500);
+  --color-peso-100: var(--color-peso-100);
 }
 
 body {

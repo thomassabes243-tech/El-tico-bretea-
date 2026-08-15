@@ -81,7 +81,7 @@ export default async function AdminModeradoresPage() {
                       await removeModeratorAssignment(a.id);
                     }}
                   >
-                    <button type="submit" className="text-navy-800/40 hover:text-cr-red-600" title="Quitar">
+                    <button type="submit" className="text-navy-800/40 hover:text-mx-red-600" title="Quitar">
                       <X className="h-3.5 w-3.5" />
                     </button>
                   </form>

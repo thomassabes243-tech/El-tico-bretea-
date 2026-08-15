@@ -2,7 +2,7 @@ export const MOTIVATIONAL_QUOTES = [
   "Un perfil completo y honesto abre más puertas que uno exagerado.",
   "Buscar trabajo también es trabajo. Un paso a la vez, sin apurarse.",
   "Tu experiencia cuenta, aunque no tengas título. Mostrala con claridad.",
-  "Costa Rica se mueve gracias a gente como vos. ¡Pura vida y a brechar!",
+  "México se mueve gracias a gente como vos. ¡Échale ganas!",
   "Las empresas serias valoran la constancia. Seguí postulando.",
   "Nadie va a saber lo que sabés hacer si tu perfil no lo dice.",
   "Hoy podés postularte a una vacante más. Puede ser la que te cambie el mes.",

@@ -17,7 +17,7 @@ export default function NotFound() {
           Puede que el enlace esté vencido o la vacante/perfil ya no exista.
         </p>
         <Button href="/" size="sm">Volver al inicio</Button>
-        <Link href="/buscar" className="text-xs font-semibold text-cr-red-600">
+        <Link href="/buscar" className="text-xs font-semibold text-mx-red-600">
           Buscar vacantes
         </Link>
       </Card>

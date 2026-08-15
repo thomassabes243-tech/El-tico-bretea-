@@ -80,7 +80,7 @@ export default async function AplicantesPage({
                 <div>
                   <p className="text-sm font-bold text-navy-900">{app.worker.fullName}</p>
                   <span className="text-[11px] text-navy-800/45">
-                    {app.createdAt.toLocaleDateString("es-CR")}
+                    {app.createdAt.toLocaleDateString("es-MX")}
                   </span>
                 </div>
                 <ApplicationStatusSelect applicationId={app.id} status={app.status} />
@@ -95,7 +95,7 @@ export default async function AplicantesPage({
               )}
               <Link
                 href={`/trabajadores/${app.worker.id}`}
-                className="mt-2 inline-block text-xs font-semibold text-cr-red-600"
+                className="mt-2 inline-block text-xs font-semibold text-mx-red-600"
               >
                 Ver perfil completo
               </Link>
@@ -106,7 +106,7 @@ export default async function AplicantesPage({
         {recommended.length > 0 && (
           <div className="mt-8">
             <h2 className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
-              <Sparkles className="h-4 w-4 text-colon-600" /> Trabajadores recomendados
+              <Sparkles className="h-4 w-4 text-peso-600" /> Trabajadores recomendados
             </h2>
             <p className="mt-1 text-xs text-navy-800/50">
               Por categoría y ubicación. No aplicaron todavía, pero podrían encajar.

@@ -10,8 +10,8 @@ export default function DonarPage() {
       <TopBar />
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
         <Card className="flex flex-col items-center gap-3 p-8 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cr-red-100">
-            <HeartHandshake className="h-6 w-6 text-cr-red-600" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-mx-red-100">
+            <HeartHandshake className="h-6 w-6 text-mx-red-600" />
           </div>
           <h1 className="text-lg font-extrabold text-navy-900">
             ¿Lograste lo que buscabas?
@@ -23,9 +23,9 @@ export default function DonarPage() {
           </p>
           <p className="text-xs text-navy-800/50">
             El cobro con tarjeta está en desarrollo, a la espera de definir un procesador de
-            pagos compatible con Costa Rica. Mientras tanto, si querés colaborar de otra
+            pagos compatible con México. Mientras tanto, si querés colaborar de otra
             forma, escribinos a{" "}
-            <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-cr-red-600">
+            <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-mx-red-600">
               {CONTACT_EMAIL}
             </a>
             .

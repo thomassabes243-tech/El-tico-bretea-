@@ -81,7 +81,7 @@ export default async function BuscarCategoriaPage({
                     </span>
                   )}
                   {job.salary && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-cr-red-100 px-2 py-0.5 text-cr-red-700">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-mx-red-100 px-2 py-0.5 text-mx-red-700">
                       {job.salary}
                     </span>
                   )}

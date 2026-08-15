@@ -12,9 +12,9 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
-  title: "El Tico Bretea — Conseguí trabajo en Costa Rica",
+  title: "Méxicosinhambre — Conseguí trabajo en México",
   description:
-    "El Tico Bretea conecta a trabajadores ticos con empresas de forma directa y confiable: perfiles profesionales, currículums, vacantes y comunidades por gremio.",
+    "Méxicosinhambre conecta a trabajadores mexicanos con empresas de forma directa y confiable: perfiles profesionales, currículums, vacantes y comunidades por gremio.",
   manifest: "/manifest.json",
 };
 
@@ -27,7 +27,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="es-CR"
+      lang="es-MX"
       className={`${plusJakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-sand-50 text-foreground">

@@ -86,7 +86,7 @@ export function JobPostingForm() {
           <TextInput id="quantity" type="number" min={1} max={999} {...register("quantity")} />
         </FieldWrapper>
         <FieldWrapper label="Salario" htmlFor="salary" hint="Opcional" error={errors.salary?.message}>
-          <TextInput id="salary" placeholder="Ej. ₡350,000 - ₡400,000" {...register("salary")} />
+          <TextInput id="salary" placeholder="Ej. $350,000 - $400,000" {...register("salary")} />
         </FieldWrapper>
       </div>
       <FieldWrapper label="Horario" htmlFor="schedule" error={errors.schedule?.message}>
@@ -116,7 +116,7 @@ export function JobPostingForm() {
       </FieldWrapper>
 
       {submitError && (
-        <p className="rounded-xl bg-cr-red-100 px-3.5 py-2.5 text-sm font-medium text-cr-red-700">
+        <p className="rounded-xl bg-mx-red-100 px-3.5 py-2.5 text-sm font-medium text-mx-red-700">
           {submitError}
         </p>
       )}

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { LABOR_CATEGORIES } from "@/lib/constants";
 
 export const runtime = "nodejs";
-export const alt = "Vacante en El Tico Bretea";
+export const alt = "Vacante en Méxicosinhambre";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -19,10 +19,10 @@ export default async function OpengraphImage({ params }: { params: Promise<{ id:
   });
 
   const title = jobPosting?.title ?? "Vacante disponible";
-  const company = jobPosting?.company.commercialName ?? "El Tico Bretea";
+  const company = jobPosting?.company.commercialName ?? "Méxicosinhambre";
   const meta = jobPosting
     ? `${labelFor(LABOR_CATEGORIES, jobPosting.laborCategory)} · ${jobPosting.location}`
-    : "Costa Rica";
+    : "México";
 
   return new ImageResponse(
     (
@@ -53,10 +53,10 @@ export default async function OpengraphImage({ params }: { params: Promise<{ id:
               color: "#ffffff",
             }}
           >
-            T
+            M
           </div>
           <div style={{ display: "flex", fontSize: 28, fontWeight: 800, color: "#ffffff" }}>
-            El Tico<span style={{ color: "#ff6b6b", marginLeft: 8 }}>Bretea</span>
+            México<span style={{ color: "#ff6b6b", marginLeft: 8 }}>SinHambre</span>
           </div>
         </div>
 

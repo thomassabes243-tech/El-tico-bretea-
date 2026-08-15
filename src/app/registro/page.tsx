@@ -27,13 +27,13 @@ export default function RegistroPage() {
 
         <Link href="/registro/empresa">
           <Card className="flex items-center gap-4 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-cr-red-600/[0.09] text-cr-red-600">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-mx-red-600/[0.09] text-mx-red-600">
               <Building2 className="h-6 w-6" strokeWidth={2.1} />
             </div>
             <div className="flex-1">
               <p className="text-sm font-bold text-navy-900">Soy empresa</p>
               <p className="text-xs text-navy-800/60">
-                Publicá vacantes y encontrá talento tico
+                Publicá vacantes y encontrá talento mexicano
               </p>
             </div>
             <ArrowRight className="h-4.5 w-4.5 text-navy-800/40" />
@@ -43,7 +43,7 @@ export default function RegistroPage() {
 
       <p className="mt-6 text-center text-sm text-navy-800/60">
         ¿Ya tenés cuenta?{" "}
-        <Link href="/iniciar-sesion" className="font-semibold text-cr-red-600">
+        <Link href="/iniciar-sesion" className="font-semibold text-mx-red-600">
           Iniciá sesión
         </Link>
       </p>

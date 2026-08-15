@@ -48,7 +48,7 @@ function CvDocument({
     .join(" · ");
 
   return (
-    <Document title={`CV - ${worker.fullName}`} author="El Tico Bretea">
+    <Document title={`CV - ${worker.fullName}`} author="Méxicosinhambre">
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
           <Text style={styles.name}>{worker.fullName}</Text>
@@ -116,14 +116,14 @@ function CvDocument({
         )}
 
         <Text style={styles.footer}>
-          Generado por El Tico Bretea · elticobretea.cr · Este documento refleja el perfil al
+          Generado por Méxicosinhambre · mexicosinhambre.com · Este documento refleja el perfil al
           momento de la descarga.
         </Text>
       </Page>
 
       {criminalRecordImage && (
         <Page size="A4" style={styles.page}>
-          <Text style={styles.attachmentTitle}>Hoja de delincuencia</Text>
+          <Text style={styles.attachmentTitle}>Carta de antecedentes penales</Text>
           {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf's Image (PDF renderer), not an HTML img; has no alt prop */}
           <Image
             style={styles.attachmentImage}

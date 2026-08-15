@@ -5,9 +5,9 @@ import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
-import { PoasScene } from "@/components/brand/scenery/PoasScene";
-import { GuanacasteScene } from "@/components/brand/scenery/GuanacasteScene";
-import { MonteverdeScene } from "@/components/brand/scenery/MonteverdeScene";
+import { PopocatepetlScene } from "@/components/brand/scenery/PopocatepetlScene";
+import { CancunScene } from "@/components/brand/scenery/CancunScene";
+import { ChiapasScene } from "@/components/brand/scenery/ChiapasScene";
 import { CoffeeMountainsScene } from "@/components/brand/scenery/CoffeeMountainsScene";
 import { COMMUNITY_CATEGORIES } from "@/lib/constants";
 import { getDailyQuote } from "@/lib/motivational-quotes";
@@ -16,8 +16,8 @@ import { AdSlot } from "@/components/ads/AdSlot";
 
 const COMMUNITY_SCENES: Record<string, ComponentType<{ className?: string }>> = {
   CONSTRUCCION: CoffeeMountainsScene,
-  HOTELES_TURISMO: GuanacasteScene,
-  PROFESIONALES: MonteverdeScene,
+  HOTELES_TURISMO: CancunScene,
+  PROFESIONALES: ChiapasScene,
 };
 
 const QUICK_ACTIONS = [
@@ -41,7 +41,7 @@ const QUICK_ACTIONS = [
     href: "/buscar-personal",
     emoji: "💼",
     title: "Buscar personal",
-    description: "Para empresas: encontrá al tico ideal",
+    description: "Para empresas: encontrá el talento ideal",
     icon: Users,
     tone: "navy" as const,
   },
@@ -71,17 +71,17 @@ export default async function Home({
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
         {cuentaEliminada && (
           <div className="mb-4 rounded-2xl border border-success-600/25 bg-success-600/10 px-4 py-3 text-sm font-medium text-success-600">
-            Tu cuenta fue eliminada. Gracias por haber usado El Tico Bretea.
+            Tu cuenta fue eliminada. Gracias por haber usado Méxicosinhambre.
           </div>
         )}
 
         {/* Hero */}
         <section className="animate-fade-in-up relative overflow-hidden rounded-3xl text-white shadow-lg shadow-navy-900/20">
-          <PoasScene className="absolute inset-0 h-full w-full" />
+          <PopocatepetlScene className="absolute inset-0 h-full w-full" />
           <div className="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/40 to-transparent" />
           <div className="relative px-6 py-8">
             <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/85 backdrop-blur-sm">
-              <Sparkles className="h-3.5 w-3.5 text-cr-red-500" />
+              <Sparkles className="h-3.5 w-3.5 text-mx-red-500" />
               Mensaje del día
             </div>
             <p className="text-lg font-semibold leading-snug drop-shadow-sm">{quote}</p>
@@ -107,7 +107,7 @@ export default async function Home({
                         className={
                           "flex h-11 w-11 items-center justify-center rounded-2xl " +
                           (action.tone === "red"
-                            ? "bg-cr-red-600/[0.09] text-cr-red-600"
+                            ? "bg-mx-red-600/[0.09] text-mx-red-600"
                             : "bg-navy-900/[0.07] text-navy-800")
                         }
                       >
@@ -128,7 +128,7 @@ export default async function Home({
         <section className="mt-8">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-navy-900">Comunidades por gremio</h2>
-            <Link href="/comunidad" className="text-xs font-semibold text-cr-red-600">
+            <Link href="/comunidad" className="text-xs font-semibold text-mx-red-600">
               Ver todas
             </Link>
           </div>
@@ -167,10 +167,10 @@ export default async function Home({
             <div className="flex-1">
               <h3 className="text-sm font-bold text-navy-900">Trabajo directo y confiable</h3>
               <p className="mt-1 text-xs leading-relaxed text-navy-800/65">
-                Conectamos ticos con empresas reales, sin intermediarios. Lo que cobramos
+                Conectamos mexicanos con empresas reales, sin intermediarios. Lo que cobramos
                 por el CV o Premium es solo para mantener la app funcionando — no buscamos
                 lucrar con tu búsqueda de empleo.{" "}
-                <Link href="/acerca-de" className="font-semibold text-cr-red-600">
+                <Link href="/acerca-de" className="font-semibold text-mx-red-600">
                   Conocé más
                 </Link>
               </p>
@@ -180,9 +180,9 @@ export default async function Home({
 
         {/* Donación */}
         <section className="mt-4">
-          <Card className="flex items-center gap-3.5 border-cr-red-600/15 bg-cr-red-100/40 p-4">
+          <Card className="flex items-center gap-3.5 border-mx-red-600/15 bg-mx-red-100/40 p-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white">
-              <HeartHandshake className="h-5 w-5 text-cr-red-600" />
+              <HeartHandshake className="h-5 w-5 text-mx-red-600" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-navy-900">
@@ -192,7 +192,7 @@ export default async function Home({
                 Si querés, podés darme una pequeña donación voluntaria. ¡Gracias!
               </p>
             </div>
-            <Link href="/donar" className="shrink-0 text-xs font-bold text-cr-red-600">
+            <Link href="/donar" className="shrink-0 text-xs font-bold text-mx-red-600">
               Donar
             </Link>
           </Card>

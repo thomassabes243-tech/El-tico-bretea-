@@ -48,7 +48,7 @@ export function ApplicationStatusSelect({
           <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
       </select>
-      {error && <p className="text-[10px] font-medium text-cr-red-600">{error}</p>}
+      {error && <p className="text-[10px] font-medium text-mx-red-600">{error}</p>}
     </div>
   );
 }

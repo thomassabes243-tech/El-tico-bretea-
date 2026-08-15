@@ -53,7 +53,7 @@ export default async function AdminReportesPage() {
                   </p>
                   <p className="mt-1 text-xs text-navy-800/70">{r.reason}</p>
                   <p className="mt-1 text-[11px] text-navy-800/40">
-                    Reportado por {r.reporter.email} · {r.createdAt.toLocaleDateString("es-CR")}
+                    Reportado por {r.reporter.email} · {r.createdAt.toLocaleDateString("es-MX")}
                   </p>
                 </div>
                 <form

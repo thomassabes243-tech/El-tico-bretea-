@@ -40,7 +40,7 @@ export function JobPostingStatusToggle({ jobId, isActive }: { jobId: string; isA
         >
           <Eye className="h-3.5 w-3.5" /> Reactivar
         </button>
-        {error && <p className="text-[11px] font-medium text-cr-red-600">{error}</p>}
+        {error && <p className="text-[11px] font-medium text-mx-red-600">{error}</p>}
       </div>
     );
   }
@@ -61,7 +61,7 @@ export function JobPostingStatusToggle({ jobId, isActive }: { jobId: string; isA
           <option key={reason.value} value={reason.value}>{reason.label}</option>
         ))}
       </select>
-      {error && <p className="text-[11px] font-medium text-cr-red-600">{error}</p>}
+      {error && <p className="text-[11px] font-medium text-mx-red-600">{error}</p>}
     </div>
   );
 }
