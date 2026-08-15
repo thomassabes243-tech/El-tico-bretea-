@@ -8,6 +8,12 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // sharp (procesa las fotos del chat/CV) trae binarios nativos: si el
+  // bundler los empaqueta en vez de dejarlos como módulo externo, puede
+  // fallar en el runtime serverless de Vercel de forma silenciosa. Next
+  // ya trae sharp en su lista de exclusión por defecto en versiones
+  // recientes, pero se declara acá también para no depender de eso.
+  serverExternalPackages: ["sharp", "@aws-sdk/client-s3"],
   async headers() {
     return [
       {
