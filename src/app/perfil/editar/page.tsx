@@ -13,7 +13,7 @@ export default async function EditarPerfilPage() {
   if (session.user.role === "WORKER") {
     const worker = await prisma.workerProfile.findUnique({
       where: { userId: session.user.id },
-      include: { references: true },
+      include: { references: true, user: { select: { chatAlias: true } } },
     });
     if (!worker) redirect("/registro/trabajador");
 
@@ -55,6 +55,7 @@ export default async function EditarPerfilPage() {
                 showWhatsapp: worker.showWhatsapp,
                 showEmail: worker.showEmail,
                 showSalaryExpectation: worker.showSalaryExpectation,
+                chatAlias: worker.user.chatAlias ?? "",
                 references: worker.references.map((r) => ({
                   name: r.name,
                   company: r.company,
@@ -73,6 +74,7 @@ export default async function EditarPerfilPage() {
   if (session.user.role === "COMPANY") {
     const company = await prisma.companyProfile.findUnique({
       where: { userId: session.user.id },
+      include: { user: { select: { chatAlias: true } } },
     });
     if (!company) redirect("/registro/empresa");
 
@@ -97,6 +99,7 @@ export default async function EditarPerfilPage() {
                 activity: company.activity,
                 logoUrl: company.logoUrl ?? "",
                 description: company.description ?? "",
+                chatAlias: company.user.chatAlias ?? "",
               }}
             />
           </div>

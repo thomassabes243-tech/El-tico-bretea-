@@ -93,6 +93,18 @@ export function EditWorkerProfileForm({
         </div>
       </Card>
 
+      <Card className="flex flex-col gap-3 p-4">
+        <h2 className="text-sm font-bold text-navy-900">Alias para el chat de comunidad</h2>
+        <p className="text-xs text-navy-800/50">
+          Si lo completás, se muestra en las salas de comunidad en vez de tu nombre completo.
+          Tu cuenta sigue siendo la misma por dentro: si alguien insulta o abusa, un moderador
+          igual puede identificarlo y silenciarlo. Dejalo vacío para seguir mostrando tu nombre.
+        </p>
+        <FieldWrapper label="Alias" htmlFor="chatAlias" hint="Máximo 40 caracteres" error={errors.chatAlias?.message}>
+          <TextInput id="chatAlias" placeholder="Ej. Trabajador de San José" {...register("chatAlias")} />
+        </FieldWrapper>
+      </Card>
+
       <Card className="flex flex-col gap-4 p-4">
         <h2 className="text-sm font-bold text-navy-900">Profesión</h2>
         <FieldWrapper label="Profesión" htmlFor="profession" required error={errors.profession?.message}>

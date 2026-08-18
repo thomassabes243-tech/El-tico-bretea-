@@ -38,7 +38,15 @@ cobro activo hoy es la descarga del CV en PDF. Desde /admin/usuarios,
 cualquier Administrador puede buscar cuentas por correo o nombre y
 darle/quitarle el rol de Administrador a cualquiera (sin límite de cuántos
 puede haber a la vez); no se puede quitar el rol a sí mismo, para no dejar
-el panel sin acceso por accidente.
+el panel sin acceso por accidente. Se puede borrar un mensaje o foto propia
+del chat, y un moderador puede borrar mensajes ajenos en su sala. Entrada
+liviana al chat de comunidad sin registro completo: solo correo + un alias
+elegido por la persona (sin contraseña) — el alias se muestra en vez del
+nombre real, y por dentro sigue siendo una cuenta identificable para poder
+silenciar a quien insulte o abuse (el correo nunca se verifica ni se
+muestra públicamente, y no se puede "tomar" un correo que ya tenga cuenta
+real). Cualquier cuenta (trabajador o empresa) puede definir ese mismo
+alias desde "Editar perfil".
 Pendiente: pagos reales (falta definir procesador compatible con Costa
 Rica) y categorías editables desde el panel.
 

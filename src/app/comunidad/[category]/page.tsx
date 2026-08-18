@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, ShieldBan } from "lucide-react";
 import { auth } from "@/lib/auth";
@@ -8,6 +8,7 @@ import { cleanupExpiredChatFiles } from "@/lib/storage";
 import { TopBar } from "@/components/nav/TopBar";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { ChatRoomView } from "@/components/chat/ChatRoomView";
+import { QuickChatAccessForm } from "@/components/community/QuickChatAccessForm";
 import { GuanacasteScene } from "@/components/brand/scenery/GuanacasteScene";
 import { MonteverdeScene } from "@/components/brand/scenery/MonteverdeScene";
 import { CoffeeMountainsScene } from "@/components/brand/scenery/CoffeeMountainsScene";
@@ -27,7 +28,6 @@ export default async function ComunidadCategoriaPage({
   params: Promise<{ category: string }>;
 }) {
   const session = await auth();
-  if (!session?.user) redirect("/iniciar-sesion");
 
   const { category } = await params;
   const community = COMMUNITY_CATEGORIES.find((c) => c.value.toLowerCase() === category);
@@ -35,6 +35,33 @@ export default async function ComunidadCategoriaPage({
 
   const room = await getChatRoomBySlug(category);
   if (!room) notFound();
+
+  const Scene = COMMUNITY_SCENES[community.value];
+
+  if (!session?.user) {
+    return (
+      <div className="flex h-dvh flex-col overflow-hidden">
+        <TopBar />
+        <div className="relative h-24 shrink-0 overflow-hidden border-b border-sand-200">
+          {Scene && <Scene className="absolute inset-0 h-full w-full" />}
+          <div className="absolute inset-0 bg-gradient-to-r from-navy-950/75 via-navy-950/45 to-navy-950/15" />
+          <div className="relative flex h-full items-center gap-3 px-4">
+            <Link href="/comunidad" className="text-white/80">
+              <ChevronLeft className="h-5 w-5" />
+            </Link>
+            <CategoryIcon category={community.value} size="sm" tone="red" />
+            <div className="flex-1">
+              <h1 className="text-sm font-extrabold text-white drop-shadow-sm">{community.label}</h1>
+              <p className="text-[11px] text-white/70">Comunidad en vivo</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto pb-8">
+          <QuickChatAccessForm />
+        </div>
+      </div>
+    );
+  }
 
   await cleanupExpiredChatFiles().catch(() => undefined);
 
@@ -73,8 +100,6 @@ export default async function ComunidadCategoriaPage({
       canModerate = Boolean(assignment);
     }
   }
-
-  const Scene = COMMUNITY_SCENES[community.value];
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden">

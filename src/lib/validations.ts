@@ -109,15 +109,20 @@ export const workerProfileUpdateSchema = workerRegistrationSchema
     showWhatsapp: z.boolean().default(false),
     showEmail: z.boolean().default(false),
     showSalaryExpectation: z.boolean().default(false),
+    chatAlias: z.string().max(40, "Máximo 40 caracteres").optional().or(z.literal("")),
   });
 
 export type WorkerProfileUpdateInput = z.infer<typeof workerProfileUpdateSchema>;
 export type WorkerProfileUpdateFormValues = z.input<typeof workerProfileUpdateSchema>;
 
-export const companyProfileUpdateSchema = companyRegistrationSchema.omit({
-  email: true,
-  password: true,
-});
+export const companyProfileUpdateSchema = companyRegistrationSchema
+  .omit({
+    email: true,
+    password: true,
+  })
+  .extend({
+    chatAlias: z.string().max(40, "Máximo 40 caracteres").optional().or(z.literal("")),
+  });
 
 export type CompanyProfileUpdateInput = z.infer<typeof companyProfileUpdateSchema>;
 

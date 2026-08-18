@@ -29,6 +29,10 @@ export async function PATCH(request: Request) {
   const data = parsed.data;
 
   await prisma.$transaction([
+    prisma.user.update({
+      where: { id: session.user.id },
+      data: { chatAlias: data.chatAlias || null },
+    }),
     prisma.workerProfile.update({
       where: { id: worker.id },
       data: {

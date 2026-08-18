@@ -99,6 +99,19 @@ export function EditCompanyProfileForm({
         <Textarea id="description" {...register("description")} />
       </FieldWrapper>
 
+      <Card className="flex flex-col gap-3 p-4">
+        <h2 className="text-sm font-bold text-navy-900">Alias para el chat de comunidad</h2>
+        <p className="text-xs text-navy-800/50">
+          Si lo completás, se muestra en las salas de comunidad en vez del nombre comercial.
+          La cuenta sigue siendo la misma por dentro: si alguien insulta o abusa, un moderador
+          igual puede identificarla y silenciarla. Dejalo vacío para seguir mostrando el nombre
+          comercial.
+        </p>
+        <FieldWrapper label="Alias" htmlFor="chatAlias" hint="Máximo 40 caracteres" error={errors.chatAlias?.message}>
+          <TextInput id="chatAlias" placeholder="Ej. Empresa de limpieza en Heredia" {...register("chatAlias")} />
+        </FieldWrapper>
+      </Card>
+
       {submitError && (
         <p className="rounded-xl bg-cr-red-100 px-3.5 py-2.5 text-sm font-medium text-cr-red-700">
           {submitError}

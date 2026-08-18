@@ -23,9 +23,11 @@ export async function isUserBlockedFromRoom(chatRoomId: string, userId: string) 
 export function displayNameFor(user: {
   email: string;
   role: string;
+  chatAlias?: string | null;
   workerProfile?: { fullName: string } | null;
   companyProfile?: { commercialName: string } | null;
 }) {
+  if (user.chatAlias?.trim()) return user.chatAlias.trim();
   if (user.workerProfile) return user.workerProfile.fullName;
   if (user.companyProfile) return user.companyProfile.commercialName;
   if (user.role === "MODERATOR") return "Moderador";
