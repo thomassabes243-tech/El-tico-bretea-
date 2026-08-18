@@ -24,6 +24,8 @@ export function AvatarImage({
       src={src}
       alt={alt}
       className={className}
+      loading="lazy"
+      decoding="async"
       onError={() => setErrored(true)}
     />
   );
