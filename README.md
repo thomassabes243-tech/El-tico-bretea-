@@ -46,7 +46,13 @@ nombre real, y por dentro sigue siendo una cuenta identificable para poder
 silenciar a quien insulte o abuse (el correo nunca se verifica ni se
 muestra públicamente, y no se puede "tomar" un correo que ya tenga cuenta
 real). Cualquier cuenta (trabajador o empresa) puede definir ese mismo
-alias desde "Editar perfil".
+alias desde "Editar perfil". Panel admin en /admin/importar-oferta para
+convertir publicaciones de Facebook/WhatsApp (texto pegado y/o una imagen)
+en una vacante real: la IA (Claude, vía Anthropic API) extrae puesto,
+categoría, ubicación, descripción y WhatsApp, el admin revisa/corrige, y al
+publicar se guarda como una vacante normal (mismo modelo `JobPosting`, mismo
+listado) atribuida a una cuenta "empresa" reservada para importados —
+ver sección de despliegue para `ANTHROPIC_API_KEY`.
 Pendiente: pagos reales (falta definir procesador compatible con Costa
 Rica) y categorías editables desde el panel.
 
@@ -133,7 +139,14 @@ todos con capa gratuita. `.env.example` documenta cada variable.
    `STORAGE_S3_SECRET_ACCESS_KEY` a las variables de entorno de Vercel, y
    volvé a desplegar.
 
-4. **Cuenta admin propia** (opcional, recomendado): el build también
+4. **Importar oferta con IA — [console.anthropic.com](https://console.anthropic.com)**
+   (opcional; sin esto, `/admin/importar-oferta` sigue existiendo pero el
+   botón "Procesar con IA" muestra un aviso claro en vez de fallar):
+   generá una API key en Settings → API Keys y agregá `ANTHROPIC_API_KEY`
+   en Vercel. Nunca se expone al navegador, solo la usan rutas de
+   servidor.
+
+5. **Cuenta admin propia** (opcional, recomendado): el build también
    corre el seed automáticamente (comunidades de chat, configuración de
    precios/límites, cuenta admin + moderador). Sin más configuración,
    esa cuenta admin queda con el correo/contraseña de desarrollo que

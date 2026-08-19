@@ -13,6 +13,7 @@ const TABS = [
   { href: "/admin/usuarios", label: "Usuarios" },
   { href: "/admin/empresas", label: "Empresas" },
   { href: "/admin/vacantes", label: "Vacantes" },
+  { href: "/admin/importar-oferta", label: "Importar oferta" },
   { href: "/admin/moderadores", label: "Moderadores" },
   { href: "/admin/reportes", label: "Reportes" },
   { href: "/admin/publicidad", label: "Publicidad" },
