@@ -46,6 +46,10 @@ model User {
   roomBlocksReceived ChatRoomBlock[] @relation("RoomBlocksReceived")
   roomBlocksIssued   ChatRoomBlock[] @relation("RoomBlocksIssued")
 
+  scamAlertsAuthored     ScamAlert[]              @relation("ScamAlertsAuthored")
+  scamAlertConfirmations ScamAlertConfirmation[]   @relation("ScamAlertConfirmationsGiven")
+  scamAlertFlagsFiled    ScamAlertFlag[]           @relation("ScamAlertFlagsFiled")
+
   @@map("users")
 }
 
@@ -148,6 +152,13 @@ model WorkerProfile {
   criminalRecordKey        String?
   criminalRecordUploadedAt DateTime?
 
+  // Alias público opcional (Sección 21): si está definido, se muestra en
+  // vez del nombre real únicamente en el canal de alertas de estafas —
+  // en el resto de la app (chat de comunidad, perfil, CV) se sigue
+  // mostrando el nombre real como siempre. No reemplaza el login, que
+  // sigue siendo correo + contraseña.
+  alias String?
+
   isPremium  Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -193,6 +204,9 @@ model CompanyProfile {
 
   isVerified   Boolean   @default(false)
   verifiedAt   DateTime?
+
+  // Alias público opcional (Sección 21) — ver nota en WorkerProfile.
+  alias String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -404,6 +418,82 @@ model Report {
   resolved   Boolean          @default(false)
 
   @@map("reports")
+}
+
+// ---------------------------------------------------------------------------
+// Section 21: Canal público de alertas de estafas laborales — separado del
+// chat de comunidad, visible sin necesidad de asignación de moderador por
+// sala (cualquier Moderator/Admin puede revisar). El título/motivo NO pasa
+// por ningún filtro de lenguaje: frases como "⚠️ Estafa" o "⚠️ Peligro"
+// deben poder publicarse tal cual, es el propósito del canal.
+// ---------------------------------------------------------------------------
+
+enum ScamAlertModality {
+  PRESENCIAL
+  REMOTO
+  AMBOS
+}
+
+enum ScamAlertStatus {
+  SIN_VERIFICAR
+  VERIFICADO
+  DESCARTADO
+}
+
+model ScamAlert {
+  id       String @id @default(cuid())
+  authorId String
+  author   User   @relation("ScamAlertsAuthored", fields: [authorId], references: [id], onDelete: Cascade)
+
+  title            String
+  offerDescription String
+  suspicionReason  String
+  location         String?
+  modality         ScamAlertModality?
+
+  status     ScamAlertStatus @default(SIN_VERIFICAR)
+  reviewedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  confirmations ScamAlertConfirmation[]
+  flags         ScamAlertFlag[]
+
+  @@index([status, createdAt])
+  @@map("scam_alerts")
+}
+
+// "Confirmo" de otros usuarios (a mí también me pasó / lo vi) — sube el
+// contador público de credibilidad pero no cambia `status` por sí solo:
+// el estado oficial (VERIFICADO/DESCARTADO) lo define un moderador.
+model ScamAlertConfirmation {
+  id      String    @id @default(cuid())
+  alertId String
+  alert   ScamAlert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User      @relation("ScamAlertConfirmationsGiven", fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([alertId, userId])
+  @@map("scam_alert_confirmations")
+}
+
+// Reporte de un alert puntual como falso/malicioso (ej. publicado contra
+// un competidor) — separado del modelo Report genérico (tipado a User)
+// para no forzar una relación polimórfica ahí.
+model ScamAlertFlag {
+  id         String    @id @default(cuid())
+  alertId    String
+  alert      ScamAlert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+  reporterId String
+  reporter   User      @relation("ScamAlertFlagsFiled", fields: [reporterId], references: [id], onDelete: Cascade)
+  reason     String
+
+  createdAt DateTime @default(now())
+
+  @@map("scam_alert_flags")
 }
 
 // ---------------------------------------------------------------------------

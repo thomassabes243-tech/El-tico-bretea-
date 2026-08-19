@@ -109,15 +109,19 @@ export const workerProfileUpdateSchema = workerRegistrationSchema
     showWhatsapp: z.boolean().default(false),
     showEmail: z.boolean().default(false),
     showSalaryExpectation: z.boolean().default(false),
+    // Alias público opcional para el canal de alertas de estafas (Sección 21).
+    alias: z.string().trim().max(60).optional().or(z.literal("")),
   });
 
 export type WorkerProfileUpdateInput = z.infer<typeof workerProfileUpdateSchema>;
 export type WorkerProfileUpdateFormValues = z.input<typeof workerProfileUpdateSchema>;
 
-export const companyProfileUpdateSchema = companyRegistrationSchema.omit({
-  email: true,
-  password: true,
-});
+export const companyProfileUpdateSchema = companyRegistrationSchema
+  .omit({ email: true, password: true })
+  .extend({
+    // Alias público opcional para el canal de alertas de estafas (Sección 21).
+    alias: z.string().trim().max(60).optional().or(z.literal("")),
+  });
 
 export type CompanyProfileUpdateInput = z.infer<typeof companyProfileUpdateSchema>;
 
@@ -167,3 +171,26 @@ export const reportSchema = z.object({
 });
 
 export type ReportInput = z.infer<typeof reportSchema>;
+
+// No se valida el "tono" del título ni de los campos de texto acá a
+// propósito: frases de alerta como "⚠️ Estafa" tienen que poder publicarse
+// tal cual, es el propósito del canal. Solo se valida longitud mínima/máxima.
+export const scamAlertSchema = z.object({
+  title: z.string().trim().min(3, "El título es requerido").max(120),
+  offerDescription: z.string().trim().min(10, "Describí la oferta o empresa").max(1000),
+  suspicionReason: z.string().trim().min(10, "Contanos por qué sospechás").max(1000),
+  location: z.string().trim().max(120).optional().or(z.literal("")),
+  modality: z.preprocess(
+    (val) => (val === "" || val === undefined || val === null ? undefined : val),
+    z.enum(["PRESENCIAL", "REMOTO", "AMBOS"]).optional()
+  ),
+});
+
+export type ScamAlertInput = z.infer<typeof scamAlertSchema>;
+export type ScamAlertFormValues = z.input<typeof scamAlertSchema>;
+
+export const scamAlertFlagSchema = z.object({
+  reason: z.string().trim().min(5, "Contanos brevemente el motivo").max(500),
+});
+
+export type ScamAlertFlagInput = z.infer<typeof scamAlertFlagSchema>;

@@ -63,6 +63,14 @@ export function EditCompanyProfileForm({
       <FieldWrapper label="Nombre comercial" htmlFor="commercialName" required error={errors.commercialName?.message}>
         <TextInput id="commercialName" {...register("commercialName")} />
       </FieldWrapper>
+      <FieldWrapper
+        label="Alias"
+        htmlFor="alias"
+        hint="Opcional. Se muestra en vez del nombre comercial solo en el canal de alertas de estafas."
+        error={errors.alias?.message}
+      >
+        <TextInput id="alias" {...register("alias")} />
+      </FieldWrapper>
       <FieldWrapper label="Identificación / RFC" htmlFor="legalId" required error={errors.legalId?.message}>
         <TextInput id="legalId" {...register("legalId")} />
       </FieldWrapper>

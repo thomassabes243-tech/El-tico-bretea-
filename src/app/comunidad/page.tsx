@@ -12,7 +12,7 @@ import { prisma } from "@/lib/prisma";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { CommunityInviteBanner } from "@/components/community/CommunityInviteBanner";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, AlertTriangle } from "lucide-react";
 import type { CommunityCategory } from "@prisma/client";
 
 const COMMUNITY_SCENES: Record<string, ComponentType<{ className?: string }>> = {
@@ -41,6 +41,19 @@ export default async function ComunidadPage() {
         </p>
 
         <CommunityInviteBanner />
+
+        <Link href="/alertas-estafa" className="mt-3 block">
+          <Card className="flex items-center gap-3 border-mx-red-600/20 bg-mx-red-100/40 p-3.5 transition-all hover:-translate-y-0.5 hover:shadow-md">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-mx-red-600/15 text-mx-red-600">
+              <AlertTriangle className="h-4.5 w-4.5" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-navy-900">Alertas de estafas</p>
+              <p className="text-xs text-navy-800/50">Reportá o consultá ofertas sospechosas</p>
+            </div>
+            <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
+          </Card>
+        </Link>
 
         <div className="mt-5 flex flex-col gap-3">
           {COMMUNITY_CATEGORIES.map((cat) => {

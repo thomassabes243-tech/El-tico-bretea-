@@ -36,3 +36,16 @@ export const COMMUNITY_CATEGORIES = [
 ] as const;
 
 export const CONTACT_EMAIL = "contacto@mexicosinhambre.com";
+
+// Section 21: canal de alertas de estafas.
+export const SCAM_ALERT_MODALITIES = [
+  { value: "PRESENCIAL", label: "Presencial" },
+  { value: "REMOTO", label: "Remoto" },
+  { value: "AMBOS", label: "Presencial y remoto" },
+] as const;
+
+export const SCAM_ALERT_STATUS_LABELS: Record<string, string> = {
+  SIN_VERIFICAR: "Sin verificar",
+  VERIFICADO: "Verificado por moderación",
+  DESCARTADO: "Descartado",
+};

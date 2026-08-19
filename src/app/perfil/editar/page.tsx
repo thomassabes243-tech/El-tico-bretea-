@@ -29,6 +29,7 @@ export default async function EditarPerfilPage() {
             <EditWorkerProfileForm
               defaultValues={{
                 fullName: worker.fullName,
+                alias: worker.alias ?? "",
                 formalPhotoUrl: worker.formalPhotoUrl ?? "",
                 age: worker.age,
                 residence: worker.residence,
@@ -89,6 +90,7 @@ export default async function EditarPerfilPage() {
               wasVerified={company.isVerified}
               defaultValues={{
                 commercialName: company.commercialName,
+                alias: company.alias ?? "",
                 legalId: company.legalId,
                 responsibleName: company.responsibleName,
                 contactPhone: company.contactPhone ?? "",

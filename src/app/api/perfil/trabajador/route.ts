@@ -59,6 +59,7 @@ export async function PATCH(request: Request) {
         showWhatsapp: data.showWhatsapp,
         showEmail: data.showEmail,
         showSalaryExpectation: data.showSalaryExpectation,
+        alias: data.alias || null,
       },
     }),
     prisma.workerReference.deleteMany({ where: { workerId: worker.id } }),

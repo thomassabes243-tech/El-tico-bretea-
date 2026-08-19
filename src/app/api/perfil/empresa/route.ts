@@ -41,6 +41,7 @@ export async function PATCH(request: Request) {
       activity: data.activity,
       logoUrl: data.logoUrl || null,
       description: data.description || null,
+      alias: data.alias || null,
       // Cambiar la identificación legal invalida una verificación previa: estaba
       // atada a esos datos específicos y debe revisarse de nuevo.
       ...(legalIdChanged && company.isVerified ? { isVerified: false, verifiedAt: null } : {}),

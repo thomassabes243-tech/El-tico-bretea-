@@ -68,6 +68,14 @@ export function EditWorkerProfileForm({
           <TextInput id="fullName" {...register("fullName")} />
         </FieldWrapper>
         <FieldWrapper
+          label="Alias"
+          htmlFor="alias"
+          hint="Opcional. Se muestra en vez de tu nombre solo en el canal de alertas de estafas."
+          error={errors.alias?.message}
+        >
+          <TextInput id="alias" placeholder="Ej. Trabajador_GDL" {...register("alias")} />
+        </FieldWrapper>
+        <FieldWrapper
           label="Fotografía formal (URL)"
           htmlFor="formalPhotoUrl"
           hint="Podés pegar el enlace de una foto tipo carné."
