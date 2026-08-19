@@ -1,9 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
-import { X, UserPlus } from "lucide-react";
-import { assignModerator, removeModeratorAssignment } from "./actions";
+import { X } from "lucide-react";
+import { removeModeratorAssignment } from "./actions";
+import { AssignModeratorForm } from "@/components/admin/AssignModeratorForm";
 
 export default async function AdminModeradoresPage() {
   const [moderators, rooms] = await Promise.all([
@@ -21,41 +21,7 @@ export default async function AdminModeradoresPage() {
         Un moderador solo puede bloquear/desbloquear usuarios en las salas que tenga asignadas.
       </p>
 
-      <Card className="mt-5 p-4">
-        <h2 className="flex items-center gap-2 text-sm font-bold text-navy-900">
-          <UserPlus className="h-4 w-4" /> Asignar moderador a una sala
-        </h2>
-        <form action={assignModerator} className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
-          <div className="flex-1">
-            <label className="text-xs font-semibold text-navy-800/60">Correo</label>
-            <input
-              name="email"
-              type="email"
-              required
-              placeholder="moderador@correo.com"
-              className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
-            />
-          </div>
-          <div className="flex-1">
-            <label className="text-xs font-semibold text-navy-800/60">Contraseña (solo si es cuenta nueva)</label>
-            <input
-              name="password"
-              type="text"
-              placeholder="mínimo 8 caracteres"
-              className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
-            />
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-navy-800/60">Sala</label>
-            <select name="chatRoomId" required className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm">
-              {rooms.map((r) => (
-                <option key={r.id} value={r.id}>{r.name}</option>
-              ))}
-            </select>
-          </div>
-          <Button type="submit" size="sm">Asignar</Button>
-        </form>
-      </Card>
+      <AssignModeratorForm rooms={rooms} />
 
       <div className="mt-5 flex flex-col gap-2.5">
         {moderators.length === 0 && (
