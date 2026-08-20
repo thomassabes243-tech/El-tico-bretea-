@@ -60,10 +60,10 @@ export function EditCompanyProfileForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-      <FieldWrapper label="Nombre comercial" htmlFor="commercialName" required error={errors.commercialName?.message}>
+      <FieldWrapper label="Nombre comercial" htmlFor="commercialName" error={errors.commercialName?.message}>
         <TextInput id="commercialName" {...register("commercialName")} />
       </FieldWrapper>
-      <FieldWrapper label="Identificación / cédula jurídica" htmlFor="legalId" required error={errors.legalId?.message}>
+      <FieldWrapper label="Identificación / cédula jurídica" htmlFor="legalId" error={errors.legalId?.message}>
         <TextInput id="legalId" {...register("legalId")} />
       </FieldWrapper>
       {legalIdChanged && (
@@ -75,21 +75,21 @@ export function EditCompanyProfileForm({
           </p>
         </Card>
       )}
-      <FieldWrapper label="Nombre del responsable" htmlFor="responsibleName" required error={errors.responsibleName?.message}>
+      <FieldWrapper label="Nombre del responsable" htmlFor="responsibleName" error={errors.responsibleName?.message}>
         <TextInput id="responsibleName" {...register("responsibleName")} />
       </FieldWrapper>
       <div className="grid grid-cols-2 gap-3">
         <FieldWrapper label="Teléfono de contacto" htmlFor="contactPhone" error={errors.contactPhone?.message}>
           <TextInput id="contactPhone" {...register("contactPhone")} />
         </FieldWrapper>
-        <FieldWrapper label="Correo de contacto" htmlFor="contactEmail" required error={errors.contactEmail?.message}>
+        <FieldWrapper label="Correo de contacto" htmlFor="contactEmail" error={errors.contactEmail?.message}>
           <TextInput id="contactEmail" type="email" {...register("contactEmail")} />
         </FieldWrapper>
       </div>
-      <FieldWrapper label="Ubicación" htmlFor="location" required error={errors.location?.message}>
+      <FieldWrapper label="Ubicación" htmlFor="location" error={errors.location?.message}>
         <TextInput id="location" {...register("location")} />
       </FieldWrapper>
-      <FieldWrapper label="Actividad comercial" htmlFor="activity" required error={errors.activity?.message}>
+      <FieldWrapper label="Actividad comercial" htmlFor="activity" error={errors.activity?.message}>
         <TextInput id="activity" {...register("activity")} />
       </FieldWrapper>
       <FieldWrapper label="Logo (URL)" htmlFor="logoUrl" error={errors.logoUrl?.message}>

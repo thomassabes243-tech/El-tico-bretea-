@@ -125,7 +125,7 @@ export function WorkerRegistrationForm() {
 
       {step === 1 && (
         <div className="flex flex-col gap-4">
-          <FieldWrapper label="Nombre completo" htmlFor="fullName" required error={errors.fullName?.message}>
+          <FieldWrapper label="Nombre completo" htmlFor="fullName" error={errors.fullName?.message}>
             <TextInput id="fullName" placeholder="Ej. Juan Pérez Rojas" {...register("fullName")} />
           </FieldWrapper>
           <FieldWrapper
@@ -137,10 +137,10 @@ export function WorkerRegistrationForm() {
             <TextInput id="formalPhotoUrl" placeholder="https://..." {...register("formalPhotoUrl")} />
           </FieldWrapper>
           <div className="grid grid-cols-2 gap-3">
-            <FieldWrapper label="Edad" htmlFor="age" required error={errors.age?.message}>
+            <FieldWrapper label="Edad" htmlFor="age" error={errors.age?.message}>
               <TextInput id="age" type="number" min={15} max={100} {...register("age")} />
             </FieldWrapper>
-            <FieldWrapper label="Residencia" htmlFor="residence" required error={errors.residence?.message}>
+            <FieldWrapper label="Residencia" htmlFor="residence" error={errors.residence?.message}>
               <TextInput id="residence" placeholder="Ej. San José" {...register("residence")} />
             </FieldWrapper>
           </div>
@@ -157,10 +157,10 @@ export function WorkerRegistrationForm() {
 
       {step === 2 && (
         <div className="flex flex-col gap-4">
-          <FieldWrapper label="Profesión" htmlFor="profession" required error={errors.profession?.message}>
+          <FieldWrapper label="Profesión" htmlFor="profession" error={errors.profession?.message}>
             <TextInput id="profession" placeholder="Ej. Electricista" {...register("profession")} />
           </FieldWrapper>
-          <FieldWrapper label="Categoría laboral" htmlFor="laborCategory" required error={errors.laborCategory?.message}>
+          <FieldWrapper label="Categoría laboral" htmlFor="laborCategory" error={errors.laborCategory?.message}>
             <Select id="laborCategory" {...register("laborCategory")}>
               <option value="">Seleccioná una categoría</option>
               {LABOR_CATEGORIES.map((c) => (
@@ -168,7 +168,7 @@ export function WorkerRegistrationForm() {
               ))}
             </Select>
           </FieldWrapper>
-          <FieldWrapper label="Años de experiencia" htmlFor="yearsExperience" required error={errors.yearsExperience?.message}>
+          <FieldWrapper label="Años de experiencia" htmlFor="yearsExperience" error={errors.yearsExperience?.message}>
             <TextInput id="yearsExperience" type="number" min={0} max={60} {...register("yearsExperience")} />
           </FieldWrapper>
           <FieldWrapper label="Experiencia laboral" htmlFor="workExperience" error={errors.workExperience?.message}>
@@ -208,7 +208,7 @@ export function WorkerRegistrationForm() {
 
       {step === 4 && (
         <div className="flex flex-col gap-4">
-          <FieldWrapper label="Disponibilidad" htmlFor="availability" required error={errors.availability?.message}>
+          <FieldWrapper label="Disponibilidad" htmlFor="availability" error={errors.availability?.message}>
             <Select id="availability" {...register("availability")}>
               <option value="">Seleccioná una opción</option>
               {AVAILABILITY_OPTIONS.map((a) => (
@@ -216,7 +216,7 @@ export function WorkerRegistrationForm() {
               ))}
             </Select>
           </FieldWrapper>
-          <FieldWrapper label="Tipo de trabajo que busca" htmlFor="jobTypeSought" required error={errors.jobTypeSought?.message}>
+          <FieldWrapper label="Tipo de trabajo que busca" htmlFor="jobTypeSought" error={errors.jobTypeSought?.message}>
             <Select id="jobTypeSought" {...register("jobTypeSought")}>
               <option value="">Seleccioná una opción</option>
               {JOB_TYPES.map((j) => (

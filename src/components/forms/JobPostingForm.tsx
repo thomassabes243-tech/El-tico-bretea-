@@ -56,13 +56,13 @@ export function JobPostingForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <div className="flex flex-col gap-4">
         <p className="text-xs font-bold uppercase tracking-wide text-navy-800/40">El brete</p>
-        <FieldWrapper label="Puesto" htmlFor="title" required error={errors.title?.message}>
+        <FieldWrapper label="Puesto" htmlFor="title" error={errors.title?.message}>
           <TextInput id="title" placeholder="Ej. Ayudante de construcción" {...register("title")} />
         </FieldWrapper>
-        <FieldWrapper label="Descripción" htmlFor="description" required error={errors.description?.message}>
+        <FieldWrapper label="Descripción" htmlFor="description" error={errors.description?.message}>
           <Textarea id="description" placeholder="Describí las funciones del puesto" {...register("description")} />
         </FieldWrapper>
-        <FieldWrapper label="Categoría" htmlFor="laborCategory" required error={errors.laborCategory?.message}>
+        <FieldWrapper label="Categoría" htmlFor="laborCategory" error={errors.laborCategory?.message}>
           <Select id="laborCategory" {...register("laborCategory")}>
             <option value="">Seleccioná una categoría</option>
             {LABOR_CATEGORIES.map((c) => (
@@ -75,10 +75,10 @@ export function JobPostingForm() {
       <div className="flex flex-col gap-4 border-t border-sand-200 pt-5">
         <p className="text-xs font-bold uppercase tracking-wide text-navy-800/40">Ubicación y contrato</p>
         <div className="grid grid-cols-2 gap-3">
-          <FieldWrapper label="Ubicación" htmlFor="location" required error={errors.location?.message}>
+          <FieldWrapper label="Ubicación" htmlFor="location" error={errors.location?.message}>
             <TextInput id="location" placeholder="Ej. Cartago" {...register("location")} />
           </FieldWrapper>
-          <FieldWrapper label="Tipo de contrato" htmlFor="contractType" required error={errors.contractType?.message}>
+          <FieldWrapper label="Tipo de contrato" htmlFor="contractType" error={errors.contractType?.message}>
             <Select id="contractType" {...register("contractType")}>
               <option value="">Seleccioná</option>
               {JOB_TYPES.map((j) => (

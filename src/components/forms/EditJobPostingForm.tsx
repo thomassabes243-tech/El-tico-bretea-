@@ -60,13 +60,13 @@ export function EditJobPostingForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-      <FieldWrapper label="Puesto" htmlFor="title" required error={errors.title?.message}>
+      <FieldWrapper label="Puesto" htmlFor="title" error={errors.title?.message}>
         <TextInput id="title" placeholder="Ej. Ayudante de construcción" {...register("title")} />
       </FieldWrapper>
-      <FieldWrapper label="Descripción" htmlFor="description" required error={errors.description?.message}>
+      <FieldWrapper label="Descripción" htmlFor="description" error={errors.description?.message}>
         <Textarea id="description" placeholder="Describí las funciones del puesto" {...register("description")} />
       </FieldWrapper>
-      <FieldWrapper label="Categoría" htmlFor="laborCategory" required error={errors.laborCategory?.message}>
+      <FieldWrapper label="Categoría" htmlFor="laborCategory" error={errors.laborCategory?.message}>
         <Select id="laborCategory" {...register("laborCategory")}>
           {LABOR_CATEGORIES.map((c) => (
             <option key={c.value} value={c.value}>{c.label}</option>
@@ -74,10 +74,10 @@ export function EditJobPostingForm({
         </Select>
       </FieldWrapper>
       <div className="grid grid-cols-2 gap-3">
-        <FieldWrapper label="Ubicación" htmlFor="location" required error={errors.location?.message}>
+        <FieldWrapper label="Ubicación" htmlFor="location" error={errors.location?.message}>
           <TextInput id="location" placeholder="Ej. Cartago" {...register("location")} />
         </FieldWrapper>
-        <FieldWrapper label="Tipo de contrato" htmlFor="contractType" required error={errors.contractType?.message}>
+        <FieldWrapper label="Tipo de contrato" htmlFor="contractType" error={errors.contractType?.message}>
           <Select id="contractType" {...register("contractType")}>
             {JOB_TYPES.map((j) => (
               <option key={j.value} value={j.value}>{j.label}</option>

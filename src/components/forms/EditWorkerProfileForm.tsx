@@ -64,7 +64,7 @@ export function EditWorkerProfileForm({
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <Card className="flex flex-col gap-4 p-4">
         <h2 className="text-sm font-bold text-navy-900">Identidad</h2>
-        <FieldWrapper label="Nombre completo" htmlFor="fullName" required error={errors.fullName?.message}>
+        <FieldWrapper label="Nombre completo" htmlFor="fullName" error={errors.fullName?.message}>
           <TextInput id="fullName" {...register("fullName")} />
         </FieldWrapper>
         <FieldWrapper
@@ -76,10 +76,10 @@ export function EditWorkerProfileForm({
           <TextInput id="formalPhotoUrl" placeholder="https://..." {...register("formalPhotoUrl")} />
         </FieldWrapper>
         <div className="grid grid-cols-2 gap-3">
-          <FieldWrapper label="Edad" htmlFor="age" required error={errors.age?.message}>
+          <FieldWrapper label="Edad" htmlFor="age" error={errors.age?.message}>
             <TextInput id="age" type="number" min={15} max={100} {...register("age")} />
           </FieldWrapper>
-          <FieldWrapper label="Residencia" htmlFor="residence" required error={errors.residence?.message}>
+          <FieldWrapper label="Residencia" htmlFor="residence" error={errors.residence?.message}>
             <TextInput id="residence" {...register("residence")} />
           </FieldWrapper>
         </div>
@@ -107,17 +107,17 @@ export function EditWorkerProfileForm({
 
       <Card className="flex flex-col gap-4 p-4">
         <h2 className="text-sm font-bold text-navy-900">Profesión</h2>
-        <FieldWrapper label="Profesión" htmlFor="profession" required error={errors.profession?.message}>
+        <FieldWrapper label="Profesión" htmlFor="profession" error={errors.profession?.message}>
           <TextInput id="profession" {...register("profession")} />
         </FieldWrapper>
-        <FieldWrapper label="Categoría laboral" htmlFor="laborCategory" required error={errors.laborCategory?.message}>
+        <FieldWrapper label="Categoría laboral" htmlFor="laborCategory" error={errors.laborCategory?.message}>
           <Select id="laborCategory" {...register("laborCategory")}>
             {LABOR_CATEGORIES.map((c) => (
               <option key={c.value} value={c.value}>{c.label}</option>
             ))}
           </Select>
         </FieldWrapper>
-        <FieldWrapper label="Años de experiencia" htmlFor="yearsExperience" required error={errors.yearsExperience?.message}>
+        <FieldWrapper label="Años de experiencia" htmlFor="yearsExperience" error={errors.yearsExperience?.message}>
           <TextInput id="yearsExperience" type="number" min={0} max={60} {...register("yearsExperience")} />
         </FieldWrapper>
         <FieldWrapper label="Experiencia laboral" htmlFor="workExperience" error={errors.workExperience?.message}>
@@ -155,14 +155,14 @@ export function EditWorkerProfileForm({
 
       <Card className="flex flex-col gap-4 p-4">
         <h2 className="text-sm font-bold text-navy-900">Disponibilidad</h2>
-        <FieldWrapper label="Disponibilidad" htmlFor="availability" required error={errors.availability?.message}>
+        <FieldWrapper label="Disponibilidad" htmlFor="availability" error={errors.availability?.message}>
           <Select id="availability" {...register("availability")}>
             {AVAILABILITY_OPTIONS.map((a) => (
               <option key={a.value} value={a.value}>{a.label}</option>
             ))}
           </Select>
         </FieldWrapper>
-        <FieldWrapper label="Tipo de trabajo que busca" htmlFor="jobTypeSought" required error={errors.jobTypeSought?.message}>
+        <FieldWrapper label="Tipo de trabajo que busca" htmlFor="jobTypeSought" error={errors.jobTypeSought?.message}>
           <Select id="jobTypeSought" {...register("jobTypeSought")}>
             {JOB_TYPES.map((j) => (
               <option key={j.value} value={j.value}>{j.label}</option>

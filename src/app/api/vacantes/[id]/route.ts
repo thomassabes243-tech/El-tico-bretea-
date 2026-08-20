@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { jobPostingSchema } from "@/lib/validations";
 import { JOB_CLOSURE_REASONS } from "@/lib/job-closure-reason";
+import { textOrDefault, enumOrDefault } from "@/lib/form-defaults";
 
 const VALID_CLOSURE_REASONS = JOB_CLOSURE_REASONS.map((r) => r.value);
 
@@ -60,11 +61,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   await prisma.jobPosting.update({
     where: { id },
     data: {
-      title: data.title,
-      description: data.description,
-      laborCategory: data.laborCategory,
-      location: data.location,
-      contractType: data.contractType,
+      title: textOrDefault(data.title),
+      description: textOrDefault(data.description),
+      laborCategory: enumOrDefault(data.laborCategory),
+      location: textOrDefault(data.location),
+      contractType: enumOrDefault(data.contractType),
       quantity: data.quantity ?? null,
       salary: data.salary || null,
       schedule: data.schedule || null,

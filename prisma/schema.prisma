@@ -70,6 +70,9 @@ enum LaborCategory {
   VENTAS_COMERCIO
   TECNOLOGIA
   PROFESIONALES
+  // Valor de respaldo cuando la persona deja el campo sin llenar -- todos
+  // los campos de los formularios son opcionales salvo correo/contraseña.
+  SIN_ESPECIFICAR
 }
 
 enum JobType {
@@ -78,6 +81,7 @@ enum JobType {
   TEMPORAL
   POR_HORAS
   FREELANCE
+  SIN_ESPECIFICAR
 }
 
 enum Availability {
@@ -86,6 +90,7 @@ enum Availability {
   DOS_SEMANAS
   UN_MES
   A_CONVENIR
+  SIN_ESPECIFICAR
 }
 
 // ---------------------------------------------------------------------------
