@@ -1,14 +1,24 @@
 import { prisma } from "@/lib/prisma";
 import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { X } from "lucide-react";
 import { removeModeratorAssignment } from "./actions";
 import { AssignModeratorForm } from "@/components/admin/AssignModeratorForm";
 
+const ROLE_LABEL: Record<string, string> = {
+  WORKER: "Trabajador",
+  COMPANY: "Empresa",
+  MODERATOR: "Solo moderador",
+};
+
 export default async function AdminModeradoresPage() {
   const [moderators, rooms] = await Promise.all([
     prisma.moderator.findMany({
-      include: { user: true, assignments: { include: { chatRoom: true } } },
+      include: {
+        user: { include: { workerProfile: true, companyProfile: true } },
+        assignments: { include: { chatRoom: true } },
+      },
       orderBy: { user: { email: "asc" } },
     }),
     prisma.chatRoom.findMany({ orderBy: { name: "asc" } }),
@@ -18,7 +28,9 @@ export default async function AdminModeradoresPage() {
     <div>
       <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Moderadores</h1>
       <p className="mt-1 text-sm text-navy-800/60">
-        Un moderador solo puede bloquear/desbloquear usuarios en las salas que tenga asignadas.
+        Un moderador puede borrar mensajes/fotos y bloquear/desbloquear usuarios solo en las
+        salas que tenga asignadas. Como admin, vos podés hacer eso en cualquier sala sin
+        necesitar asignación.
       </p>
 
       <AssignModeratorForm rooms={rooms} />
@@ -27,9 +39,15 @@ export default async function AdminModeradoresPage() {
         {moderators.length === 0 && (
           <Card className="p-6 text-center text-sm text-navy-800/60">Todavía no hay moderadores.</Card>
         )}
-        {moderators.map((m) => (
+        {moderators.map((m) => {
+          const displayName = m.user.workerProfile?.fullName ?? m.user.companyProfile?.commercialName ?? null;
+          return (
           <Card key={m.id} className="p-4">
-            <p className="text-sm font-semibold text-navy-900">{m.user.email}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-semibold text-navy-900">{displayName ?? m.user.email}</p>
+              <Badge tone="neutral">{ROLE_LABEL[m.user.role] ?? m.user.role}</Badge>
+            </div>
+            {displayName && <p className="text-xs text-navy-800/50">{m.user.email}</p>}
             <div className="mt-2 flex flex-wrap gap-2">
               {m.assignments.length === 0 && (
                 <span className="text-xs text-navy-800/45">Sin salas asignadas</span>
@@ -55,7 +73,8 @@ export default async function AdminModeradoresPage() {
               ))}
             </div>
           </Card>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

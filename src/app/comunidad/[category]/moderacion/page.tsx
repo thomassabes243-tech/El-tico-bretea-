@@ -16,7 +16,6 @@ export default async function ModeracionSalaPage({
 }) {
   const session = await auth();
   if (!session?.user) redirect("/iniciar-sesion");
-  if (session.user.role !== "MODERATOR") redirect("/perfil");
 
   const { category } = await params;
   const community = COMMUNITY_CATEGORIES.find((c) => c.value.toLowerCase() === category);
@@ -25,13 +24,16 @@ export default async function ModeracionSalaPage({
   const room = await getChatRoomBySlug(category);
   if (!room) notFound();
 
-  const moderator = await prisma.moderator.findUnique({ where: { userId: session.user.id } });
-  const assignment = moderator
-    ? await prisma.moderatorAssignment.findUnique({
-        where: { moderatorId_chatRoomId: { moderatorId: moderator.id, chatRoomId: room.id } },
-      })
-    : null;
-  if (!assignment) redirect("/perfil");
+  // El admin modera cualquier sala sin necesitar una asignación explícita.
+  if (session.user.role !== "ADMIN") {
+    const moderator = await prisma.moderator.findUnique({ where: { userId: session.user.id } });
+    const assignment = moderator
+      ? await prisma.moderatorAssignment.findUnique({
+          where: { moderatorId_chatRoomId: { moderatorId: moderator.id, chatRoomId: room.id } },
+        })
+      : null;
+    if (!assignment) redirect("/perfil");
+  }
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
