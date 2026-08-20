@@ -188,6 +188,36 @@ export async function deleteChatImage(key: string) {
   await deleteObject(key);
 }
 
+// Foto de perfil (trabajador) / logo (empresa): pública y de largo plazo,
+// igual que la hoja de delincuencia -- clave estable por perfil, volver a
+// subir reemplaza la foto anterior en la misma clave. A diferencia de la
+// hoja de delincuencia, esta SÍ se sirve públicamente (ver la ruta
+// /api/fotos/[kind]/[id]), porque es la foto/logo que ya se mostraba en el
+// perfil público antes de este cambio.
+const PROFILE_PHOTO_QUALITY = 85;
+
+function profilePhotoKey(kind: "worker" | "company", ownerId: string) {
+  return `profile-photo-${kind}-${ownerId}.jpg`;
+}
+
+export async function saveProfilePhoto(kind: "worker" | "company", ownerId: string, buffer: Buffer) {
+  const compressed = await sharp(buffer)
+    .rotate()
+    .resize({ width: MAX_DIMENSION, height: MAX_DIMENSION, fit: "inside", withoutEnlargement: true })
+    .jpeg({ quality: PROFILE_PHOTO_QUALITY, mozjpeg: true })
+    .toBuffer();
+
+  await writeObject(profilePhotoKey(kind, ownerId), compressed, "image/jpeg");
+}
+
+export async function readProfilePhoto(kind: "worker" | "company", ownerId: string) {
+  return readObject(profilePhotoKey(kind, ownerId));
+}
+
+export async function deleteProfilePhoto(kind: "worker" | "company", ownerId: string) {
+  await deleteObject(profilePhotoKey(kind, ownerId));
+}
+
 /**
  * Borra del almacenamiento y de la base de datos los archivos de chat
  * vencidos. Se llama de forma perezosa desde las rutas de chat, y también

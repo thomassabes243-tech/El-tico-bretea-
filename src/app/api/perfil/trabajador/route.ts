@@ -38,7 +38,6 @@ export async function PATCH(request: Request) {
       where: { id: worker.id },
       data: {
         fullName: textOrDefault(data.fullName),
-        formalPhotoUrl: data.formalPhotoUrl || null,
         age: numberOrDefault(data.age),
         residence: textOrDefault(data.residence),
         phone: data.phone || null,

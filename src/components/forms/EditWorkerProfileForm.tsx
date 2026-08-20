@@ -13,13 +13,18 @@ import {
 import { LABOR_CATEGORIES, JOB_TYPES, AVAILABILITY_OPTIONS } from "@/lib/constants";
 import { FieldWrapper, TextInput, Textarea, Select } from "@/components/forms/FormField";
 import { OptionalFormNotice } from "@/components/forms/OptionalFormNotice";
+import { ProfilePhotoUpload } from "@/components/forms/ProfilePhotoUpload";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 
 export function EditWorkerProfileForm({
   defaultValues,
+  initialPhotoUrl,
+  fullName,
 }: {
   defaultValues: WorkerProfileUpdateFormValues;
+  initialPhotoUrl: string | null;
+  fullName: string;
 }) {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -70,16 +75,19 @@ export function EditWorkerProfileForm({
 
       <Card className="flex flex-col gap-4 p-4">
         <h2 className="text-sm font-bold text-navy-900">Identidad</h2>
+        <ProfilePhotoUpload
+          kind="trabajador"
+          initialUrl={initialPhotoUrl}
+          alt={fullName}
+          shape="circle"
+          fallback={
+            <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-navy-900 bg-navy-900/[0.07] text-2xl font-bold text-navy-800">
+              {fullName.slice(0, 1).toUpperCase()}
+            </div>
+          }
+        />
         <FieldWrapper label="Nombre completo" htmlFor="fullName" error={errors.fullName?.message}>
           <TextInput id="fullName" {...register("fullName")} />
-        </FieldWrapper>
-        <FieldWrapper
-          label="Fotografía formal (URL)"
-          htmlFor="formalPhotoUrl"
-          hint="Podés pegar el enlace de una foto tipo carné."
-          error={errors.formalPhotoUrl?.message}
-        >
-          <TextInput id="formalPhotoUrl" placeholder="https://..." {...register("formalPhotoUrl")} />
         </FieldWrapper>
         <div className="grid grid-cols-2 gap-3">
           <FieldWrapper label="Edad" htmlFor="age" error={errors.age?.message}>

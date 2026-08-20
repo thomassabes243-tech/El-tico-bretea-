@@ -46,7 +46,6 @@ export async function PATCH(request: Request) {
         contactEmail: data.contactEmail || company.contactEmail,
         location: textOrDefault(data.location),
         activity: textOrDefault(data.activity),
-        logoUrl: data.logoUrl || null,
         description: data.description || null,
         // Cambiar la identificación legal invalida una verificación previa: estaba
         // atada a esos datos específicos y debe revisarse de nuevo.

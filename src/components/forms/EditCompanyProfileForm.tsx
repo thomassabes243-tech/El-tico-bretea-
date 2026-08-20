@@ -8,15 +8,20 @@ import { CheckCircle2, Info } from "lucide-react";
 import { companyProfileUpdateSchema, type CompanyProfileUpdateInput } from "@/lib/validations";
 import { FieldWrapper, TextInput, Textarea } from "@/components/forms/FormField";
 import { OptionalFormNotice } from "@/components/forms/OptionalFormNotice";
+import { ProfilePhotoUpload } from "@/components/forms/ProfilePhotoUpload";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 
 export function EditCompanyProfileForm({
   defaultValues,
   wasVerified,
+  initialLogoUrl,
+  commercialName,
 }: {
   defaultValues: CompanyProfileUpdateInput;
   wasVerified: boolean;
+  initialLogoUrl: string | null;
+  commercialName: string;
 }) {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -66,6 +71,17 @@ export function EditCompanyProfileForm({
         a tu perfil sin cambiar nada.
       </OptionalFormNotice>
 
+      <ProfilePhotoUpload
+        kind="empresa"
+        initialUrl={initialLogoUrl}
+        alt={commercialName}
+        shape="square"
+        fallback={
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-navy-900 bg-cr-red-600/[0.09] text-2xl font-bold text-cr-red-600">
+            {commercialName.slice(0, 1).toUpperCase()}
+          </div>
+        }
+      />
       <FieldWrapper label="Nombre comercial" htmlFor="commercialName" error={errors.commercialName?.message}>
         <TextInput id="commercialName" {...register("commercialName")} />
       </FieldWrapper>
@@ -97,9 +113,6 @@ export function EditCompanyProfileForm({
       </FieldWrapper>
       <FieldWrapper label="Actividad comercial" htmlFor="activity" error={errors.activity?.message}>
         <TextInput id="activity" {...register("activity")} />
-      </FieldWrapper>
-      <FieldWrapper label="Logo (URL)" htmlFor="logoUrl" error={errors.logoUrl?.message}>
-        <TextInput id="logoUrl" placeholder="https://..." {...register("logoUrl")} />
       </FieldWrapper>
       <FieldWrapper label="Descripción" htmlFor="description" error={errors.description?.message}>
         <Textarea id="description" {...register("description")} />
