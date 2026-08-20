@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, Info } from "lucide-react";
 import { companyProfileUpdateSchema, type CompanyProfileUpdateInput } from "@/lib/validations";
 import { FieldWrapper, TextInput, Textarea } from "@/components/forms/FormField";
+import { OptionalFormNotice } from "@/components/forms/OptionalFormNotice";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 
@@ -60,6 +61,11 @@ export function EditCompanyProfileForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <OptionalFormNotice>
+        Este formulario es opcional. Completá solo lo que quieras o tocá «Omitir» para volver
+        a tu perfil sin cambiar nada.
+      </OptionalFormNotice>
+
       <FieldWrapper label="Nombre comercial" htmlFor="commercialName" error={errors.commercialName?.message}>
         <TextInput id="commercialName" {...register("commercialName")} />
       </FieldWrapper>
@@ -118,9 +124,14 @@ export function EditCompanyProfileForm({
         </p>
       )}
 
-      <Button type="submit" fullWidth disabled={isSubmitting}>
-        {isSubmitting ? "Guardando..." : "Guardar cambios"} <CheckCircle2 className="h-4 w-4" />
-      </Button>
+      <div className="flex items-center gap-3">
+        <Button type="button" variant="outline" onClick={() => router.push("/perfil")}>
+          Omitir
+        </Button>
+        <Button type="submit" fullWidth disabled={isSubmitting}>
+          {isSubmitting ? "Guardando..." : "Guardar cambios"} <CheckCircle2 className="h-4 w-4" />
+        </Button>
+      </div>
     </form>
   );
 }

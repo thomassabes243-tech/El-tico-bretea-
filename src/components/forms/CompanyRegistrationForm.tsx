@@ -8,6 +8,7 @@ import { signIn } from "next-auth/react";
 import { CheckCircle2 } from "lucide-react";
 import { companyRegistrationSchema, type CompanyRegistrationInput } from "@/lib/validations";
 import { FieldWrapper, TextInput, Textarea } from "@/components/forms/FormField";
+import { OptionalFormNotice } from "@/components/forms/OptionalFormNotice";
 import { Button } from "@/components/ui/Button";
 
 export function CompanyRegistrationForm() {
@@ -64,6 +65,22 @@ export function CompanyRegistrationForm() {
       <FieldWrapper label="Contraseña" htmlFor="password" required error={errors.password?.message} hint="Mínimo 8 caracteres">
         <TextInput id="password" type="password" placeholder="••••••••" {...register("password")} />
       </FieldWrapper>
+      <OptionalFormNotice>
+        Correo y contraseña son los únicos datos obligatorios. El resto de la información de
+        tu empresa es opcional — completala ahora o tocá «Omitir» para crear la cuenta ya
+        mismo y completarla después desde tu perfil.
+      </OptionalFormNotice>
+
+      <Button
+        type="button"
+        variant="outline"
+        fullWidth
+        disabled={isSubmitting}
+        onClick={handleSubmit(onSubmit)}
+      >
+        Omitir
+      </Button>
+
       <FieldWrapper label="Nombre comercial" htmlFor="commercialName" error={errors.commercialName?.message}>
         <TextInput id="commercialName" placeholder="Ej. Constructora ABC" {...register("commercialName")} />
       </FieldWrapper>

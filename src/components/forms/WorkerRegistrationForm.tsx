@@ -13,6 +13,7 @@ import {
 } from "@/lib/validations";
 import { LABOR_CATEGORIES, JOB_TYPES, AVAILABILITY_OPTIONS } from "@/lib/constants";
 import { FieldWrapper, TextInput, Textarea, Select } from "@/components/forms/FormField";
+import { OptionalFormNotice } from "@/components/forms/OptionalFormNotice";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 
@@ -56,6 +57,8 @@ export function WorkerRegistrationForm() {
   };
 
   const goBack = () => setStep((s) => Math.max(s - 1, 0));
+
+  const goToEnd = () => setStep(STEPS.length - 1);
 
   const onSubmit = async (data: WorkerRegistrationInput) => {
     if (isSubmitting) return;
@@ -111,6 +114,18 @@ export function WorkerRegistrationForm() {
       <p className="-mt-3 text-xs font-semibold uppercase tracking-wide text-navy-800/50">
         Paso {step + 1} de {STEPS.length} · {STEPS[step].title}
       </p>
+
+      {step === 0 ? (
+        <OptionalFormNotice>
+          Correo y contraseña son los únicos datos obligatorios para crear tu cuenta. Todo lo
+          demás en los siguientes pasos es opcional — completalo ahora o dejalo para después.
+        </OptionalFormNotice>
+      ) : (
+        <OptionalFormNotice>
+          Esta sección es opcional. Completá solo lo que quieras o tocá «Omitir» para terminar
+          el registro ahora mismo.
+        </OptionalFormNotice>
+      )}
 
       {step === 0 && (
         <div className="flex flex-col gap-4">
@@ -300,20 +315,31 @@ export function WorkerRegistrationForm() {
         </p>
       )}
 
-      <div className="flex items-center gap-3">
-        {step > 0 && (
-          <Button type="button" variant="outline" onClick={goBack}>
-            <ChevronLeft className="h-4 w-4" /> Atrás
-          </Button>
-        )}
-        {!isLastStep ? (
-          <Button type="button" onClick={goNext} fullWidth>
-            Continuar <ChevronRight className="h-4 w-4" />
-          </Button>
-        ) : (
-          <Button type="submit" fullWidth disabled={isSubmitting}>
-            {isSubmitting ? "Creando cuenta..." : "Crear mi cuenta"} <CheckCircle2 className="h-4 w-4" />
-          </Button>
+      <div className="flex flex-col gap-2.5">
+        <div className="flex items-center gap-3">
+          {step > 0 && (
+            <Button type="button" variant="outline" onClick={goBack}>
+              <ChevronLeft className="h-4 w-4" /> Atrás
+            </Button>
+          )}
+          {!isLastStep ? (
+            <Button type="button" onClick={goNext} fullWidth>
+              Continuar <ChevronRight className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button type="submit" fullWidth disabled={isSubmitting}>
+              {isSubmitting ? "Creando cuenta..." : "Crear mi cuenta"} <CheckCircle2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        {step > 0 && !isLastStep && (
+          <button
+            type="button"
+            onClick={goToEnd}
+            className="text-center text-xs font-semibold text-navy-800/50 hover:text-navy-800"
+          >
+            Omitir
+          </button>
         )}
       </div>
     </form>
