@@ -5,7 +5,10 @@ import { Providers } from "@/components/Providers";
 import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
 
-const adsenseClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+// Client ID público de Google AdSense — no es un secreto, aparece igual en
+// el código fuente de cualquier sitio con AdSense, por eso va directo acá
+// en vez de en una variable de entorno.
+const ADSENSE_CLIENT_ID = "ca-pub-6733879285050684";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -40,14 +43,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${montserrat.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-sand-50 text-foreground">
-        {adsenseClientId && (
-          <Script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
-            crossOrigin="anonymous"
-            strategy="beforeInteractive"
-          />
-        )}
+        <Script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
+          crossOrigin="anonymous"
+          strategy="beforeInteractive"
+        />
         <Providers>{children}</Providers>
       </body>
     </html>
