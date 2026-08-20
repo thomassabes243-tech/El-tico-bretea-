@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, Inbox, MapPin, Users, ChevronRight } from "lucide-react";
+import { ChevronLeft, Search, MapPin, Users, ChevronRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
+import { TagChip } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
@@ -43,20 +45,26 @@ export default async function BuscarCategoriaPage({
           <ChevronLeft className="h-4 w-4" /> Categorías
         </Link>
 
-        <div className="mt-3 flex items-center gap-3">
+        <div className="mt-3.5 flex items-center gap-3.5">
           <CategoryIcon category={category.value} size="lg" />
-          <h1 className="text-xl font-extrabold tracking-tight text-navy-900">{category.label}</h1>
+          <div>
+            <h1 className="text-xl font-extrabold tracking-tight text-navy-900">{category.label}</h1>
+            <p className="text-xs text-navy-800/50">
+              {jobPostings.length === 0
+                ? "Sin bretes activos por ahora"
+                : `${jobPostings.length} brete${jobPostings.length !== 1 ? "s" : ""} disponible${jobPostings.length !== 1 ? "s" : ""}`}
+            </p>
+          </div>
         </div>
 
         <div className="mt-6 flex flex-col gap-3">
           {jobPostings.length === 0 && (
-            <Card className="flex flex-col items-center gap-3 p-8 text-center">
-              <Inbox className="h-8 w-8 text-navy-800/30" />
-              <p className="text-sm font-semibold text-navy-900">
-                Todavía no hay vacantes publicadas en esta categoría
-              </p>
-              <p className="text-xs text-navy-800/50">Volvé pronto.</p>
-            </Card>
+            <EmptyState
+              icon={Search}
+              title="No hay bretes por aquí todavía"
+              description="Cuando aparezcan nuevas oportunidades en esta categoría, las vas a encontrar aquí."
+              action={{ label: "Ver otras categorías", href: "/buscar" }}
+            />
           )}
           {jobPostings.map((job) => (
             <Link key={job.id} href={`/vacantes/${job.id}`}>
@@ -64,26 +72,18 @@ export default async function BuscarCategoriaPage({
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="text-sm font-bold text-navy-900">{job.title}</p>
-                    <p className="text-xs text-navy-800/50">{job.company.commercialName}</p>
+                    <p className="mt-0.5 text-xs text-navy-800/50">{job.company.commercialName}</p>
                   </div>
                   <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
                 </div>
-                <div className="mt-2.5 flex flex-wrap gap-2 text-[11px] font-medium text-navy-800/60">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
-                    <MapPin className="h-3 w-3" /> {job.location}
-                  </span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
-                    {labelFor(JOB_TYPES, job.contractType)}
-                  </span>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <TagChip icon={<MapPin className="h-3 w-3" />}>{job.location}</TagChip>
+                  <TagChip>{labelFor(JOB_TYPES, job.contractType)}</TagChip>
                   {job.quantity && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
-                      <Users className="h-3 w-3" /> {job.quantity}
-                    </span>
+                    <TagChip icon={<Users className="h-3 w-3" />}>{job.quantity}</TagChip>
                   )}
                   {job.salary && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-cr-red-100 px-2 py-0.5 text-cr-red-700">
-                      {job.salary}
-                    </span>
+                    <TagChip className="bg-cr-red-100 text-cr-red-700">{job.salary}</TagChip>
                   )}
                 </div>
               </Card>

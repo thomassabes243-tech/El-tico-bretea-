@@ -9,7 +9,7 @@ export default async function NuevaVacantePage() {
   if (session.user.role !== "COMPANY") redirect("/perfil");
 
   return (
-    <AuthShell title="Publicar vacante" subtitle="Los trabajadores podrán verla y aplicar directamente.">
+    <AuthShell title="Publicar brete" subtitle="Los trabajadores podrán verla y aplicar directamente.">
       <JobPostingForm />
     </AuthShell>
   );

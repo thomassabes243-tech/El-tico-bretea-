@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
+import { Badge, TagChip } from "@/components/ui/Badge";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { ApplyButton } from "@/components/forms/ApplyButton";
 import { ShareJobButton } from "@/components/forms/ShareJobButton";
@@ -72,13 +73,19 @@ export default async function VacanteDetailPage({
       <TopBar />
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
         <Card className="p-5">
+          {!jobPosting.isActive && (
+            <Badge tone="neutral" className="mb-3">
+              Vacante cerrada
+              {closureReasonLabel(jobPosting.closureReason) && ` · ${closureReasonLabel(jobPosting.closureReason)}`}
+            </Badge>
+          )}
           <div className="flex items-start gap-3.5">
             <CategoryIcon category={jobPosting.laborCategory} size="lg" />
             <div className="flex-1">
-              <h1 className="text-lg font-extrabold text-navy-900">{jobPosting.title}</h1>
+              <h1 className="text-lg font-extrabold leading-snug text-navy-900">{jobPosting.title}</h1>
               <Link
                 href={`/empresas/${jobPosting.companyId}`}
-                className="mt-0.5 flex items-center gap-1 text-sm font-medium text-navy-800/60"
+                className="mt-1 flex items-center gap-1 text-sm font-medium text-navy-800/60"
               >
                 {jobPosting.company.commercialName}
                 {jobPosting.company.isVerified && <ShieldCheck className="h-3.5 w-3.5 text-success-600" />}
@@ -86,32 +93,21 @@ export default async function VacanteDetailPage({
             </div>
           </div>
 
-          {!jobPosting.isActive && (
-            <p className="mt-3 rounded-lg bg-sand-100 px-3 py-1.5 text-xs font-semibold text-navy-800/60">
-              Esta vacante ya no está activa
-              {closureReasonLabel(jobPosting.closureReason) && `: ${closureReasonLabel(jobPosting.closureReason)}`}
-            </p>
-          )}
-
-          <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-navy-800/70">
-            <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
-              <MapPin className="h-3.5 w-3.5" /> {jobPosting.location}
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
-              <Briefcase className="h-3.5 w-3.5" /> {labelFor(LABOR_CATEGORIES, jobPosting.laborCategory)}
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
-              {labelFor(JOB_TYPES, jobPosting.contractType)}
-            </span>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <TagChip icon={<MapPin className="h-3.5 w-3.5" />}>{jobPosting.location}</TagChip>
+            <TagChip icon={<Briefcase className="h-3.5 w-3.5" />}>
+              {labelFor(LABOR_CATEGORIES, jobPosting.laborCategory)}
+            </TagChip>
+            <TagChip>{labelFor(JOB_TYPES, jobPosting.contractType)}</TagChip>
             {jobPosting.quantity && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
-                <Users className="h-3.5 w-3.5" /> {jobPosting.quantity} puesto{jobPosting.quantity > 1 ? "s" : ""}
-              </span>
+              <TagChip icon={<Users className="h-3.5 w-3.5" />}>
+                {jobPosting.quantity} puesto{jobPosting.quantity > 1 ? "s" : ""}
+              </TagChip>
             )}
             {jobPosting.deadline && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
-                <Calendar className="h-3.5 w-3.5" /> Hasta {jobPosting.deadline.toLocaleDateString("es-CR")}
-              </span>
+              <TagChip icon={<Calendar className="h-3.5 w-3.5" />}>
+                Hasta {jobPosting.deadline.toLocaleDateString("es-CR")}
+              </TagChip>
             )}
           </div>
 

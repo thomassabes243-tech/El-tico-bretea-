@@ -2,8 +2,10 @@
 
 import { memo } from "react";
 import Link from "next/link";
-import { Briefcase, ShieldBan, Trash2 } from "lucide-react";
+import { Briefcase, ShieldBan, Trash2, MessagesSquare } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export type ChatMessage = {
   id: string;
@@ -45,9 +47,12 @@ export const ChatMessageList = memo(function ChatMessageList({
 }) {
   if (messages.length === 0) {
     return (
-      <p className="py-10 text-center text-sm text-navy-800/50">
-        Aún no hay publicaciones en esta sala. ¡Sé el primero!
-      </p>
+      <EmptyState
+        icon={MessagesSquare}
+        title="Todavía no hay publicaciones"
+        description="Sé el primero en escribir en esta sala de la comunidad."
+        className="mt-6"
+      />
     );
   }
 
@@ -77,17 +82,13 @@ export const ChatMessageList = memo(function ChatMessageList({
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               )}
-              <p
-                className={`mb-1.5 text-[11px] font-bold uppercase tracking-wide ${
-                  isClosed ? "text-navy-800/50" : "text-cr-red-700"
-                }`}
-              >
+              <Badge tone={isClosed ? "neutral" : "red"} className="mb-1.5">
                 {isClosed
                   ? "Vacante cerrada"
                   : m.jobPosting.companyVerified
-                    ? "Vacante empresarial verificada ✓"
+                    ? "Vacante verificada ✓"
                     : "Vacante empresarial"}
-              </p>
+              </Badge>
               <Link href={`/vacantes/${m.jobPosting.id}`} className="flex items-center gap-3">
                 <div
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white ${

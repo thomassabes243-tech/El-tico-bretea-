@@ -25,10 +25,10 @@ export function AuthShell({
           </Link>
         </div>
       </div>
-      <main className={`mx-auto w-full flex-1 px-4 py-8 ${wide ? "max-w-xl" : "max-w-md"}`}>
+      <main className={`mx-auto w-full flex-1 px-4 py-9 ${wide ? "max-w-xl" : "max-w-md"}`}>
         <h1 className="text-2xl font-extrabold tracking-tight text-navy-900">{title}</h1>
-        {subtitle && <p className="mt-1.5 text-sm text-navy-800/60">{subtitle}</p>}
-        <div className="mt-6">{children}</div>
+        {subtitle && <p className="mt-2 text-sm leading-relaxed text-navy-800/60">{subtitle}</p>}
+        <div className="mt-7">{children}</div>
       </main>
     </div>
   );

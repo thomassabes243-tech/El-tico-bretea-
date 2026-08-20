@@ -7,12 +7,15 @@ import {
   ShieldCheck,
   HeartHandshake,
   ChevronRight,
-  Inbox,
+  Briefcase,
 } from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { Badge, TagChip } from "@/components/ui/Badge";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { GuanacasteScene } from "@/components/brand/scenery/GuanacasteScene";
 import { MonteverdeScene } from "@/components/brand/scenery/MonteverdeScene";
@@ -95,21 +98,16 @@ export default async function Home({
         </section>
 
         {/* Bretes Destacados */}
-        <section className="mt-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-navy-900">Bretes Destacados</h2>
-            <Link href="/buscar" className="text-xs font-semibold text-cr-red-600">
-              Ver todos
-            </Link>
-          </div>
-          <div className="mt-3 flex flex-col gap-3">
+        <section className="mt-9">
+          <SectionHeader title="Bretes Destacados" href="/buscar" />
+          <div className="mt-3.5 flex flex-col gap-3">
             {featuredJobs.length === 0 && (
-              <Card className="flex flex-col items-center gap-2 p-6 text-center">
-                <Inbox className="h-7 w-7 text-navy-800/30" />
-                <p className="text-sm font-semibold text-navy-900">
-                  Todavía no hay vacantes publicadas
-                </p>
-              </Card>
+              <EmptyState
+                icon={Briefcase}
+                title="Todavía no hay bretes publicados"
+                description="Cuando aparezcan nuevas oportunidades, las vas a encontrar aquí."
+                action={{ label: "Buscar bretes", href: "/buscar" }}
+              />
             )}
             {featuredJobs.map((job) => (
               <Link key={job.id} href={`/vacantes/${job.id}`}>
@@ -118,19 +116,13 @@ export default async function Home({
                     <CategoryIcon category={job.laborCategory} size="md" />
                     <div className="min-w-0 flex-1">
                       {job.company.isVerified && (
-                        <span className="mb-1 inline-block rounded-full bg-colon-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-colon-700">
-                          Empresa verificada
-                        </span>
+                        <Badge tone="premium" className="mb-1.5">Empresa verificada</Badge>
                       )}
                       <p className="truncate text-sm font-bold text-navy-900">{job.title}</p>
                       <p className="truncate text-xs text-navy-800/50">{job.company.commercialName}</p>
-                      <div className="mt-2 flex flex-wrap gap-2 text-[11px] font-medium text-navy-800/60">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
-                          <MapPin className="h-3 w-3" /> {job.location}
-                        </span>
-                        <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
-                          {labelFor(JOB_TYPES, job.contractType)}
-                        </span>
+                      <div className="mt-2.5 flex flex-wrap gap-2">
+                        <TagChip icon={<MapPin className="h-3 w-3" />}>{job.location}</TagChip>
+                        <TagChip>{labelFor(JOB_TYPES, job.contractType)}</TagChip>
                       </div>
                     </div>
                     <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
@@ -142,14 +134,9 @@ export default async function Home({
         </section>
 
         {/* Comunidades por gremio */}
-        <section className="mt-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-navy-900">Comunidades por gremio</h2>
-            <Link href="/comunidad" className="text-xs font-semibold text-cr-red-600">
-              Ver todas
-            </Link>
-          </div>
-          <div className="mt-3 flex gap-3 overflow-x-auto pb-1 scrollbar-none">
+        <section className="mt-9">
+          <SectionHeader title="Comunidades por gremio" href="/comunidad" linkLabel="Ver todas" />
+          <div className="mt-3.5 flex gap-3 overflow-x-auto pb-1 scrollbar-none">
             {COMMUNITY_CATEGORIES.map((cat) => {
               const Scene = COMMUNITY_SCENES[cat.value];
               return (

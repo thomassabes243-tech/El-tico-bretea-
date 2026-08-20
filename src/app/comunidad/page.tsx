@@ -33,8 +33,8 @@ export default async function ComunidadPage() {
     <div className="flex min-h-full flex-1 flex-col">
       <TopBar />
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
-        <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Comunidad</h1>
-        <p className="mt-1 text-sm text-navy-800/60">
+        <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Comunidad Tica</h1>
+        <p className="mt-1.5 text-sm leading-relaxed text-navy-800/60">
           Salas de chat por gremio, en vivo. Publicaciones normales aparecen como
           &ldquo;Publicación comunitaria&rdquo;; vacantes de empresas verificadas, como
           &ldquo;Vacante empresarial verificada ✓&rdquo;.
@@ -42,7 +42,7 @@ export default async function ComunidadPage() {
 
         <CommunityInviteBanner />
 
-        <div className="mt-5 flex flex-col gap-3">
+        <div className="mt-6 flex flex-col gap-3">
           {COMMUNITY_CATEGORIES.map((cat) => {
             const count = countByCategory.get(cat.value as CommunityCategory) ?? 0;
             const Scene = COMMUNITY_SCENES[cat.value];

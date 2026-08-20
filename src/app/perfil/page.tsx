@@ -6,6 +6,8 @@ import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { Badge, TagChip } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { AvatarImage } from "@/components/brand/AvatarImage";
 import { recommendJobsForWorker } from "@/lib/recommendations";
@@ -68,21 +70,13 @@ export default async function PerfilPage() {
                 <Pencil className="h-3.5 w-3.5" /> Editar
               </Link>
             </div>
-            <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-navy-800/70">
-              <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
-                <MapPin className="h-3.5 w-3.5" /> {worker.residence}
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
-                <Briefcase className="h-3.5 w-3.5" /> {labelFor(LABOR_CATEGORIES, worker.laborCategory)}
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
-                {worker.yearsExperience} años de experiencia
-              </span>
-              {!worker.isPublic && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-navy-900/[0.06] px-2.5 py-1 text-navy-800/60">
-                  Perfil no visible para empresas
-                </span>
-              )}
+            <div className="mt-4 flex flex-wrap gap-2">
+              <TagChip icon={<MapPin className="h-3.5 w-3.5" />}>{worker.residence}</TagChip>
+              <TagChip icon={<Briefcase className="h-3.5 w-3.5" />}>
+                {labelFor(LABOR_CATEGORIES, worker.laborCategory)}
+              </TagChip>
+              <TagChip>{worker.yearsExperience} años de experiencia</TagChip>
+              {!worker.isPublic && <Badge tone="navy">Perfil no visible</Badge>}
             </div>
           </Card>
 
@@ -139,9 +133,7 @@ export default async function PerfilPage() {
               </h2>
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {worker.skills.split(",").map((s) => s.trim()).filter(Boolean).map((s) => (
-                  <span key={s} className="rounded-full bg-cr-red-100 px-2.5 py-1 text-xs font-medium text-cr-red-700">
-                    {s}
-                  </span>
+                  <Badge key={s} tone="red" className="normal-case">{s}</Badge>
                 ))}
               </div>
             </Card>
@@ -204,10 +196,13 @@ export default async function PerfilPage() {
               <Send className="h-4 w-4" /> Mis aplicaciones
             </h2>
             {worker.applications.length === 0 ? (
-              <p className="mt-2 text-xs text-navy-800/50">
-                Todavía no aplicaste a ninguna vacante.{" "}
-                <Link href="/buscar" className="font-semibold text-cr-red-600">Buscar trabajo</Link>
-              </p>
+              <EmptyState
+                icon={Send}
+                title="Todavía no aplicaste a ningún brete"
+                description="Cuando aplicás a una vacante, el seguimiento aparece acá."
+                action={{ label: "Buscar bretes", href: "/buscar" }}
+                className="mt-3 border-none bg-sand-50 p-6 shadow-none"
+              />
             ) : (
               <div className="mt-3 flex flex-col gap-2.5">
                 {worker.applications.map((app) => {
@@ -220,9 +215,7 @@ export default async function PerfilPage() {
                           <p className="truncate text-sm font-semibold text-navy-900">{app.jobPosting.title}</p>
                           <p className="truncate text-xs text-navy-800/50">{app.jobPosting.company.commercialName}</p>
                         </div>
-                        <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-bold ${statusMeta.className}`}>
-                          {statusMeta.label}
-                        </span>
+                        <Badge tone={statusMeta.tone}>{statusMeta.label}</Badge>
                         <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
                       </div>
                     </Link>
@@ -291,9 +284,9 @@ export default async function PerfilPage() {
                 <Pencil className="h-3.5 w-3.5" /> Editar
               </Link>
             </div>
-            <p className="mt-2 text-xs font-semibold text-navy-800/50">
-              {company.isVerified ? "Empresa verificada ✓" : "Verificación pendiente de revisión"}
-            </p>
+            <Badge tone={company.isVerified ? "success" : "warning"} className="mt-2.5">
+              {company.isVerified ? "Empresa verificada ✓" : "Verificación pendiente"}
+            </Badge>
           </Card>
 
           <Card className="mt-4 p-5">
@@ -314,9 +307,13 @@ export default async function PerfilPage() {
               </Button>
             </div>
             {company.jobPostings.length === 0 ? (
-              <p className="mt-3 text-xs text-navy-800/50">
-                Todavía no has publicado ninguna vacante.
-              </p>
+              <EmptyState
+                icon={Briefcase}
+                title="Todavía no publicaste ningún brete"
+                description="Publicá tu primera vacante y empezá a recibir aplicantes."
+                action={{ label: "Publicar brete", href: "/empresa/vacantes/nueva" }}
+                className="mt-3 border-none bg-sand-50 p-6 shadow-none"
+              />
             ) : (
               <div className="mt-3 flex flex-col gap-2.5">
                 {company.jobPostings.map((job) => (
@@ -380,9 +377,12 @@ export default async function PerfilPage() {
         <Card className="mt-4 p-5">
           <h2 className="text-sm font-bold text-navy-900">Mis salas asignadas</h2>
           {!moderator || moderator.assignments.length === 0 ? (
-            <p className="mt-2 text-xs text-navy-800/50">
-              Todavía no tenés salas asignadas.
-            </p>
+            <EmptyState
+              icon={ShieldCheck}
+              title="Todavía no tenés salas asignadas"
+              description="Un administrador te va a asignar salas de chat para moderar."
+              className="mt-3 border-none bg-sand-50 p-6 shadow-none"
+            />
           ) : (
             <div className="mt-3 flex flex-col gap-2.5">
               {moderator.assignments.map((a) => (
