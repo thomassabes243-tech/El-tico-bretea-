@@ -9,6 +9,9 @@ export async function saveSettings(formData: FormData) {
 
   const cvPriceColones = Number(formData.get("cvPriceColones"));
   const premiumPriceColones = Number(formData.get("premiumPriceColones"));
+  const sinpeMovilNumber = String(formData.get("sinpeMovilNumber") || "").trim();
+  const sinpeMovilName = String(formData.get("sinpeMovilName") || "").trim();
+  const contactWhatsapp = String(formData.get("contactWhatsapp") || "").replace(/\D/g, "");
 
   if ([cvPriceColones, premiumPriceColones].some((n) => !Number.isFinite(n) || n < 0)) {
     throw new Error("Todos los valores deben ser números válidos mayores o iguales a 0");
@@ -17,6 +20,9 @@ export async function saveSettings(formData: FormData) {
   await updateAppSettings({
     cvPriceColones: Math.round(cvPriceColones),
     premiumPriceColones: Math.round(premiumPriceColones),
+    sinpeMovilNumber: sinpeMovilNumber || null,
+    sinpeMovilName: sinpeMovilName || null,
+    contactWhatsapp: contactWhatsapp || null,
   });
 
   revalidatePath("/admin/configuracion");

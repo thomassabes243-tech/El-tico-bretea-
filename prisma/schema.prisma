@@ -51,6 +51,7 @@ model User {
   chatFiles       ChatFile[]
   roomBlocksReceived ChatRoomBlock[] @relation("RoomBlocksReceived")
   roomBlocksIssued   ChatRoomBlock[] @relation("RoomBlocksIssued")
+  cvClaimsReviewed   CvPaymentClaim[] @relation("CvClaimsReviewed")
 
   @@map("users")
 }
@@ -160,12 +161,18 @@ model WorkerProfile {
   criminalRecordUploadedAt DateTime?
 
   isPremium  Boolean  @default(false)
+  // Descarga de CV pagada por SINPE Móvil (Sección 6): la persona paga
+  // manualmente por fuera de la app y pega el código de comprobante; un
+  // admin lo revisa y aprueba, lo que pone esto en true. No tiene relación
+  // con isPremium (eso es curación/ranking, esto es acceso al PDF).
+  cvUnlocked Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  references   WorkerReference[]
-  savedBy      SavedWorker[]
-  applications JobApplication[]
+  references      WorkerReference[]
+  savedBy         SavedWorker[]
+  applications    JobApplication[]
+  cvPaymentClaims CvPaymentClaim[]
 
   @@map("worker_profiles")
 }
@@ -431,9 +438,44 @@ model AppSettings {
   id                  String   @id @default("singleton")
   cvPriceColones      Int      @default(1090)
   premiumPriceColones Int      @default(1500)
+  // Número y nombre de la cuenta SINPE Móvil a la que la persona transfiere
+  // manualmente para desbloquear la descarga del CV. Sin esto configurado,
+  // el flujo de pago no se muestra (no hay a dónde pagar todavía).
+  sinpeMovilNumber    String?
+  sinpeMovilName      String?
+  // WhatsApp de contacto para quien quiera pagar más rápido con tarjeta
+  // (coordinado directamente, no hay pasarela conectada todavía). Formato
+  // internacional sin signos, ej. 50688881234.
+  contactWhatsapp     String?
   updatedAt           DateTime @updatedAt
 
   @@map("app_settings")
+}
+
+// Pago manual por SINPE Móvil para desbloquear la descarga del CV en PDF: la
+// persona transfiere por fuera de la app y pega acá el código de
+// comprobante que le da su banco; un admin lo revisa contra su cuenta y
+// aprueba o rechaza. No hay pasarela de pago conectada -- es una cola de
+// verificación manual, como la verificación de empresas.
+enum CvClaimStatus {
+  PENDIENTE
+  APROBADO
+  RECHAZADO
+}
+
+model CvPaymentClaim {
+  id            String        @id @default(cuid())
+  workerId      String
+  worker        WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  referenceCode String
+  status        CvClaimStatus @default(PENDIENTE)
+  createdAt     DateTime      @default(now())
+  reviewedAt    DateTime?
+  reviewedById  String?
+  reviewedBy    User?         @relation("CvClaimsReviewed", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([workerId, status])
+  @@map("cv_payment_claims")
 }
 
 // ---------------------------------------------------------------------------
