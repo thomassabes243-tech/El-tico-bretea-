@@ -13,8 +13,13 @@ type FieldWrapperProps = {
 export function FieldWrapper({ label, htmlFor, error, hint, required, children }: FieldWrapperProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={htmlFor} className="text-sm font-semibold text-navy-900">
-        {label} {required && <span className="text-mx-red-600">*</span>}
+      <label htmlFor={htmlFor} className="flex items-baseline gap-1.5 text-sm font-semibold text-navy-900">
+        {label}
+        {required ? (
+          <span className="text-mx-red-600">*</span>
+        ) : (
+          <span className="text-xs font-medium normal-case text-navy-800/40">(Opcional)</span>
+        )}
       </label>
       {children}
       {hint && !error && <p className="text-xs text-navy-800/50">{hint}</p>}

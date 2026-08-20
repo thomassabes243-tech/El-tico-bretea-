@@ -10,6 +10,7 @@ export const LABOR_CATEGORIES = [
   { value: "VENTAS_COMERCIO", label: "Ventas y comercio" },
   { value: "TECNOLOGIA", label: "Tecnología" },
   { value: "PROFESIONALES", label: "Profesionales" },
+  { value: "SIN_ESPECIFICAR", label: "Sin especificar" },
 ] as const;
 
 export const JOB_TYPES = [
@@ -18,6 +19,7 @@ export const JOB_TYPES = [
   { value: "TEMPORAL", label: "Temporal" },
   { value: "POR_HORAS", label: "Por horas" },
   { value: "FREELANCE", label: "Freelance" },
+  { value: "SIN_ESPECIFICAR", label: "Sin especificar" },
 ] as const;
 
 export const AVAILABILITY_OPTIONS = [
@@ -26,6 +28,7 @@ export const AVAILABILITY_OPTIONS = [
   { value: "DOS_SEMANAS", label: "En dos semanas" },
   { value: "UN_MES", label: "En un mes" },
   { value: "A_CONVENIR", label: "A convenir" },
+  { value: "SIN_ESPECIFICAR", label: "Sin especificar" },
 ] as const;
 
 // Section 9: comunidades de chat por gremio.

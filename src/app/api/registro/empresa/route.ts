@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { companyRegistrationSchema } from "@/lib/validations";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { textOrDefault } from "@/lib/form-defaults";
 
 export async function POST(request: Request) {
   const { allowed } = await checkRateLimit(`registro:${getClientIp(request)}`, 10, 60 * 60 * 1000);
@@ -43,13 +44,13 @@ export async function POST(request: Request) {
       role: "COMPANY",
       companyProfile: {
         create: {
-          commercialName: data.commercialName,
-          legalId: data.legalId,
-          responsibleName: data.responsibleName,
+          commercialName: textOrDefault(data.commercialName),
+          legalId: textOrDefault(data.legalId),
+          responsibleName: textOrDefault(data.responsibleName),
           contactPhone: data.contactPhone || null,
-          contactEmail: data.contactEmail,
-          location: data.location,
-          activity: data.activity,
+          contactEmail: data.contactEmail || email,
+          location: textOrDefault(data.location),
+          activity: textOrDefault(data.activity),
           logoUrl: data.logoUrl || null,
           description: data.description || null,
         },

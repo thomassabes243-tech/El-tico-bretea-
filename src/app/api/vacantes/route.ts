@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { jobPostingSchema } from "@/lib/validations";
+import { textOrDefault, enumOrDefault } from "@/lib/form-defaults";
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -28,11 +29,11 @@ export async function POST(request: Request) {
   const jobPosting = await prisma.jobPosting.create({
     data: {
       companyId: company.id,
-      title: data.title,
-      description: data.description,
-      laborCategory: data.laborCategory,
-      location: data.location,
-      contractType: data.contractType,
+      title: textOrDefault(data.title),
+      description: textOrDefault(data.description),
+      laborCategory: enumOrDefault(data.laborCategory),
+      location: textOrDefault(data.location),
+      contractType: enumOrDefault(data.contractType),
       quantity: data.quantity ?? null,
       salary: data.salary || null,
       schedule: data.schedule || null,

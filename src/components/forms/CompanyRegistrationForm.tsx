@@ -64,27 +64,27 @@ export function CompanyRegistrationForm() {
       <FieldWrapper label="Contraseña" htmlFor="password" required error={errors.password?.message} hint="Mínimo 8 caracteres">
         <TextInput id="password" type="password" placeholder="••••••••" {...register("password")} />
       </FieldWrapper>
-      <FieldWrapper label="Nombre comercial" htmlFor="commercialName" required error={errors.commercialName?.message}>
+      <FieldWrapper label="Nombre comercial" htmlFor="commercialName" error={errors.commercialName?.message}>
         <TextInput id="commercialName" placeholder="Ej. Constructora ABC" {...register("commercialName")} />
       </FieldWrapper>
-      <FieldWrapper label="Identificación / RFC" htmlFor="legalId" required error={errors.legalId?.message}>
-        <TextInput id="legalId" placeholder="3-101-000000" {...register("legalId")} />
+      <FieldWrapper label="Identificación / RFC" htmlFor="legalId" error={errors.legalId?.message}>
+        <TextInput id="legalId" placeholder="ABC010101AB1" {...register("legalId")} />
       </FieldWrapper>
-      <FieldWrapper label="Nombre del responsable" htmlFor="responsibleName" required error={errors.responsibleName?.message}>
+      <FieldWrapper label="Nombre del responsable" htmlFor="responsibleName" error={errors.responsibleName?.message}>
         <TextInput id="responsibleName" {...register("responsibleName")} />
       </FieldWrapper>
       <div className="grid grid-cols-2 gap-3">
         <FieldWrapper label="Teléfono de contacto" htmlFor="contactPhone" error={errors.contactPhone?.message}>
-          <TextInput id="contactPhone" placeholder="8888-8888" {...register("contactPhone")} />
+          <TextInput id="contactPhone" placeholder="55 1234 5678" {...register("contactPhone")} />
         </FieldWrapper>
-        <FieldWrapper label="Correo de contacto" htmlFor="contactEmail" required error={errors.contactEmail?.message}>
+        <FieldWrapper label="Correo de contacto" htmlFor="contactEmail" error={errors.contactEmail?.message}>
           <TextInput id="contactEmail" type="email" {...register("contactEmail")} />
         </FieldWrapper>
       </div>
-      <FieldWrapper label="Ubicación" htmlFor="location" required error={errors.location?.message}>
+      <FieldWrapper label="Ubicación" htmlFor="location" error={errors.location?.message}>
         <TextInput id="location" placeholder="Ej. Guadalajara, Jalisco" {...register("location")} />
       </FieldWrapper>
-      <FieldWrapper label="Actividad comercial" htmlFor="activity" required error={errors.activity?.message}>
+      <FieldWrapper label="Actividad comercial" htmlFor="activity" error={errors.activity?.message}>
         <TextInput id="activity" placeholder="Ej. Construcción y remodelación" {...register("activity")} />
       </FieldWrapper>
       <FieldWrapper label="Logo (URL)" htmlFor="logoUrl" hint="La carga de archivos llega en una próxima entrega." error={errors.logoUrl?.message}>

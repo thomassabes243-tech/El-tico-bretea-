@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { companyProfileUpdateSchema } from "@/lib/validations";
+import { textOrDefault } from "@/lib/form-defaults";
 
 export async function PATCH(request: Request) {
   const session = await auth();
@@ -20,14 +21,15 @@ export async function PATCH(request: Request) {
 
   const company = await prisma.companyProfile.findUnique({
     where: { userId: session.user.id },
-    select: { id: true, legalId: true, isVerified: true },
+    select: { id: true, legalId: true, isVerified: true, contactEmail: true },
   });
   if (!company) {
     return NextResponse.json({ error: "Perfil no encontrado" }, { status: 404 });
   }
 
   const data = parsed.data;
-  const legalIdChanged = data.legalId !== company.legalId;
+  const newLegalId = textOrDefault(data.legalId);
+  const legalIdChanged = newLegalId !== company.legalId;
 
   await prisma.$transaction([
     prisma.user.update({
@@ -37,13 +39,13 @@ export async function PATCH(request: Request) {
     prisma.companyProfile.update({
       where: { id: company.id },
       data: {
-        commercialName: data.commercialName,
-        legalId: data.legalId,
-        responsibleName: data.responsibleName,
+        commercialName: textOrDefault(data.commercialName),
+        legalId: newLegalId,
+        responsibleName: textOrDefault(data.responsibleName),
         contactPhone: data.contactPhone || null,
-        contactEmail: data.contactEmail,
-        location: data.location,
-        activity: data.activity,
+        contactEmail: data.contactEmail || company.contactEmail,
+        location: textOrDefault(data.location),
+        activity: textOrDefault(data.activity),
         logoUrl: data.logoUrl || null,
         description: data.description || null,
         // Cambiar la identificación legal invalida una verificación previa: estaba

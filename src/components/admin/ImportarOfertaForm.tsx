@@ -148,13 +148,13 @@ export function ImportarOfertaForm() {
           </p>
         </Card>
 
-        <FieldWrapper label="Puesto" htmlFor="title" required error={errors.title?.message}>
+        <FieldWrapper label="Puesto" htmlFor="title" error={errors.title?.message}>
           <TextInput id="title" placeholder="Ej. Ayudante de construcción" {...register("title")} />
         </FieldWrapper>
-        <FieldWrapper label="Descripción" htmlFor="description" required error={errors.description?.message}>
+        <FieldWrapper label="Descripción" htmlFor="description" error={errors.description?.message}>
           <Textarea id="description" placeholder="Describí las funciones del puesto" {...register("description")} />
         </FieldWrapper>
-        <FieldWrapper label="Categoría" htmlFor="laborCategory" required error={errors.laborCategory?.message}>
+        <FieldWrapper label="Categoría" htmlFor="laborCategory" error={errors.laborCategory?.message}>
           <Select id="laborCategory" {...register("laborCategory")}>
             <option value="">Seleccioná una categoría</option>
             {LABOR_CATEGORIES.map((c) => (
@@ -163,10 +163,10 @@ export function ImportarOfertaForm() {
           </Select>
         </FieldWrapper>
         <div className="grid grid-cols-2 gap-3">
-          <FieldWrapper label="Ubicación" htmlFor="location" required error={errors.location?.message}>
+          <FieldWrapper label="Ubicación" htmlFor="location" error={errors.location?.message}>
             <TextInput id="location" placeholder="Ej. Liberia, Guanacaste" {...register("location")} />
           </FieldWrapper>
-          <FieldWrapper label="Tipo de contrato" htmlFor="contractType" required error={errors.contractType?.message}>
+          <FieldWrapper label="Tipo de contrato" htmlFor="contractType" error={errors.contractType?.message}>
             <Select id="contractType" {...register("contractType")}>
               <option value="">Seleccioná</option>
               {JOB_TYPES.map((j) => (
@@ -199,7 +199,7 @@ export function ImportarOfertaForm() {
         </FieldWrapper>
         <div className="grid grid-cols-2 gap-3">
           <FieldWrapper label="WhatsApp de contacto" htmlFor="whatsapp" error={errors.whatsapp?.message}>
-            <TextInput id="whatsapp" placeholder="8888-8888" {...register("whatsapp")} />
+            <TextInput id="whatsapp" placeholder="55 1234 5678" {...register("whatsapp")} />
           </FieldWrapper>
           <FieldWrapper label="Correo de contacto" htmlFor="contactEmail" error={errors.contactEmail?.message}>
             <TextInput id="contactEmail" type="email" {...register("contactEmail")} />
@@ -238,7 +238,7 @@ export function ImportarOfertaForm() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={6}
-          placeholder='Ej. "Se necesita albañil para trabajar en Liberia. Experiencia mínima de 2 años. Salario según experiencia. Interesados escribir al 8888-8888."'
+          placeholder='Ej. "Se necesita albañil para trabajar en Guadalajara. Experiencia mínima de 2 años. Salario según experiencia. Interesados escribir al 55 1234 5678."'
         />
       </Card>
 

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { workerProfileUpdateSchema } from "@/lib/validations";
+import { textOrDefault, enumOrDefault, numberOrDefault } from "@/lib/form-defaults";
 
 export async function PATCH(request: Request) {
   const session = await auth();
@@ -36,15 +37,15 @@ export async function PATCH(request: Request) {
     prisma.workerProfile.update({
       where: { id: worker.id },
       data: {
-        fullName: data.fullName,
+        fullName: textOrDefault(data.fullName),
         formalPhotoUrl: data.formalPhotoUrl || null,
-        age: data.age,
-        residence: data.residence,
+        age: numberOrDefault(data.age),
+        residence: textOrDefault(data.residence),
         phone: data.phone || null,
         whatsapp: data.whatsapp || null,
-        profession: data.profession,
-        laborCategory: data.laborCategory,
-        yearsExperience: data.yearsExperience,
+        profession: textOrDefault(data.profession),
+        laborCategory: enumOrDefault(data.laborCategory),
+        yearsExperience: numberOrDefault(data.yearsExperience),
         workExperience: data.workExperience || null,
         companiesWorkedAt: data.companiesWorkedAt || null,
         previousPositions: data.previousPositions || null,
@@ -54,9 +55,9 @@ export async function PATCH(request: Request) {
         certifications: data.certifications || null,
         skills: data.skills || null,
         languages: data.languages || null,
-        availability: data.availability,
+        availability: enumOrDefault(data.availability),
         willingToRelocate: data.willingToRelocate,
-        jobTypeSought: data.jobTypeSought,
+        jobTypeSought: enumOrDefault(data.jobTypeSought),
         salaryExpectation: data.salaryExpectation || null,
         isPublic: data.isPublic,
         showPhone: data.showPhone,

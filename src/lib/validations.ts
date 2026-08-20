@@ -11,6 +11,7 @@ const laborCategoryValues = [
   "VENTAS_COMERCIO",
   "TECNOLOGIA",
   "PROFESIONALES",
+  "SIN_ESPECIFICAR",
 ] as const;
 
 const jobTypeValues = [
@@ -19,6 +20,7 @@ const jobTypeValues = [
   "TEMPORAL",
   "POR_HORAS",
   "FREELANCE",
+  "SIN_ESPECIFICAR",
 ] as const;
 
 const availabilityValues = [
@@ -27,11 +29,21 @@ const availabilityValues = [
   "DOS_SEMANAS",
   "UN_MES",
   "A_CONVENIR",
+  "SIN_ESPECIFICAR",
 ] as const;
 
 const passwordSchema = z
   .string()
   .min(8, "La contraseña debe tener al menos 8 caracteres");
+
+// Casilla numérica opcional: "" o undefined pasan como "sin llenar" en vez
+// de fallar la validación por no ser un número.
+function optionalInt(min: number, max: number) {
+  return z.preprocess(
+    (val) => (val === "" || val === undefined || val === null ? undefined : val),
+    z.coerce.number().int().min(min).max(max).optional()
+  );
+}
 
 const referenceSchema = z.object({
   name: z.string().min(1, "El nombre de la referencia es requerido"),
@@ -41,22 +53,23 @@ const referenceSchema = z.object({
 });
 
 export const workerRegistrationSchema = z.object({
-  // Cuenta
+  // Cuenta -- lo único obligatorio: sin esto no hay forma de volver a
+  // entrar a la cuenta.
   email: z.string().email("Correo inválido"),
   password: passwordSchema,
 
-  // Identidad (Sección 2)
-  fullName: z.string().min(2, "El nombre completo es requerido"),
+  // Identidad (Sección 2) -- todo opcional, se puede completar después.
+  fullName: z.string().optional().or(z.literal("")),
   formalPhotoUrl: z.string().optional().or(z.literal("")),
-  age: z.coerce.number().int().min(15, "Edad mínima 15 años").max(100),
-  residence: z.string().min(2, "El lugar de residencia es requerido"),
+  age: optionalInt(15, 100),
+  residence: z.string().optional().or(z.literal("")),
   phone: z.string().optional().or(z.literal("")),
   whatsapp: z.string().optional().or(z.literal("")),
 
   // Profesión
-  profession: z.string().min(2, "La profesión es requerida"),
-  laborCategory: z.enum(laborCategoryValues),
-  yearsExperience: z.coerce.number().int().min(0).max(60),
+  profession: z.string().optional().or(z.literal("")),
+  laborCategory: z.enum(laborCategoryValues).optional().or(z.literal("")),
+  yearsExperience: optionalInt(0, 60),
   workExperience: z.string().optional().or(z.literal("")),
   companiesWorkedAt: z.string().optional().or(z.literal("")),
   previousPositions: z.string().optional().or(z.literal("")),
@@ -72,9 +85,9 @@ export const workerRegistrationSchema = z.object({
   languages: z.string().optional().or(z.literal("")),
 
   // Disponibilidad
-  availability: z.enum(availabilityValues),
+  availability: z.enum(availabilityValues).optional().or(z.literal("")),
   willingToRelocate: z.boolean().default(false),
-  jobTypeSought: z.enum(jobTypeValues),
+  jobTypeSought: z.enum(jobTypeValues).optional().or(z.literal("")),
   salaryExpectation: z.string().optional().or(z.literal("")),
 
   // Referencias laborales
@@ -85,16 +98,18 @@ export type WorkerRegistrationInput = z.infer<typeof workerRegistrationSchema>;
 export type WorkerRegistrationFormValues = z.input<typeof workerRegistrationSchema>;
 
 export const companyRegistrationSchema = z.object({
+  // Lo único obligatorio: sin esto no hay forma de volver a entrar a la
+  // cuenta. Todo el resto del perfil de empresa es opcional.
   email: z.string().email("Correo inválido"),
   password: passwordSchema,
 
-  commercialName: z.string().min(2, "El nombre comercial es requerido"),
-  legalId: z.string().min(2, "La identificación es requerida"),
-  responsibleName: z.string().min(2, "El nombre del responsable es requerido"),
+  commercialName: z.string().optional().or(z.literal("")),
+  legalId: z.string().optional().or(z.literal("")),
+  responsibleName: z.string().optional().or(z.literal("")),
   contactPhone: z.string().optional().or(z.literal("")),
-  contactEmail: z.string().email("Correo de contacto inválido"),
-  location: z.string().min(2, "La ubicación es requerida"),
-  activity: z.string().min(2, "La actividad comercial es requerida"),
+  contactEmail: z.string().email("Correo de contacto inválido").optional().or(z.literal("")),
+  location: z.string().optional().or(z.literal("")),
+  activity: z.string().optional().or(z.literal("")),
   logoUrl: z.string().optional().or(z.literal("")),
   description: z.string().optional().or(z.literal("")),
 });
@@ -134,11 +149,12 @@ export const loginSchema = z.object({
 export type LoginInput = z.infer<typeof loginSchema>;
 
 export const jobPostingSchema = z.object({
-  title: z.string().min(3, "El título es requerido"),
-  description: z.string().min(10, "Agregá una descripción del puesto"),
-  laborCategory: z.enum(laborCategoryValues),
-  location: z.string().min(2, "La ubicación es requerida"),
-  contractType: z.enum(jobTypeValues),
+  // Todo opcional -- se puede completar o corregir después de publicar.
+  title: z.string().optional().or(z.literal("")),
+  description: z.string().optional().or(z.literal("")),
+  laborCategory: z.enum(laborCategoryValues).optional().or(z.literal("")),
+  location: z.string().optional().or(z.literal("")),
+  contractType: z.enum(jobTypeValues).optional().or(z.literal("")),
   quantity: z.preprocess(
     (val) => (val === "" || val === undefined || val === null ? undefined : val),
     z.coerce
