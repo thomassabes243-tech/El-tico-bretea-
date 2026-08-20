@@ -34,6 +34,8 @@ import {
   Eye,
   LogOut,
   Building2,
+  Users,
+  TrendingUp,
 } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
@@ -320,6 +322,14 @@ export default async function PerfilPage() {
     });
     if (!company) redirect("/registro/empresa");
 
+    const newApplicationsCount = await prisma.jobApplication.count({
+      where: { jobPosting: { companyId: company.id }, status: "ENVIADA" },
+    });
+    const activeJobs = company.jobPostings.filter((j) => j.isActive);
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const activeThisWeek = activeJobs.filter((j) => j.createdAt >= oneWeekAgo).length;
+
     return (
       <div className="flex min-h-full flex-1 flex-col">
         <TopBar />
@@ -351,6 +361,28 @@ export default async function PerfilPage() {
             </Link>
           </Card>
 
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <Card className="p-4">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy-900/[0.06] text-navy-900">
+                <Briefcase className="h-4.5 w-4.5" />
+              </div>
+              <p className="mt-2.5 font-heading text-2xl font-bold text-navy-900">{activeJobs.length}</p>
+              <p className="text-xs font-medium text-navy-800/60">Bretes activos</p>
+              {activeThisWeek > 0 && (
+                <p className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-success-600">
+                  <TrendingUp className="h-3 w-3" /> +{activeThisWeek} esta semana
+                </p>
+              )}
+            </Card>
+            <Card className="p-4">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-cr-red-600/[0.09] text-cr-red-600">
+                <Users className="h-4.5 w-4.5" />
+              </div>
+              <p className="mt-2.5 font-heading text-2xl font-bold text-navy-900">{newApplicationsCount}</p>
+              <p className="text-xs font-medium text-navy-800/60">Candidatos nuevos</p>
+            </Card>
+          </div>
+
           <Card className="mt-4 p-5">
             <h2 className="text-sm font-bold text-navy-900">Datos de la empresa</h2>
             <dl className="mt-3 flex flex-col gap-2 text-sm text-navy-800/70">
@@ -364,7 +396,7 @@ export default async function PerfilPage() {
           <Card className="mt-4 p-5">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-navy-900">Mis vacantes</h2>
-              <Button href="/empresa/vacantes/nueva" size="sm" variant="secondary">
+              <Button href="/empresa/vacantes/nueva" size="sm" variant="secondary" className="rounded-full">
                 <Plus className="h-3.5 w-3.5" /> Publicar
               </Button>
             </div>
@@ -383,14 +415,19 @@ export default async function PerfilPage() {
                     <div className="flex items-center gap-3 rounded-xl border border-sand-200 p-3">
                       <CategoryIcon category={job.laborCategory} size="sm" />
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-navy-900">{job.title}</p>
-                        <p className="text-xs text-navy-800/50">
+                        <div className="flex items-center gap-1.5">
+                          <p className="truncate text-sm font-semibold text-navy-900">{job.title}</p>
+                          {job.isUrgent && job.isActive && <Badge tone="red">Urgente</Badge>}
+                        </div>
+                        <p className="mt-0.5 text-xs text-navy-800/50">
                           {job._count.applications} aplicante{job._count.applications !== 1 ? "s" : ""}
-                          {!job.isActive &&
-                            ` · Cerrada${closureReasonLabel(job.closureReason) ? ` (${closureReasonLabel(job.closureReason)})` : ""}`}
                         </p>
                       </div>
-                      <ChevronRight className="h-4 w-4 text-navy-800/30" />
+                      <Badge tone={job.isActive ? "success" : "neutral"}>
+                        {job.isActive
+                          ? "Activa"
+                          : `Cerrada${closureReasonLabel(job.closureReason) ? ` · ${closureReasonLabel(job.closureReason)}` : ""}`}
+                      </Badge>
                     </div>
                   </Link>
                 ))}
