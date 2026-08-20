@@ -12,6 +12,7 @@ import {
 } from "@/lib/validations";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import { FieldWrapper, TextInput, Textarea, Select } from "@/components/forms/FormField";
+import { OptionalFormNotice } from "@/components/forms/OptionalFormNotice";
 import { Button } from "@/components/ui/Button";
 
 const STEPS: { title: string; fields: (keyof JobPostingFormValues)[] }[] = [
@@ -44,6 +45,8 @@ export function JobPostingForm() {
   };
 
   const goBack = () => setStep((s) => Math.max(s - 1, 0));
+
+  const goToEnd = () => setStep(STEPS.length - 1);
 
   const onSubmit = async (data: JobPostingInput) => {
     if (isSubmitting) return;
@@ -91,6 +94,11 @@ export function JobPostingForm() {
       <p className="-mt-3 text-xs font-semibold uppercase tracking-wide text-navy-800/50">
         Paso {step + 1} de {STEPS.length} · {STEPS[step].title}
       </p>
+
+      <OptionalFormNotice>
+        Todos los campos de este formulario son opcionales. Completá solo lo que quieras o
+        tocá «Omitir» para publicar el brete ahora mismo.
+      </OptionalFormNotice>
 
       {step === 0 && (
         <div className="flex flex-col gap-4">
@@ -176,20 +184,31 @@ export function JobPostingForm() {
         </p>
       )}
 
-      <div className="flex items-center gap-3">
-        {step > 0 && (
-          <Button type="button" variant="outline" onClick={goBack}>
-            <ChevronLeft className="h-4 w-4" /> Atrás
-          </Button>
-        )}
-        {!isLastStep ? (
-          <Button type="button" onClick={goNext} fullWidth>
-            Siguiente <ChevronRight className="h-4 w-4" />
-          </Button>
-        ) : (
-          <Button type="submit" fullWidth disabled={isSubmitting}>
-            {isSubmitting ? "Publicando..." : "Publicar brete"} <CheckCircle2 className="h-4 w-4" />
-          </Button>
+      <div className="flex flex-col gap-2.5">
+        <div className="flex items-center gap-3">
+          {step > 0 && (
+            <Button type="button" variant="outline" onClick={goBack}>
+              <ChevronLeft className="h-4 w-4" /> Atrás
+            </Button>
+          )}
+          {!isLastStep ? (
+            <Button type="button" onClick={goNext} fullWidth>
+              Siguiente <ChevronRight className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button type="submit" fullWidth disabled={isSubmitting}>
+              {isSubmitting ? "Publicando..." : "Publicar brete"} <CheckCircle2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        {!isLastStep && (
+          <button
+            type="button"
+            onClick={goToEnd}
+            className="text-center text-xs font-semibold text-navy-800/50 hover:text-navy-800"
+          >
+            Omitir
+          </button>
         )}
       </div>
     </form>
