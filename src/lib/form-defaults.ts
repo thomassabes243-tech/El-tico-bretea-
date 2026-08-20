@@ -1,4 +1,4 @@
-// Todos los formularios de registro, edición de perfil y publicar brete son
+// Todos los formularios de registro, edición de perfil y publicar vacante son
 // opcionales salvo correo/contraseña. La base de datos igual necesita un
 // valor válido en columnas de texto/número/categoría -- estas funciones
 // convierten "campo vacío" en un valor de respaldo neutro, sin bloquear el
