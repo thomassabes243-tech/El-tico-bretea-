@@ -48,7 +48,7 @@ export default async function GuardadosPage() {
           )}
           {saved.map((s) => (
             <Link key={s.id} href={`/trabajadores/${s.worker.id}`}>
-              <Card className="flex items-center gap-3.5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+              <Card className="flex items-center gap-3.5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-active">
                 <CategoryIcon category={s.worker.laborCategory} size="md" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-bold text-navy-900">{s.worker.fullName}</p>

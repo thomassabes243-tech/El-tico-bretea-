@@ -14,7 +14,7 @@ import { ReportButton } from "@/components/forms/ReportButton";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { getSiteUrl } from "@/lib/site";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
-import { MapPin, Briefcase, Users, Calendar, ShieldCheck, Phone, Mail } from "lucide-react";
+import { MapPin, Briefcase, Users, Calendar, ShieldCheck, Phone, Mail, Flame } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -110,6 +110,12 @@ export default async function VacanteDetailPage({
               </TagChip>
             )}
           </div>
+
+          {jobPosting.isUrgent && jobPosting.isActive && (
+            <div className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-cr-red-600 py-2.5 text-sm font-bold text-white">
+              <Flame className="h-4 w-4" /> CONTRATACIÓN URGENTE
+            </div>
+          )}
 
           <div className="mt-4 border-t border-sand-200 pt-4">
             <ShareJobButton jobId={jobPosting.id} title={jobPosting.title} siteUrl={getSiteUrl()} />

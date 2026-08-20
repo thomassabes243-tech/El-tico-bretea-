@@ -15,3 +15,15 @@ export async function toggleJobPostingActive(jobPostingId: string, nextValue: bo
   });
   revalidatePath("/admin/vacantes");
 }
+
+// Curación editorial ("Brete Premium"): solo el admin la activa, igual que
+// el Premium de trabajadores -- no es algo que la empresa se auto-asigne.
+export async function toggleJobPostingFeatured(jobPostingId: string, nextValue: boolean) {
+  await requireAdmin();
+  await prisma.jobPosting.update({
+    where: { id: jobPostingId },
+    data: { isFeatured: nextValue },
+  });
+  revalidatePath("/admin/vacantes");
+  revalidatePath("/");
+}

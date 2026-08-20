@@ -128,6 +128,11 @@ export function JobPostingForm() {
         <FieldWrapper label="Fecha límite" htmlFor="deadline" error={errors.deadline?.message}>
           <TextInput id="deadline" type="date" {...register("deadline")} />
         </FieldWrapper>
+        <label className="flex items-center gap-2.5 text-sm font-medium text-navy-900">
+          <input type="checkbox" className="h-4.5 w-4.5 rounded border-sand-200 text-cr-red-600" {...register("isUrgent")} />
+          Marcar como urgente
+          <span className="text-xs font-normal text-navy-800/50">(se muestra con un badge destacado)</span>
+        </label>
       </div>
 
       {submitError && (

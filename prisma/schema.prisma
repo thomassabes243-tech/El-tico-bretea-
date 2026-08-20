@@ -252,6 +252,11 @@ model JobPosting {
 
   isActive      Boolean            @default(true)
   closureReason JobClosureReason?
+  // Urgente: lo marca la propia empresa al publicar/editar, como cualquier
+  // otro campo del formulario. Destacado ("Brete Premium"): curación
+  // editorial, solo el admin lo activa (mismo patrón que WorkerProfile.isPremium).
+  isUrgent      Boolean            @default(false)
+  isFeatured    Boolean            @default(false)
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
 

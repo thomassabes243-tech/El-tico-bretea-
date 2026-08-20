@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ComponentType } from "react";
 import {
+  Search,
   Users,
   MapPin,
   MessagesSquare,
@@ -8,6 +9,8 @@ import {
   HeartHandshake,
   ChevronRight,
   Briefcase,
+  Flame,
+  Star,
 } from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
@@ -20,7 +23,7 @@ import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { GuanacasteScene } from "@/components/brand/scenery/GuanacasteScene";
 import { MonteverdeScene } from "@/components/brand/scenery/MonteverdeScene";
 import { CoffeeMountainsScene } from "@/components/brand/scenery/CoffeeMountainsScene";
-import { COMMUNITY_CATEGORIES, JOB_TYPES } from "@/lib/constants";
+import { COMMUNITY_CATEGORIES, LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import { getDailyQuote } from "@/lib/motivational-quotes";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
@@ -46,12 +49,18 @@ export default async function Home({
     getAdEligibility(),
     getActiveAds(),
     prisma.jobPosting.findMany({
-      where: { isActive: true },
+      where: { isActive: true, isFeatured: true },
       include: { company: true },
       orderBy: { createdAt: "desc" },
       take: 4,
     }),
   ]);
+  const newJobs = await prisma.jobPosting.findMany({
+    where: { isActive: true, id: { notIn: featuredJobs.map((j) => j.id) } },
+    include: { company: true },
+    orderBy: { createdAt: "desc" },
+    take: 6,
+  });
   const { "cuenta-eliminada": cuentaEliminada } = await searchParams;
 
   return (
@@ -67,41 +76,91 @@ export default async function Home({
 
         {/* Hero */}
         <section className="animate-fade-in-up rounded-3xl bg-sand-50 px-6 py-7">
-          <h1 className="text-2xl font-extrabold tracking-tight text-navy-900">¡Pura Vida!</h1>
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-navy-900">¡Pura Vida!</h1>
           <p className="mt-2 text-sm leading-relaxed text-navy-800/65">{quote}</p>
-          <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
-            <Button href="/buscar" variant="secondary" fullWidth>
-              🔍 Buscar Empleo
-            </Button>
+          <div className="mt-5">
             <Button href="/buscar-personal" variant="outline" fullWidth>
               <Users className="h-4 w-4" /> Buscar Personal
             </Button>
           </div>
         </section>
 
-        {/* Comunidad Tica */}
+        {/* Buscador */}
+        <section className="mt-5">
+          <form action="/buscar" className="relative group">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-navy-800/40 transition-colors group-focus-within:text-navy-900" />
+            <input
+              name="q"
+              placeholder="Buscar puestos, empresas o palabras clave..."
+              className="h-12 w-full rounded-xl border border-sand-200 bg-white pl-11 pr-4 text-sm text-navy-900 placeholder:text-navy-800/40 shadow-ambient outline-none transition-colors focus:border-navy-700 focus:ring-2 focus:ring-navy-700/10"
+            />
+          </form>
+        </section>
+
+        {/* Chips de categoría */}
         <section className="mt-4">
-          <Link href="/comunidad">
-            <Card className="flex items-center gap-3.5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-navy-900 text-white">
-                <MessagesSquare className="h-5.5 w-5.5" strokeWidth={2.1} />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-sm font-bold text-navy-900">Comunidad Tica</h3>
-                <p className="mt-0.5 text-xs leading-snug text-navy-800/60">
-                  Conectá, compartí y crecé con otros ticos.
-                </p>
-              </div>
-              <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
-            </Card>
-          </Link>
+          <div className="flex gap-2.5 overflow-x-auto pb-1 scrollbar-none">
+            <Link
+              href="/buscar"
+              className="shrink-0 rounded-full bg-navy-900 px-4 py-2 text-xs font-bold text-white shadow-ambient transition-colors hover:bg-navy-800"
+            >
+              Todos
+            </Link>
+            {LABOR_CATEGORIES.map((cat) => (
+              <Link
+                key={cat.value}
+                href={`/buscar/${cat.value.toLowerCase()}`}
+                className="shrink-0 rounded-full border border-sand-200 bg-white px-4 py-2 text-xs font-bold text-navy-900 shadow-ambient transition-colors hover:bg-sand-100"
+              >
+                {cat.label}
+              </Link>
+            ))}
+          </div>
         </section>
 
         {/* Bretes Destacados */}
-        <section className="mt-9">
+        <section className="mt-8">
           <SectionHeader title="Bretes Destacados" href="/buscar" />
           <div className="mt-3.5 flex flex-col gap-3">
             {featuredJobs.length === 0 && (
+              <EmptyState
+                icon={Star}
+                title="Todavía no hay bretes destacados"
+                description="El equipo de El Tico Bretea va destacando los mejores bretes acá."
+                action={{ label: "Buscar bretes", href: "/buscar" }}
+              />
+            )}
+            {featuredJobs.map((job) => (
+              <Link key={job.id} href={`/vacantes/${job.id}`}>
+                <Card className="relative overflow-hidden p-4 transition-all hover:-translate-y-0.5 hover:shadow-active">
+                  <Badge tone="featured" icon={<Star className="h-3 w-3 fill-current" />} className="absolute right-0 top-0 rounded-bl-lg rounded-tr-2xl">
+                    Brete Premium
+                  </Badge>
+                  <div className="flex items-start gap-3 pr-2">
+                    <CategoryIcon category={job.laborCategory} size="md" />
+                    <div className="min-w-0 flex-1">
+                      {job.company.isVerified && (
+                        <Badge tone="premium" className="mb-1.5">Empresa verificada</Badge>
+                      )}
+                      <p className="truncate font-heading text-sm font-bold text-navy-900">{job.title}</p>
+                      <p className="truncate text-xs text-navy-800/50">{job.company.commercialName}</p>
+                      <div className="mt-2.5 flex flex-wrap gap-2">
+                        <TagChip icon={<MapPin className="h-3 w-3" />}>{job.location}</TagChip>
+                        <TagChip>{labelFor(JOB_TYPES, job.contractType)}</TagChip>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Nuevos Bretes */}
+        <section className="mt-8">
+          <SectionHeader title="Nuevos Bretes" />
+          <div className="mt-3.5 flex flex-col gap-3">
+            {newJobs.length === 0 && featuredJobs.length === 0 && (
               <EmptyState
                 icon={Briefcase}
                 title="Todavía no hay bretes publicados"
@@ -109,16 +168,18 @@ export default async function Home({
                 action={{ label: "Buscar bretes", href: "/buscar" }}
               />
             )}
-            {featuredJobs.map((job) => (
+            {newJobs.map((job) => (
               <Link key={job.id} href={`/vacantes/${job.id}`}>
-                <Card className="p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+                <Card className="p-4 transition-all hover:-translate-y-0.5 hover:shadow-active">
                   <div className="flex items-start gap-3">
                     <CategoryIcon category={job.laborCategory} size="md" />
                     <div className="min-w-0 flex-1">
-                      {job.company.isVerified && (
-                        <Badge tone="premium" className="mb-1.5">Empresa verificada</Badge>
-                      )}
-                      <p className="truncate text-sm font-bold text-navy-900">{job.title}</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="truncate font-heading text-sm font-bold text-navy-900">{job.title}</p>
+                        {job.isUrgent && (
+                          <Badge tone="red" icon={<Flame className="h-3 w-3" />}>Urgente</Badge>
+                        )}
+                      </div>
                       <p className="truncate text-xs text-navy-800/50">{job.company.commercialName}</p>
                       <div className="mt-2.5 flex flex-wrap gap-2">
                         <TagChip icon={<MapPin className="h-3 w-3" />}>{job.location}</TagChip>
@@ -131,6 +192,29 @@ export default async function Home({
               </Link>
             ))}
           </div>
+          {(newJobs.length > 0 || featuredJobs.length > 0) && (
+            <Button href="/buscar" variant="outline" fullWidth className="mt-3.5">
+              Cargar más bretes
+            </Button>
+          )}
+        </section>
+
+        {/* Comunidad Tica */}
+        <section className="mt-8">
+          <Link href="/comunidad">
+            <Card className="flex items-center gap-3.5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-active">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-navy-900 text-white">
+                <MessagesSquare className="h-5.5 w-5.5" strokeWidth={2.1} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-bold text-navy-900">Comunidad Tica</h3>
+                <p className="mt-0.5 text-xs leading-snug text-navy-800/60">
+                  Conectá, compartí y crecé con otros ticos.
+                </p>
+              </div>
+              <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
+            </Card>
+          </Link>
         </section>
 
         {/* Comunidades por gremio */}

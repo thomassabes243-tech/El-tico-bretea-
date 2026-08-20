@@ -78,7 +78,7 @@ export default async function EmpresaPublicPage({
             )}
             {company.jobPostings.map((job) => (
               <Link key={job.id} href={`/vacantes/${job.id}`}>
-                <Card className="flex items-center gap-3 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+                <Card className="flex items-center gap-3 p-4 transition-all hover:-translate-y-0.5 hover:shadow-active">
                   <CategoryIcon category={job.laborCategory} size="sm" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-bold text-navy-900">{job.title}</p>

@@ -172,6 +172,7 @@ export const jobPostingSchema = z.object({
   whatsapp: z.string().optional().or(z.literal("")),
   contactEmail: z.string().email("Correo inválido").optional().or(z.literal("")),
   deadline: z.string().optional().or(z.literal("")),
+  isUrgent: z.boolean().default(false),
 });
 
 export type JobPostingInput = z.infer<typeof jobPostingSchema>;

@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, Search, MapPin, Users, ChevronRight } from "lucide-react";
+import { ChevronLeft, Search, MapPin, Users, ChevronRight, Flame } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
-import { TagChip } from "@/components/ui/Badge";
+import { Badge, TagChip } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
@@ -68,10 +68,15 @@ export default async function BuscarCategoriaPage({
           )}
           {jobPostings.map((job) => (
             <Link key={job.id} href={`/vacantes/${job.id}`}>
-              <Card className="p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+              <Card className="p-4 transition-all hover:-translate-y-0.5 hover:shadow-active">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-bold text-navy-900">{job.title}</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-sm font-bold text-navy-900">{job.title}</p>
+                      {job.isUrgent && (
+                        <Badge tone="red" icon={<Flame className="h-3 w-3" />}>Urgente</Badge>
+                      )}
+                    </div>
                     <p className="mt-0.5 text-xs text-navy-800/50">{job.company.commercialName}</p>
                   </div>
                   <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />

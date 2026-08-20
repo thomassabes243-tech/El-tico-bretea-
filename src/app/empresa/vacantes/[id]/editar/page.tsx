@@ -53,6 +53,7 @@ export default async function EditarVacantePage({
               deadline: jobPosting.deadline
                 ? jobPosting.deadline.toISOString().slice(0, 10)
                 : "",
+              isUrgent: jobPosting.isUrgent,
             }}
           />
         </div>

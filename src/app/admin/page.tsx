@@ -63,7 +63,7 @@ export default async function AdminDashboardPage() {
           const Icon = c.icon;
           return (
             <Link key={c.label} href={c.href}>
-              <Card className="p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+              <Card className="p-4 transition-all hover:-translate-y-0.5 hover:shadow-active">
                 <Icon className="h-5 w-5 text-navy-700" />
                 <p className="mt-3 text-2xl font-extrabold text-navy-900">{c.value}</p>
                 <p className="text-xs text-navy-800/50">{c.label}</p>

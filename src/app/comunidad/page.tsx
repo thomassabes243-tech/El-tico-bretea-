@@ -48,7 +48,7 @@ export default async function ComunidadPage() {
             const Scene = COMMUNITY_SCENES[cat.value];
             return (
               <Link key={cat.value} href={`/comunidad/${cat.value.toLowerCase()}`}>
-                <Card className="relative overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-md">
+                <Card className="relative overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-active">
                   {Scene && (
                     <>
                       <Scene className="absolute inset-0 h-full w-full" />

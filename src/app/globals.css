@@ -1,27 +1,33 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f7fb;
+  --background: #f5f2ed;
   --foreground: #101828;
 
-  /* Identidad El Tico Bretea: azul marino + rojo (bandera de Costa Rica) */
-  --color-navy-950: #061b33;
-  --color-navy-900: #0a2647;
-  --color-navy-800: #123a63;
-  --color-navy-700: #1c4d80;
-  --color-navy-600: #2a63a3;
+  /* Identidad El Tico Bretea: azul marino + rojo (bandera de Costa Rica).
+     Paleta anclada a la referencia visual definitiva (Stitch): navy
+     #1A2B48/#031632, rojo #EF3340, arena #F5F2ED, verde #2D5A27. */
+  --color-navy-950: #031632;
+  --color-navy-900: #1a2b48;
+  --color-navy-800: #24365a;
+  --color-navy-700: #2f4570;
+  --color-navy-600: #3d5688;
 
-  --color-cr-red-700: #a50e1f;
-  --color-cr-red-600: #ce1126;
-  --color-cr-red-500: #e02638;
-  --color-cr-red-100: #fde3e5;
+  --color-cr-red-700: #d0202d;
+  --color-cr-red-600: #ef3340;
+  --color-cr-red-500: #f14c57;
+  --color-cr-red-100: #fbdfe1;
 
-  --color-sand-50: #f6f7fb;
-  --color-sand-100: #eef1f6;
-  --color-sand-200: #dde3ec;
+  --color-sand-50: #f5f2ed;
+  --color-sand-100: #ede8df;
+  --color-sand-200: #ded7c9;
 
-  --color-success-600: #16803d;
+  --color-success-600: #2d5a27;
   --color-warning-600: #b45309;
+
+  /* Dorado: acento exclusivo del badge "Brete Premium" (vacantes
+     destacadas por el equipo), distinto del morado "colón" de abajo. */
+  --color-gold-600: #d4af37;
 
   /* Acento "colón": morado/violeta inspirado en el billete de ₡10,000,
      reservado para precios, Premium y CV — nunca reproduce el billete. */
@@ -34,7 +40,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-plus-jakarta);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-montserrat);
 
   --color-navy-950: var(--color-navy-950);
   --color-navy-900: var(--color-navy-900);
@@ -53,17 +60,23 @@
 
   --color-success-600: var(--color-success-600);
   --color-warning-600: var(--color-warning-600);
+  --color-gold-600: var(--color-gold-600);
 
   --color-colon-700: var(--color-colon-700);
   --color-colon-600: var(--color-colon-600);
   --color-colon-500: var(--color-colon-500);
   --color-colon-100: var(--color-colon-100);
+
+  /* Sombras "ambient"/"active" de la referencia visual: profundidad muy
+     sutil para tarjetas en reposo, algo más marcada en hover/activo. */
+  --shadow-ambient: 0px 4px 12px rgba(26, 43, 72, 0.05);
+  --shadow-active: 0px 8px 24px rgba(26, 43, 72, 0.12);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-plus-jakarta), Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
 }
 
 @keyframes fade-in-up {

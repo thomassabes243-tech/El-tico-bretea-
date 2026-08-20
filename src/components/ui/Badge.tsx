@@ -4,7 +4,7 @@ import clsx from "clsx";
 // Sistema único de badges/chips para toda la app -- mismo radio, padding y
 // tipografía en todos lados; solo cambia el tono según lo que representa
 // (verificado, premium, urgente, estado neutro, etc).
-type Tone = "neutral" | "navy" | "red" | "success" | "warning" | "premium";
+type Tone = "neutral" | "navy" | "red" | "success" | "warning" | "premium" | "featured";
 
 const toneClasses: Record<Tone, string> = {
   neutral: "bg-sand-100 text-navy-800/70",
@@ -13,6 +13,9 @@ const toneClasses: Record<Tone, string> = {
   success: "bg-success-600/10 text-success-600",
   warning: "bg-warning-600/10 text-warning-600",
   premium: "bg-colon-100 text-colon-700",
+  // "Brete Premium": vacante destacada por curación editorial -- verde +
+  // dorado, distinto del morado "premium" (ese es para CV/suscripción).
+  featured: "bg-success-600 text-gold-600",
 };
 
 type BadgeProps = HTMLAttributes<HTMLSpanElement> & {

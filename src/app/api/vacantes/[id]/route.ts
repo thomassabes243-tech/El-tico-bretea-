@@ -75,6 +75,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       whatsapp: data.whatsapp || null,
       contactEmail: data.contactEmail || null,
       deadline: data.deadline ? new Date(data.deadline) : null,
+      isUrgent: data.isUrgent,
     },
   });
 
