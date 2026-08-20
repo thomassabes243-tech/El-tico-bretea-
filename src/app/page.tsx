@@ -1,18 +1,27 @@
 import Link from "next/link";
 import type { ComponentType } from "react";
-import { Search, FileText, Users, MessagesSquare, ShieldCheck, HeartHandshake, Sparkles } from "lucide-react";
+import {
+  Users,
+  MapPin,
+  MessagesSquare,
+  ShieldCheck,
+  HeartHandshake,
+  ChevronRight,
+  Inbox,
+} from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
-import { PoasScene } from "@/components/brand/scenery/PoasScene";
 import { GuanacasteScene } from "@/components/brand/scenery/GuanacasteScene";
 import { MonteverdeScene } from "@/components/brand/scenery/MonteverdeScene";
 import { CoffeeMountainsScene } from "@/components/brand/scenery/CoffeeMountainsScene";
-import { COMMUNITY_CATEGORIES } from "@/lib/constants";
+import { COMMUNITY_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import { getDailyQuote } from "@/lib/motivational-quotes";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
+import { prisma } from "@/lib/prisma";
 
 const COMMUNITY_SCENES: Record<string, ComponentType<{ className?: string }>> = {
   CONSTRUCCION: CoffeeMountainsScene,
@@ -20,40 +29,9 @@ const COMMUNITY_SCENES: Record<string, ComponentType<{ className?: string }>> = 
   PROFESIONALES: MonteverdeScene,
 };
 
-const QUICK_ACTIONS = [
-  {
-    href: "/buscar",
-    emoji: "🔎",
-    title: "Buscar trabajo",
-    description: "Explorá vacantes por categoría y ubicación",
-    icon: Search,
-    tone: "navy" as const,
-  },
-  {
-    href: "/cv",
-    emoji: "📄",
-    title: "Crear mi CV",
-    description: "Armá tu currículum profesional en minutos",
-    icon: FileText,
-    tone: "red" as const,
-  },
-  {
-    href: "/buscar-personal",
-    emoji: "💼",
-    title: "Buscar personal",
-    description: "Para empresas: encontrá al tico ideal",
-    icon: Users,
-    tone: "navy" as const,
-  },
-  {
-    href: "/comunidad",
-    emoji: "💬",
-    title: "Comunidad",
-    description: "Conectate con tu gremio laboral",
-    icon: MessagesSquare,
-    tone: "red" as const,
-  },
-];
+function labelFor(list: readonly { value: string; label: string }[], value: string) {
+  return list.find((i) => i.value === value)?.label ?? value;
+}
 
 export default async function Home({
   searchParams,
@@ -61,7 +39,16 @@ export default async function Home({
   searchParams: Promise<{ "cuenta-eliminada"?: string }>;
 }) {
   const quote = getDailyQuote();
-  const [adEligible, ads] = await Promise.all([getAdEligibility(), getActiveAds()]);
+  const [adEligible, ads, featuredJobs] = await Promise.all([
+    getAdEligibility(),
+    getActiveAds(),
+    prisma.jobPosting.findMany({
+      where: { isActive: true },
+      include: { company: true },
+      orderBy: { createdAt: "desc" },
+      take: 4,
+    }),
+  ]);
   const { "cuenta-eliminada": cuentaEliminada } = await searchParams;
 
   return (
@@ -76,51 +63,81 @@ export default async function Home({
         )}
 
         {/* Hero */}
-        <section className="animate-fade-in-up relative overflow-hidden rounded-3xl text-white shadow-lg shadow-navy-900/20">
-          <PoasScene className="absolute inset-0 h-full w-full" />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/40 to-transparent" />
-          <div className="relative px-6 py-8">
-            <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/85 backdrop-blur-sm">
-              <Sparkles className="h-3.5 w-3.5 text-cr-red-500" />
-              Mensaje del día
-            </div>
-            <p className="text-lg font-semibold leading-snug drop-shadow-sm">{quote}</p>
+        <section className="animate-fade-in-up rounded-3xl bg-sand-50 px-6 py-7">
+          <h1 className="text-2xl font-extrabold tracking-tight text-navy-900">¡Pura Vida!</h1>
+          <p className="mt-2 text-sm leading-relaxed text-navy-800/65">{quote}</p>
+          <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
+            <Button href="/buscar" variant="secondary" fullWidth>
+              🔍 Buscar Empleo
+            </Button>
+            <Button href="/buscar-personal" variant="outline" fullWidth>
+              <Users className="h-4 w-4" /> Buscar Personal
+            </Button>
           </div>
         </section>
 
-        {/* Pregunta principal */}
-        <section className="mt-7">
-          <h1 className="text-xl font-extrabold tracking-tight text-navy-900">
-            ¿Qué estás buscando hoy?
-          </h1>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            {QUICK_ACTIONS.map((action, i) => {
-              const Icon = action.icon;
-              return (
-                <Link key={action.href} href={action.href}>
-                  <Card
-                    className="animate-fade-in-up group h-full p-4 transition-all hover:-translate-y-0.5 hover:border-navy-700/30 hover:shadow-md"
-                    style={{ animationDelay: `${i * 60}ms` }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div
-                        className={
-                          "flex h-11 w-11 items-center justify-center rounded-2xl " +
-                          (action.tone === "red"
-                            ? "bg-cr-red-600/[0.09] text-cr-red-600"
-                            : "bg-navy-900/[0.07] text-navy-800")
-                        }
-                      >
-                        <Icon className="h-5 w-5" strokeWidth={2.1} />
+        {/* Comunidad Tica */}
+        <section className="mt-4">
+          <Link href="/comunidad">
+            <Card className="flex items-center gap-3.5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-navy-900 text-white">
+                <MessagesSquare className="h-5.5 w-5.5" strokeWidth={2.1} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-bold text-navy-900">Comunidad Tica</h3>
+                <p className="mt-0.5 text-xs leading-snug text-navy-800/60">
+                  Conectá, compartí y crecé con otros ticos.
+                </p>
+              </div>
+              <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
+            </Card>
+          </Link>
+        </section>
+
+        {/* Bretes Destacados */}
+        <section className="mt-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-bold text-navy-900">Bretes Destacados</h2>
+            <Link href="/buscar" className="text-xs font-semibold text-cr-red-600">
+              Ver todos
+            </Link>
+          </div>
+          <div className="mt-3 flex flex-col gap-3">
+            {featuredJobs.length === 0 && (
+              <Card className="flex flex-col items-center gap-2 p-6 text-center">
+                <Inbox className="h-7 w-7 text-navy-800/30" />
+                <p className="text-sm font-semibold text-navy-900">
+                  Todavía no hay vacantes publicadas
+                </p>
+              </Card>
+            )}
+            {featuredJobs.map((job) => (
+              <Link key={job.id} href={`/vacantes/${job.id}`}>
+                <Card className="p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="flex items-start gap-3">
+                    <CategoryIcon category={job.laborCategory} size="md" />
+                    <div className="min-w-0 flex-1">
+                      {job.company.isVerified && (
+                        <span className="mb-1 inline-block rounded-full bg-colon-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-colon-700">
+                          Empresa verificada
+                        </span>
+                      )}
+                      <p className="truncate text-sm font-bold text-navy-900">{job.title}</p>
+                      <p className="truncate text-xs text-navy-800/50">{job.company.commercialName}</p>
+                      <div className="mt-2 flex flex-wrap gap-2 text-[11px] font-medium text-navy-800/60">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
+                          <MapPin className="h-3 w-3" /> {job.location}
+                        </span>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
+                          {labelFor(JOB_TYPES, job.contractType)}
+                        </span>
                       </div>
-                      <span className="text-2xl leading-none">{action.emoji}</span>
                     </div>
-                    <h3 className="mt-3 text-sm font-bold text-navy-900">{action.title}</h3>
-                    <p className="mt-1 text-xs leading-snug text-navy-800/60">{action.description}</p>
-                  </Card>
-                </Link>
-              );
-            })}
+                    <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
+                  </div>
+                </Card>
+              </Link>
+            ))}
           </div>
         </section>
 
