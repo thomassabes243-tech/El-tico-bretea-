@@ -5,7 +5,20 @@ import bcrypt from "bcryptjs";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 
-export async function assignModerator(formData: FormData) {
+export type AssignModeratorState = { error: string | null };
+
+// Devuelve { error } en vez de lanzar una excepción para los casos de
+// validación esperables (correo de otro tipo de cuenta, contraseña corta,
+// etc.). Un `throw` acá no lo captura nadie del lado del cliente porque el
+// <form> llama la acción directo (sin try/catch propio) -- React lo trata
+// como un error real, lo manda al error boundary más cercano y en
+// producción termina mostrando el "Minified React error" genérico en vez
+// del mensaje de validación. Con useActionState, el estado devuelto se
+// muestra en el propio formulario sin romper el resto de la página.
+export async function assignModerator(
+  _prevState: AssignModeratorState,
+  formData: FormData
+): Promise<AssignModeratorState> {
   await requireAdmin();
 
   const email = String(formData.get("email") || "").toLowerCase().trim();
@@ -13,21 +26,24 @@ export async function assignModerator(formData: FormData) {
   const chatRoomId = String(formData.get("chatRoomId") || "");
 
   if (!email || !chatRoomId) {
-    throw new Error("Correo y sala son requeridos");
+    return { error: "Correo y sala son requeridos" };
   }
 
   let user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
     if (password.length < 8) {
-      throw new Error("Para crear una cuenta nueva de moderador, la contraseña debe tener al menos 8 caracteres");
+      return {
+        error: "Para crear una cuenta nueva de moderador, la contraseña debe tener al menos 8 caracteres",
+      };
     }
     const passwordHash = await bcrypt.hash(password, 10);
     user = await prisma.user.create({ data: { email, passwordHash, role: "MODERATOR" } });
   } else if (user.role !== "MODERATOR") {
-    throw new Error(
-      "Ese correo ya tiene una cuenta de otro tipo (trabajador/empresa/admin). Usá un correo nuevo para el moderador."
-    );
+    return {
+      error:
+        "Ese correo ya tiene una cuenta de otro tipo (trabajador/empresa/admin). Usá un correo nuevo para el moderador.",
+    };
   }
 
   const moderator = await prisma.moderator.upsert({
@@ -43,6 +59,7 @@ export async function assignModerator(formData: FormData) {
   });
 
   revalidatePath("/admin/moderadores");
+  return { error: null };
 }
 
 export async function removeModeratorAssignment(assignmentId: string) {
