@@ -16,6 +16,7 @@ const TABS = [
   { href: "/admin/importar-oferta", label: "Importar oferta" },
   { href: "/admin/moderadores", label: "Moderadores" },
   { href: "/admin/reportes", label: "Reportes" },
+  { href: "/admin/pagos-cv", label: "Pagos de CV" },
   { href: "/admin/publicidad", label: "Publicidad" },
   { href: "/admin/configuracion", label: "Configuración" },
   { href: "/admin/almacenamiento", label: "Almacenamiento" },

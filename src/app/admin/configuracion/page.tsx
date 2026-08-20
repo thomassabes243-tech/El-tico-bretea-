@@ -49,6 +49,51 @@ export default async function AdminConfiguracionPage() {
           </div>
         </Card>
 
+        <Card className="p-4">
+          <h2 className="text-sm font-bold text-navy-900">Cobro por transferencia bancaria</h2>
+          <p className="mt-1 text-xs text-navy-800/50">
+            El número y nombre que se le muestran al trabajador para que transfiera manualmente
+            y desbloquee la descarga del CV. Sin esto, no se muestra ninguna forma de pagar.
+            Los pagos se aprueban a mano en «Pagos de CV» revisando el código que la persona
+            pega después de transferir.
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <div>
+              <FieldLabel label="Número transferencia bancaria" />
+              <input
+                name="bankTransferAccount"
+                type="text"
+                placeholder="8888-8888"
+                defaultValue={settings.bankTransferAccount ?? ""}
+                className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
+              />
+            </div>
+            <div>
+              <FieldLabel label="Nombre de la cuenta" hint="para que confirmen que es correcto" />
+              <input
+                name="bankTransferHolder"
+                type="text"
+                placeholder="Ej. Juan Pérez"
+                defaultValue={settings.bankTransferHolder ?? ""}
+                className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
+              />
+            </div>
+          </div>
+          <div className="mt-3">
+            <FieldLabel
+              label="WhatsApp de contacto"
+              hint="para quien quiera pagar más rápido con tarjeta, coordinado directo con vos"
+            />
+            <input
+              name="contactWhatsapp"
+              type="text"
+              placeholder="50688881234 (código de país + número, sin signos)"
+              defaultValue={settings.contactWhatsapp ?? ""}
+              className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
+            />
+          </div>
+        </Card>
+
         <Button type="submit" className="self-start">Guardar cambios</Button>
       </form>
     </div>

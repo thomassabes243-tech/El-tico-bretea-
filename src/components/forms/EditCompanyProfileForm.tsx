@@ -77,7 +77,7 @@ export function EditCompanyProfileForm({
         alt={commercialName}
         shape="square"
         fallback={
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-navy-900 bg-cr-red-600/[0.09] text-2xl font-bold text-cr-red-600">
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-navy-900 bg-mx-red-600/[0.09] text-2xl font-bold text-mx-red-600">
             {commercialName.slice(0, 1).toUpperCase()}
           </div>
         }

@@ -11,6 +11,9 @@ export async function getAppSettings() {
 export async function updateAppSettings(data: {
   cvPriceColones: number;
   premiumPriceColones: number;
+  bankTransferAccount?: string | null;
+  bankTransferHolder?: string | null;
+  contactWhatsapp?: string | null;
 }) {
   return prisma.appSettings.upsert({
     where: { id: SETTINGS_ID },
