@@ -51,7 +51,6 @@ export async function POST(request: Request) {
           contactEmail: data.contactEmail || email,
           location: textOrDefault(data.location),
           activity: textOrDefault(data.activity),
-          logoUrl: data.logoUrl || null,
           description: data.description || null,
         },
       },

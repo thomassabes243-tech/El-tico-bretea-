@@ -19,7 +19,7 @@ import { Card } from "@/components/ui/Card";
 
 const STEPS: { title: string; fields: (keyof WorkerRegistrationFormValues)[] }[] = [
   { title: "Cuenta", fields: ["email", "password"] },
-  { title: "Identidad", fields: ["fullName", "age", "residence", "phone", "whatsapp", "formalPhotoUrl"] },
+  { title: "Identidad", fields: ["fullName", "age", "residence", "phone", "whatsapp"] },
   { title: "Profesión", fields: ["profession", "laborCategory", "yearsExperience", "workExperience", "companiesWorkedAt", "previousPositions"] },
   { title: "Estudios y habilidades", fields: ["education", "degrees", "courses", "certifications", "skills", "languages"] },
   { title: "Disponibilidad", fields: ["availability", "willingToRelocate", "jobTypeSought", "salaryExpectation"] },
@@ -143,14 +143,9 @@ export function WorkerRegistrationForm() {
           <FieldWrapper label="Nombre completo" htmlFor="fullName" error={errors.fullName?.message}>
             <TextInput id="fullName" placeholder="Ej. Juan Pérez Rojas" {...register("fullName")} />
           </FieldWrapper>
-          <FieldWrapper
-            label="Fotografía formal (URL)"
-            htmlFor="formalPhotoUrl"
-            hint="Podés pegar el enlace de una foto tipo carné. La carga de archivos llega en una próxima entrega."
-            error={errors.formalPhotoUrl?.message}
-          >
-            <TextInput id="formalPhotoUrl" placeholder="https://..." {...register("formalPhotoUrl")} />
-          </FieldWrapper>
+          <p className="text-xs text-navy-800/50">
+            Después de crear tu cuenta vas a poder subir tu foto desde el teléfono, en «Editar perfil».
+          </p>
           <div className="grid grid-cols-2 gap-3">
             <FieldWrapper label="Edad" htmlFor="age" error={errors.age?.message}>
               <TextInput id="age" type="number" min={15} max={100} {...register("age")} />

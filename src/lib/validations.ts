@@ -60,7 +60,6 @@ export const workerRegistrationSchema = z.object({
 
   // Identidad (Sección 2) -- todo opcional, se puede completar después.
   fullName: z.string().optional().or(z.literal("")),
-  formalPhotoUrl: z.string().optional().or(z.literal("")),
   age: optionalInt(15, 100),
   residence: z.string().optional().or(z.literal("")),
   phone: z.string().optional().or(z.literal("")),
@@ -110,7 +109,6 @@ export const companyRegistrationSchema = z.object({
   contactEmail: z.string().email("Correo de contacto inválido").optional().or(z.literal("")),
   location: z.string().optional().or(z.literal("")),
   activity: z.string().optional().or(z.literal("")),
-  logoUrl: z.string().optional().or(z.literal("")),
   description: z.string().optional().or(z.literal("")),
 });
 

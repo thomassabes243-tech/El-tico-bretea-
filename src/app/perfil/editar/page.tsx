@@ -27,9 +27,10 @@ export default async function EditarPerfilPage() {
           </p>
           <div className="mt-5">
             <EditWorkerProfileForm
+              initialPhotoUrl={worker.formalPhotoUrl}
+              fullName={worker.fullName}
               defaultValues={{
                 fullName: worker.fullName,
-                formalPhotoUrl: worker.formalPhotoUrl ?? "",
                 age: worker.age,
                 residence: worker.residence,
                 phone: worker.phone ?? "",
@@ -89,6 +90,8 @@ export default async function EditarPerfilPage() {
           <div className="mt-5">
             <EditCompanyProfileForm
               wasVerified={company.isVerified}
+              initialLogoUrl={company.logoUrl}
+              commercialName={company.commercialName}
               defaultValues={{
                 commercialName: company.commercialName,
                 legalId: company.legalId,
@@ -97,7 +100,6 @@ export default async function EditarPerfilPage() {
                 contactEmail: company.contactEmail,
                 location: company.location,
                 activity: company.activity,
-                logoUrl: company.logoUrl ?? "",
                 description: company.description ?? "",
                 chatAlias: company.user.chatAlias ?? "",
               }}

@@ -104,9 +104,9 @@ export function CompanyRegistrationForm() {
       <FieldWrapper label="Actividad comercial" htmlFor="activity" error={errors.activity?.message}>
         <TextInput id="activity" placeholder="Ej. Construcción y remodelación" {...register("activity")} />
       </FieldWrapper>
-      <FieldWrapper label="Logo (URL)" htmlFor="logoUrl" hint="La carga de archivos llega en una próxima entrega." error={errors.logoUrl?.message}>
-        <TextInput id="logoUrl" placeholder="https://..." {...register("logoUrl")} />
-      </FieldWrapper>
+      <p className="text-xs text-navy-800/50">
+        Después de crear la cuenta vas a poder subir el logo desde el teléfono, en «Editar perfil».
+      </p>
       <FieldWrapper label="Descripción" htmlFor="description" error={errors.description?.message}>
         <Textarea id="description" placeholder="Contanos brevemente sobre la empresa" {...register("description")} />
       </FieldWrapper>

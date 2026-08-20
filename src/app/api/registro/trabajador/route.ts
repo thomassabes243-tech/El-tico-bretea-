@@ -45,7 +45,6 @@ export async function POST(request: Request) {
       workerProfile: {
         create: {
           fullName: textOrDefault(data.fullName),
-          formalPhotoUrl: data.formalPhotoUrl || null,
           age: numberOrDefault(data.age),
           residence: textOrDefault(data.residence),
           phone: data.phone || null,
