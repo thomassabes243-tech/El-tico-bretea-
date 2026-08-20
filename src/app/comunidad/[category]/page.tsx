@@ -90,8 +90,12 @@ export default async function ComunidadCategoriaPage({
     }
   }
 
-  let canModerate = false;
-  if (session.user.role === "MODERATOR") {
+  // El admin modera cualquier sala sin necesitar asignación. Cualquier otra
+  // cuenta (trabajador, empresa o moderador puro) puede moderar si tiene un
+  // registro de Moderator con una asignación a esta sala -- moderar es un
+  // extra sobre la cuenta, no depende de que el rol sea MODERATOR.
+  let canModerate = session.user.role === "ADMIN";
+  if (!canModerate) {
     const moderator = await prisma.moderator.findUnique({ where: { userId: session.user.id } });
     if (moderator) {
       const assignment = await prisma.moderatorAssignment.findUnique({

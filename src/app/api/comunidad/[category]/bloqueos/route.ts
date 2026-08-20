@@ -20,7 +20,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ cate
   const room = await getChatRoomBySlug(category);
   if (!room) return NextResponse.json({ error: "Sala no encontrada" }, { status: 404 });
 
-  if (!(await requireModeratorForRoom(session.user.id, room.id))) {
+  if (session.user.role !== "ADMIN" && !(await requireModeratorForRoom(session.user.id, room.id))) {
     return NextResponse.json({ error: "No sos moderador de esta sala" }, { status: 403 });
   }
 
@@ -50,7 +50,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ cat
   const room = await getChatRoomBySlug(category);
   if (!room) return NextResponse.json({ error: "Sala no encontrada" }, { status: 404 });
 
-  if (!(await requireModeratorForRoom(session.user.id, room.id))) {
+  if (session.user.role !== "ADMIN" && !(await requireModeratorForRoom(session.user.id, room.id))) {
     return NextResponse.json({ error: "No sos moderador de esta sala" }, { status: 403 });
   }
 
@@ -87,7 +87,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ c
   const room = await getChatRoomBySlug(category);
   if (!room) return NextResponse.json({ error: "Sala no encontrada" }, { status: 404 });
 
-  if (!(await requireModeratorForRoom(session.user.id, room.id))) {
+  if (session.user.role !== "ADMIN" && !(await requireModeratorForRoom(session.user.id, room.id))) {
     return NextResponse.json({ error: "No sos moderador de esta sala" }, { status: 403 });
   }
 

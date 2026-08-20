@@ -40,12 +40,14 @@ export async function DELETE(
   }
 
   const isOwn = message.authorId === session.user.id;
+  const isAdmin = session.user.role === "ADMIN";
   const isModerator =
     !isOwn &&
+    !isAdmin &&
     message.author.role !== "MODERATOR" &&
     (await requireModeratorForRoom(session.user.id, room.id));
 
-  if (!isOwn && !isModerator) {
+  if (!isOwn && !isAdmin && !isModerator) {
     return NextResponse.json({ error: "No podés borrar este mensaje" }, { status: 403 });
   }
 
