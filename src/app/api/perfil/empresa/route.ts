@@ -29,24 +29,29 @@ export async function PATCH(request: Request) {
   const data = parsed.data;
   const legalIdChanged = data.legalId !== company.legalId;
 
-  await prisma.companyProfile.update({
-    where: { id: company.id },
-    data: {
-      commercialName: data.commercialName,
-      legalId: data.legalId,
-      responsibleName: data.responsibleName,
-      contactPhone: data.contactPhone || null,
-      contactEmail: data.contactEmail,
-      location: data.location,
-      activity: data.activity,
-      logoUrl: data.logoUrl || null,
-      description: data.description || null,
-      alias: data.alias || null,
-      // Cambiar la identificación legal invalida una verificación previa: estaba
-      // atada a esos datos específicos y debe revisarse de nuevo.
-      ...(legalIdChanged && company.isVerified ? { isVerified: false, verifiedAt: null } : {}),
-    },
-  });
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: session.user.id },
+      data: { chatAlias: data.chatAlias || null },
+    }),
+    prisma.companyProfile.update({
+      where: { id: company.id },
+      data: {
+        commercialName: data.commercialName,
+        legalId: data.legalId,
+        responsibleName: data.responsibleName,
+        contactPhone: data.contactPhone || null,
+        contactEmail: data.contactEmail,
+        location: data.location,
+        activity: data.activity,
+        logoUrl: data.logoUrl || null,
+        description: data.description || null,
+        // Cambiar la identificación legal invalida una verificación previa: estaba
+        // atada a esos datos específicos y debe revisarse de nuevo.
+        ...(legalIdChanged && company.isVerified ? { isVerified: false, verifiedAt: null } : {}),
+      },
+    }),
+  ]);
 
   return NextResponse.json({ ok: true });
 }

@@ -63,14 +63,6 @@ export function EditCompanyProfileForm({
       <FieldWrapper label="Nombre comercial" htmlFor="commercialName" required error={errors.commercialName?.message}>
         <TextInput id="commercialName" {...register("commercialName")} />
       </FieldWrapper>
-      <FieldWrapper
-        label="Alias"
-        htmlFor="alias"
-        hint="Opcional. Se muestra en vez del nombre comercial solo en el canal de alertas de estafas."
-        error={errors.alias?.message}
-      >
-        <TextInput id="alias" {...register("alias")} />
-      </FieldWrapper>
       <FieldWrapper label="Identificación / RFC" htmlFor="legalId" required error={errors.legalId?.message}>
         <TextInput id="legalId" {...register("legalId")} />
       </FieldWrapper>
@@ -106,6 +98,19 @@ export function EditCompanyProfileForm({
       <FieldWrapper label="Descripción" htmlFor="description" error={errors.description?.message}>
         <Textarea id="description" {...register("description")} />
       </FieldWrapper>
+
+      <Card className="flex flex-col gap-3 p-4">
+        <h2 className="text-sm font-bold text-navy-900">Alias público</h2>
+        <p className="text-xs text-navy-800/50">
+          Si lo completás, se muestra en las salas de comunidad y en el canal de alertas de
+          estafas en vez del nombre comercial. La cuenta sigue siendo la misma por dentro: si
+          alguien insulta o abusa, un moderador igual puede identificarla y silenciarla. Dejalo
+          vacío para seguir mostrando el nombre comercial.
+        </p>
+        <FieldWrapper label="Alias" htmlFor="chatAlias" hint="Máximo 40 caracteres" error={errors.chatAlias?.message}>
+          <TextInput id="chatAlias" placeholder="Ej. Empresa de limpieza en Guadalajara" {...register("chatAlias")} />
+        </FieldWrapper>
+      </Card>
 
       {submitError && (
         <p className="rounded-xl bg-mx-red-100 px-3.5 py-2.5 text-sm font-medium text-mx-red-700">

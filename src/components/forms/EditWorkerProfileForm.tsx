@@ -68,14 +68,6 @@ export function EditWorkerProfileForm({
           <TextInput id="fullName" {...register("fullName")} />
         </FieldWrapper>
         <FieldWrapper
-          label="Alias"
-          htmlFor="alias"
-          hint="Opcional. Se muestra en vez de tu nombre solo en el canal de alertas de estafas."
-          error={errors.alias?.message}
-        >
-          <TextInput id="alias" placeholder="Ej. Trabajador_GDL" {...register("alias")} />
-        </FieldWrapper>
-        <FieldWrapper
           label="Fotografía formal (URL)"
           htmlFor="formalPhotoUrl"
           hint="Podés pegar el enlace de una foto tipo carné."
@@ -99,6 +91,19 @@ export function EditWorkerProfileForm({
             <TextInput id="whatsapp" {...register("whatsapp")} />
           </FieldWrapper>
         </div>
+      </Card>
+
+      <Card className="flex flex-col gap-3 p-4">
+        <h2 className="text-sm font-bold text-navy-900">Alias público</h2>
+        <p className="text-xs text-navy-800/50">
+          Si lo completás, se muestra en las salas de comunidad y en el canal de alertas de
+          estafas en vez de tu nombre completo. Tu cuenta sigue siendo la misma por dentro: si
+          alguien insulta o abusa, un moderador igual puede identificarlo y silenciarlo. Dejalo
+          vacío para seguir mostrando tu nombre.
+        </p>
+        <FieldWrapper label="Alias" htmlFor="chatAlias" hint="Máximo 40 caracteres" error={errors.chatAlias?.message}>
+          <TextInput id="chatAlias" placeholder="Ej. Trabajador de Guadalajara" {...register("chatAlias")} />
+        </FieldWrapper>
       </Card>
 
       <Card className="flex flex-col gap-4 p-4">

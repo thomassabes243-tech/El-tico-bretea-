@@ -109,18 +109,19 @@ export const workerProfileUpdateSchema = workerRegistrationSchema
     showWhatsapp: z.boolean().default(false),
     showEmail: z.boolean().default(false),
     showSalaryExpectation: z.boolean().default(false),
-    // Alias público opcional para el canal de alertas de estafas (Sección 21).
-    alias: z.string().trim().max(60).optional().or(z.literal("")),
+    chatAlias: z.string().max(40, "Máximo 40 caracteres").optional().or(z.literal("")),
   });
 
 export type WorkerProfileUpdateInput = z.infer<typeof workerProfileUpdateSchema>;
 export type WorkerProfileUpdateFormValues = z.input<typeof workerProfileUpdateSchema>;
 
 export const companyProfileUpdateSchema = companyRegistrationSchema
-  .omit({ email: true, password: true })
+  .omit({
+    email: true,
+    password: true,
+  })
   .extend({
-    // Alias público opcional para el canal de alertas de estafas (Sección 21).
-    alias: z.string().trim().max(60).optional().or(z.literal("")),
+    chatAlias: z.string().max(40, "Máximo 40 caracteres").optional().or(z.literal("")),
   });
 
 export type CompanyProfileUpdateInput = z.infer<typeof companyProfileUpdateSchema>;

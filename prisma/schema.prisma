@@ -34,6 +34,12 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  // Alias opcional elegido por la propia persona, mostrado en el chat de
+  // comunidad en vez del nombre real (más privacidad). La cuenta sigue
+  // siendo la real por dentro -- correo/contraseña, moderación y bloqueos
+  // no cambian, solo lo que se muestra públicamente en los mensajes.
+  chatAlias String?
+
   workerProfile  WorkerProfile?
   companyProfile CompanyProfile?
   moderator      Moderator?
@@ -152,13 +158,6 @@ model WorkerProfile {
   criminalRecordKey        String?
   criminalRecordUploadedAt DateTime?
 
-  // Alias público opcional (Sección 21): si está definido, se muestra en
-  // vez del nombre real únicamente en el canal de alertas de estafas —
-  // en el resto de la app (chat de comunidad, perfil, CV) se sigue
-  // mostrando el nombre real como siempre. No reemplaza el login, que
-  // sigue siendo correo + contraseña.
-  alias String?
-
   isPremium  Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -204,9 +203,6 @@ model CompanyProfile {
 
   isVerified   Boolean   @default(false)
   verifiedAt   DateTime?
-
-  // Alias público opcional (Sección 21) — ver nota en WorkerProfile.
-  alias String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
