@@ -13,8 +13,8 @@ import { AvatarImage } from "@/components/brand/AvatarImage";
 import { recommendJobsForWorker } from "@/lib/recommendations";
 import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
-import { applicationStatusMeta } from "@/lib/application-status";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
+import { MyApplicationsTabs } from "@/components/profile/MyApplicationsTabs";
 import {
   MapPin,
   Phone,
@@ -251,37 +251,24 @@ export default async function PerfilPage() {
           )}
 
           <Card className="mt-4 p-5">
-            <h2 className="flex items-center gap-2 text-sm font-bold text-navy-900">
-              <Send className="h-4 w-4" /> Mis aplicaciones
+            <h2 className="flex items-center gap-2 font-heading text-sm font-bold text-navy-900">
+              <Send className="h-4 w-4 text-navy-700" /> Mis aplicaciones
             </h2>
-            {worker.applications.length === 0 ? (
-              <EmptyState
-                icon={Send}
-                title="Todavía no aplicaste a ningún brete"
-                description="Cuando aplicás a una vacante, el seguimiento aparece acá."
-                action={{ label: "Buscar bretes", href: "/buscar" }}
-                className="mt-3 border-none bg-sand-50 p-6 shadow-none"
-              />
-            ) : (
-              <div className="mt-3 flex flex-col gap-2.5">
-                {worker.applications.map((app) => {
-                  const statusMeta = applicationStatusMeta(app.status);
-                  return (
-                    <Link key={app.id} href={`/vacantes/${app.jobPosting.id}`}>
-                      <div className="flex items-center gap-3 rounded-xl border border-sand-200 p-3">
-                        <CategoryIcon category={app.jobPosting.laborCategory} size="sm" />
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-semibold text-navy-900">{app.jobPosting.title}</p>
-                          <p className="truncate text-xs text-navy-800/50">{app.jobPosting.company.commercialName}</p>
-                        </div>
-                        <Badge tone={statusMeta.tone}>{statusMeta.label}</Badge>
-                        <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
+            <p className="mt-0.5 text-xs text-navy-800/50">Dale seguimiento a tus oportunidades.</p>
+            <MyApplicationsTabs
+              applications={worker.applications.map((app) => ({
+                id: app.id,
+                status: app.status,
+                createdAt: app.createdAt.toISOString(),
+                jobPosting: {
+                  id: app.jobPosting.id,
+                  title: app.jobPosting.title,
+                  laborCategory: app.jobPosting.laborCategory,
+                  isActive: app.jobPosting.isActive,
+                  company: { commercialName: app.jobPosting.company.commercialName },
+                },
+              }))}
+            />
           </Card>
 
           <Card className="mt-4 flex items-start gap-3 border-navy-700/15 bg-navy-900/[0.03] p-4">
