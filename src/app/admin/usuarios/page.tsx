@@ -1,9 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { ShieldBan, ShieldCheck, Sparkles, Crown } from "lucide-react";
+import { ShieldBan, ShieldCheck, Sparkles, Crown, Fingerprint } from "lucide-react";
 import { requireAdmin } from "@/lib/admin";
 import { toggleUserBlocked, toggleWorkerPremium, toggleUserAdmin } from "./actions";
+import { getDuplicateDeviceGroups } from "@/lib/safety";
 import type { Prisma } from "@prisma/client";
 
 const ROLE_LABELS: Record<string, string> = {
@@ -42,6 +43,8 @@ export default async function AdminUsuariosPage({
     },
   });
 
+  const duplicateGroups = await getDuplicateDeviceGroups();
+
   return (
     <div>
       <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Usuarios</h1>
@@ -51,6 +54,37 @@ export default async function AdminUsuariosPage({
         Mientras no haya pagos conectados, el Premium de un trabajador solo se puede activar
         desde acá. No hay límite de cuántas cuentas pueden ser Administrador.
       </p>
+
+      {duplicateGroups.length > 0 && (
+        <Card className="mt-4 flex flex-col gap-3 border-warning-600/25 bg-warning-600/[0.06] p-4">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-navy-900">
+            <Fingerprint className="h-4 w-4 text-warning-600" /> Posibles cuentas duplicadas
+          </h2>
+          <p className="text-xs leading-relaxed text-navy-800/60">
+            Cuentas que se registraron desde el mismo navegador (huella débil -- puede haber
+            falsos positivos, ej. dos personas en la misma computadora pública). Revisá antes de
+            actuar.
+          </p>
+          <div className="flex flex-col gap-2">
+            {duplicateGroups.map(({ fingerprint, accounts }) => (
+              <div key={fingerprint} className="rounded-lg border border-sand-200 bg-white p-2.5">
+                <p className="mb-1.5 font-mono text-[10px] text-navy-800/35">{fingerprint.slice(0, 16)}…</p>
+                <div className="flex flex-col gap-1">
+                  {accounts.map((a) => (
+                    <p key={a.id} className="flex items-center gap-1.5 text-xs text-navy-800/70">
+                      <span className="shrink-0 rounded-full bg-sand-100 px-1.5 py-0.5 text-[9px] font-bold uppercase text-navy-800/50">
+                        {ROLE_LABELS[a.role] ?? a.role}
+                      </span>
+                      {a.workerProfile?.fullName ?? a.companyProfile?.commercialName ?? a.email}
+                      {a.isBlocked && <span className="text-mx-red-600">(bloqueada)</span>}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       <form className="mt-4 flex gap-2">
         <input

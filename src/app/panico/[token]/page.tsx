@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { MapPin, AlertTriangle } from "lucide-react";
+import { MapPin, AlertTriangle, ShieldAlert } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { LogoMark } from "@/components/brand/Logo";
 import { Card } from "@/components/ui/Card";
@@ -47,6 +47,16 @@ export default async function PanicoPublicoPage({
         )}
         {alert.note && (
           <p className="mt-3 whitespace-pre-line text-sm text-navy-900">{alert.note}</p>
+        )}
+
+        {alert.suspicious && (
+          <div className="mt-3 flex items-start gap-2 rounded-xl border border-warning-600/25 bg-warning-600/10 p-3">
+            <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-warning-600" />
+            <p className="text-xs leading-relaxed text-navy-800/70">
+              La ubicación de esta alerta quedó marcada para revisión ({alert.suspicionReason}).
+              Puede ser un falso positivo, pero tenelo en cuenta.
+            </p>
+          </div>
         )}
 
         {mapsUrl && (

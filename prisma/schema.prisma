@@ -687,9 +687,12 @@ model PanicAlert {
   longitude Float?
   note      String?
 
-  // Mismo motivo que en LocationShare: link de solo lectura para compartir
-  // por WhatsApp, ya que TrustedContact no es necesariamente una cuenta.
-  shareToken String @unique @default(cuid())
+  // Mismo motivo que en LocationShare: heurística de sospecha (IP vs. GPS),
+  // no detección real -- y link de solo lectura para compartir por
+  // WhatsApp, ya que TrustedContact no es necesariamente una cuenta.
+  suspicious      Boolean @default(false)
+  suspicionReason String?
+  shareToken      String  @unique @default(cuid())
 
   status     PanicAlertStatus @default(ACTIVA)
   createdAt  DateTime         @default(now())

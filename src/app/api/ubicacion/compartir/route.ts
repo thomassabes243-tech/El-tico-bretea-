@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { locationShareSchema } from "@/lib/validations";
-import { detectSuspiciousLocation } from "@/lib/safety";
+import { detectSuspiciousLocation, detectIpLocationMismatch } from "@/lib/safety";
 
 const SHARE_DURATION_MS = 6 * 60 * 60 * 1000; // 6h, similar a "compartir viaje"
 
@@ -28,11 +28,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Contacto no encontrado" }, { status: 404 });
   }
 
-  const suspicionReason = await detectSuspiciousLocation(session.user.id, {
-    latitude: parsed.data.latitude,
-    longitude: parsed.data.longitude,
-    accuracy: parsed.data.accuracy,
-  });
+  const suspicionReason =
+    (await detectSuspiciousLocation(session.user.id, {
+      latitude: parsed.data.latitude,
+      longitude: parsed.data.longitude,
+      accuracy: parsed.data.accuracy,
+    })) ?? detectIpLocationMismatch(request, parsed.data);
 
   const share = await prisma.locationShare.create({
     data: {

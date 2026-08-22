@@ -20,6 +20,69 @@ export async function cleanupExpiredLocationShares(): Promise<number> {
   return count;
 }
 
+// Cuentas que comparten la misma huella de dispositivo (Sección 22) -- señal
+// débil de posible cuenta duplicada (ej. una empresa bloqueada creando una
+// cuenta nueva desde el mismo navegador). Nunca bloquea sola, solo visibiliza
+// para que un admin lo revise en /admin/usuarios.
+export async function getDuplicateDeviceGroups() {
+  const grouped = await prisma.user.groupBy({
+    by: ["deviceFingerprint"],
+    where: { deviceFingerprint: { not: null } },
+    _count: { deviceFingerprint: true },
+    having: { deviceFingerprint: { _count: { gt: 1 } } },
+  });
+  if (grouped.length === 0) return [];
+
+  const fingerprints = grouped.map((g) => g.deviceFingerprint!);
+  const users = await prisma.user.findMany({
+    where: { deviceFingerprint: { in: fingerprints } },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      isBlocked: true,
+      deviceFingerprint: true,
+      createdAt: true,
+      workerProfile: { select: { fullName: true } },
+      companyProfile: { select: { commercialName: true } },
+    },
+    orderBy: { createdAt: "asc" },
+  });
+
+  const byFingerprint = new Map<string, typeof users>();
+  for (const u of users) {
+    const key = u.deviceFingerprint!;
+    byFingerprint.set(key, [...(byFingerprint.get(key) ?? []), u]);
+  }
+  return Array.from(byFingerprint.entries()).map(([fingerprint, accounts]) => ({ fingerprint, accounts }));
+}
+
+// Heurística adicional (Sección 22): Vercel agrega automáticamente headers
+// de geolocalización por IP a cada request en producción (x-vercel-ip-*),
+// sin necesitar ninguna API key ni proveedor externo. Si el GPS reportado
+// queda muy lejos de donde la IP dice que está la persona, es otra señal de
+// sospecha (VPN, proxy, o coordenadas falseadas) -- de nuevo, una heurística,
+// no una prueba. En desarrollo local estos headers no existen, así que la
+// función simplemente no aporta nada (no bloquea ni falla).
+export function detectIpLocationMismatch(
+  request: Request,
+  point: { latitude: number; longitude: number }
+): string | null {
+  const ipLat = request.headers.get("x-vercel-ip-latitude");
+  const ipLon = request.headers.get("x-vercel-ip-longitude");
+  if (!ipLat || !ipLon) return null;
+
+  const ipPoint = { latitude: parseFloat(ipLat), longitude: parseFloat(ipLon) };
+  if (Number.isNaN(ipPoint.latitude) || Number.isNaN(ipPoint.longitude)) return null;
+
+  const distanceKm = haversineKm(ipPoint, point);
+  if (distanceKm > 500) {
+    const city = request.headers.get("x-vercel-ip-city");
+    return `La ubicación reportada está a ~${Math.round(distanceKm)} km de donde tu conexión a internet parece estar${city ? ` (${decodeURIComponent(city)})` : ""}`;
+  }
+  return null;
+}
+
 export function detectContactInfoLeak(text: string): string | null {
   if (PHONE_PATTERN.test(text)) return "Parece contener un número de teléfono";
   if (ADDRESS_PATTERN.test(text)) return "Parece contener una dirección";
