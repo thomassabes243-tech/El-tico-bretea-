@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { ComponentType } from "react";
 import {
   Search,
@@ -75,13 +76,29 @@ export default async function Home({
         )}
 
         {/* Hero */}
-        <section className="animate-fade-in-up rounded-3xl bg-sand-50 px-6 py-7">
-          <h1 className="font-heading text-2xl font-bold tracking-tight text-navy-900">¡Pura Vida!</h1>
-          <p className="mt-2 text-sm leading-relaxed text-navy-800/65">{quote}</p>
-          <div className="mt-5">
-            <Button href="/buscar-personal" variant="outline" fullWidth>
-              <Users className="h-4 w-4" /> Buscar Personal
-            </Button>
+        <section className="animate-fade-in-up relative overflow-hidden rounded-3xl">
+          <Image
+            src="/hero-worker.jpg"
+            alt="Trabajador breteando en Costa Rica"
+            width={1600}
+            height={1067}
+            priority
+            className="h-56 w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-950/90 via-navy-950/50 to-navy-950/10" />
+          <div className="absolute inset-0 flex flex-col justify-end px-6 py-6">
+            <h1 className="font-heading text-2xl font-bold tracking-tight text-white">¡Pura Vida!</h1>
+            <p className="mt-2 text-sm leading-relaxed text-white/80">{quote}</p>
+            <div className="mt-5">
+              <Button
+                href="/buscar-personal"
+                variant="outline"
+                fullWidth
+                className="border-white/40 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
+              >
+                <Users className="h-4 w-4" /> Buscar Personal
+              </Button>
+            </div>
           </div>
         </section>
 
