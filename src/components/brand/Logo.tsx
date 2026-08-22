@@ -21,24 +21,24 @@ export function LogoMark({ size = 40, className }: { size?: number; className?: 
       role="img"
       aria-label="El Tico Bretea"
     >
-      <circle cx="50" cy="48" r="48" fill="#0a2647" />
+      <circle cx="50" cy="48" r="48" fill="#1a2b48" />
       <circle cx="50" cy="48" r="48" fill="url(#logoGradient)" fillOpacity="0.25" />
 
       {/* Hombros / torso */}
-      <path d="M18 94 Q18 66 32 60 L68 60 Q82 66 82 94 Z" fill="#f6f7fb" />
+      <path d="M18 94 Q18 66 32 60 L68 60 Q82 66 82 94 Z" fill="#f5f2ed" />
 
       {/* Cabeza */}
-      <circle cx="50" cy="43" r="15" fill="#f6f7fb" />
+      <circle cx="50" cy="43" r="15" fill="#f5f2ed" />
 
       {/* Gorra */}
-      <path d="M32 35 Q32 17 50 17 Q68 17 68 35 Z" fill="#ce1126" />
-      <ellipse cx="50" cy="35" rx="19" ry="5.5" fill="#a50e1f" />
+      <path d="M32 35 Q32 17 50 17 Q68 17 68 35 Z" fill="#ef3340" />
+      <ellipse cx="50" cy="35" rx="19" ry="5.5" fill="#d0202d" />
 
       {/* Llave inglesa */}
       <g transform="translate(60 66) rotate(35)">
-        <rect x="-4" y="-16" width="8" height="30" rx="3" fill="#f6f7fb" />
-        <circle cx="0" cy="-16" r="8" fill="none" stroke="#f6f7fb" strokeWidth="4.5" />
-        <circle cx="0" cy="16" r="6" fill="none" stroke="#f6f7fb" strokeWidth="4" />
+        <rect x="-4" y="-16" width="8" height="30" rx="3" fill="#f5f2ed" />
+        <circle cx="0" cy="-16" r="8" fill="none" stroke="#f5f2ed" strokeWidth="4.5" />
+        <circle cx="0" cy="16" r="6" fill="none" stroke="#f5f2ed" strokeWidth="4" />
       </g>
 
       {/* Listón bandera de Costa Rica */}
@@ -46,11 +46,11 @@ export function LogoMark({ size = 40, className }: { size?: number; className?: 
         <rect x="14" y="100" width="72" height="10" rx="5" />
       </clipPath>
       <g clipPath="url(#flagClip)">
-        <rect x="14" y="100" width="72" height="2" fill="#1c4d80" />
-        <rect x="14" y="102" width="72" height="2" fill="#f6f7fb" />
-        <rect x="14" y="104" width="72" height="2" fill="#ce1126" />
-        <rect x="14" y="106" width="72" height="2" fill="#f6f7fb" />
-        <rect x="14" y="108" width="72" height="2" fill="#1c4d80" />
+        <rect x="14" y="100" width="72" height="2" fill="#1a2b48" />
+        <rect x="14" y="102" width="72" height="2" fill="#f5f2ed" />
+        <rect x="14" y="104" width="72" height="2" fill="#ef3340" />
+        <rect x="14" y="106" width="72" height="2" fill="#f5f2ed" />
+        <rect x="14" y="108" width="72" height="2" fill="#1a2b48" />
       </g>
 
       <defs>
