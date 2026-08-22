@@ -1,65 +1,28 @@
+import Image from "next/image";
+
 type LogoProps = {
   size?: number;
   showWordmark?: boolean;
   className?: string;
 };
 
+// Proporción real del arte de la marca (public/brand/logo-mark.png).
+const MARK_RATIO = 371 / 360;
+
 /**
- * Marca "El Tico Bretea": insignia circular con silueta de trabajador
- * (gorra + hombros) en azul marino/rojo, con un detalle tipo bandera
- * de Costa Rica como listón inferior.
+ * Marca "El Tico Bretea": ilustración real del logo (trabajador con
+ * gorra, barba, café y hoja, sobre silueta de Costa Rica).
  */
 export function LogoMark({ size = 40, className }: { size?: number; className?: string }) {
   return (
-    <svg
+    <Image
+      src="/brand/logo-mark.png"
+      alt="El Tico Bretea"
       width={size}
-      height={size * 1.14}
-      viewBox="0 0 100 114"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+      height={Math.round(size * MARK_RATIO)}
       className={className}
-      role="img"
-      aria-label="El Tico Bretea"
-    >
-      <circle cx="50" cy="48" r="48" fill="#1a2b48" />
-      <circle cx="50" cy="48" r="48" fill="url(#logoGradient)" fillOpacity="0.25" />
-
-      {/* Hombros / torso */}
-      <path d="M18 94 Q18 66 32 60 L68 60 Q82 66 82 94 Z" fill="#f5f2ed" />
-
-      {/* Cabeza */}
-      <circle cx="50" cy="43" r="15" fill="#f5f2ed" />
-
-      {/* Gorra */}
-      <path d="M32 35 Q32 17 50 17 Q68 17 68 35 Z" fill="#ef3340" />
-      <ellipse cx="50" cy="35" rx="19" ry="5.5" fill="#d0202d" />
-
-      {/* Llave inglesa */}
-      <g transform="translate(60 66) rotate(35)">
-        <rect x="-4" y="-16" width="8" height="30" rx="3" fill="#f5f2ed" />
-        <circle cx="0" cy="-16" r="8" fill="none" stroke="#f5f2ed" strokeWidth="4.5" />
-        <circle cx="0" cy="16" r="6" fill="none" stroke="#f5f2ed" strokeWidth="4" />
-      </g>
-
-      {/* Listón bandera de Costa Rica */}
-      <clipPath id="flagClip">
-        <rect x="14" y="100" width="72" height="10" rx="5" />
-      </clipPath>
-      <g clipPath="url(#flagClip)">
-        <rect x="14" y="100" width="72" height="2" fill="#1a2b48" />
-        <rect x="14" y="102" width="72" height="2" fill="#f5f2ed" />
-        <rect x="14" y="104" width="72" height="2" fill="#ef3340" />
-        <rect x="14" y="106" width="72" height="2" fill="#f5f2ed" />
-        <rect x="14" y="108" width="72" height="2" fill="#1a2b48" />
-      </g>
-
-      <defs>
-        <linearGradient id="logoGradient" x1="0" y1="0" x2="100" y2="114" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#ffffff" stopOpacity="0.4" />
-          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-    </svg>
+      priority
+    />
   );
 }
 
