@@ -16,6 +16,7 @@ import { FieldWrapper, TextInput, Textarea, Select } from "@/components/forms/Fo
 import { OptionalFormNotice } from "@/components/forms/OptionalFormNotice";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { getDeviceFingerprint } from "@/lib/device-fingerprint";
 
 const STEPS: { title: string; fields: (keyof WorkerRegistrationFormValues)[] }[] = [
   { title: "Cuenta", fields: ["email", "password"] },
@@ -65,10 +66,11 @@ export function WorkerRegistrationForm() {
     setSubmitError(null);
     setIsSubmitting(true);
     try {
+      const deviceFingerprint = await getDeviceFingerprint().catch(() => "");
       const res = await fetch("/api/registro/trabajador", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, deviceFingerprint }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));

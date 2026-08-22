@@ -42,6 +42,7 @@ export async function POST(request: Request) {
       email,
       passwordHash,
       role: "COMPANY",
+      deviceFingerprint: data.deviceFingerprint || null,
       companyProfile: {
         create: {
           commercialName: textOrDefault(data.commercialName),

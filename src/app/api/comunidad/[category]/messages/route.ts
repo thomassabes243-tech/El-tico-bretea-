@@ -9,6 +9,7 @@ import {
 } from "@/lib/chat-rooms";
 import { chatMessageSchema } from "@/lib/validations";
 import { cleanupExpiredChatFiles } from "@/lib/storage";
+import { detectContactInfoLeak } from "@/lib/safety";
 
 export async function GET(request: Request, { params }: { params: Promise<{ category: string }> }) {
   const session = await auth();
@@ -66,6 +67,24 @@ export async function POST(request: Request, { params }: { params: Promise<{ cat
   const parsed = chatMessageSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "Mensaje inválido" }, { status: 400 });
+  }
+
+  if (session.user.role === "COMPANY") {
+    const company = await prisma.companyProfile.findUnique({
+      where: { userId: session.user.id },
+      select: { isVerified: true },
+    });
+    if (company && !company.isVerified) {
+      const leakReason = detectContactInfoLeak(parsed.data.content);
+      if (leakReason) {
+        return NextResponse.json(
+          {
+            error: `Como empresa no verificada, no podés compartir datos de contacto directo en el chat (${leakReason}). Una vez verificada tu cuenta esta restricción se levanta.`,
+          },
+          { status: 400 }
+        );
+      }
+    }
   }
 
   const message = await prisma.chatMessage.create({

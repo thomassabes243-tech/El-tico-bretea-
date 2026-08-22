@@ -17,6 +17,7 @@ export function ReportButton({
 }) {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
+  const [isGrave, setIsGrave] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +58,12 @@ export function ReportButton({
       const res = await fetch("/api/reportes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ targetUserId, targetType, reason: fullReason }),
+        body: JSON.stringify({
+          targetUserId,
+          targetType,
+          reason: fullReason,
+          severity: isGrave ? "GRAVE" : "NORMAL",
+        }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -79,6 +85,15 @@ export function ReportButton({
         placeholder="Contanos brevemente el motivo del reporte"
         className="h-16 w-full resize-none rounded-lg border border-sand-200 px-2.5 py-2 text-xs text-navy-900 placeholder:text-navy-800/35 outline-none focus:border-navy-700"
       />
+      <label className="flex items-start gap-1.5 text-xs text-navy-800/60">
+        <input
+          type="checkbox"
+          checked={isGrave}
+          onChange={(e) => setIsGrave(e.target.checked)}
+          className="mt-0.5 h-3.5 w-3.5 rounded border-sand-200 text-mx-red-600"
+        />
+        Es un caso grave de seguridad (acoso, identidad o ubicación falsa, riesgo físico)
+      </label>
       {error && <p className="text-xs font-medium text-mx-red-600">{error}</p>}
       <div className="flex gap-2">
         <button

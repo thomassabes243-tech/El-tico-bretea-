@@ -58,6 +58,10 @@ export const workerRegistrationSchema = z.object({
   email: z.string().email("Correo inválido"),
   password: passwordSchema,
 
+  // Huella de dispositivo (Sección 22, opcional): hash calculado en el
+  // navegador para detectar cuentas duplicadas obvias -- ver src/lib/safety.ts.
+  deviceFingerprint: z.string().max(200).optional().or(z.literal("")),
+
   // Identidad (Sección 2) -- todo opcional, se puede completar después.
   fullName: z.string().optional().or(z.literal("")),
   age: optionalInt(15, 100),
@@ -101,6 +105,8 @@ export const companyRegistrationSchema = z.object({
   // cuenta. Todo el resto del perfil de empresa es opcional.
   email: z.string().email("Correo inválido"),
   password: passwordSchema,
+
+  deviceFingerprint: z.string().max(200).optional().or(z.literal("")),
 
   commercialName: z.string().optional().or(z.literal("")),
   legalId: z.string().optional().or(z.literal("")),
@@ -183,9 +189,36 @@ export const reportSchema = z.object({
   targetUserId: z.string().min(1),
   targetType: z.enum(["USER", "COMPANY", "JOB_POSTING"]),
   reason: z.string().trim().min(5, "Contanos brevemente el motivo").max(500),
+  severity: z.enum(["NORMAL", "GRAVE"]).default("NORMAL"),
 });
 
 export type ReportInput = z.infer<typeof reportSchema>;
+
+// Sección 22: contactos de confianza, ubicación y botón de pánico.
+export const trustedContactSchema = z.object({
+  name: z.string().trim().min(2, "Ingresá un nombre").max(80),
+  phone: z.string().trim().min(7, "Ingresá un teléfono válido").max(20),
+});
+
+export type TrustedContactInput = z.infer<typeof trustedContactSchema>;
+
+export const locationShareSchema = z.object({
+  trustedContactId: z.string().min(1),
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+  accuracy: z.number().min(0).optional(),
+});
+
+export type LocationShareInput = z.infer<typeof locationShareSchema>;
+
+export const panicAlertSchema = z.object({
+  trustedContactId: z.string().min(1).optional(),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
+  note: z.string().trim().max(500).optional().or(z.literal("")),
+});
+
+export type PanicAlertInput = z.infer<typeof panicAlertSchema>;
 
 // No se valida el "tono" del título ni de los campos de texto acá a
 // propósito: frases de alerta como "⚠️ Estafa" tienen que poder publicarse

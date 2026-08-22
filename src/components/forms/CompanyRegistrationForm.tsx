@@ -10,6 +10,7 @@ import { companyRegistrationSchema, type CompanyRegistrationInput } from "@/lib/
 import { FieldWrapper, TextInput, Textarea } from "@/components/forms/FormField";
 import { OptionalFormNotice } from "@/components/forms/OptionalFormNotice";
 import { Button } from "@/components/ui/Button";
+import { getDeviceFingerprint } from "@/lib/device-fingerprint";
 
 export function CompanyRegistrationForm() {
   const router = useRouter();
@@ -30,10 +31,11 @@ export function CompanyRegistrationForm() {
     setSubmitError(null);
     setIsSubmitting(true);
     try {
+      const deviceFingerprint = await getDeviceFingerprint().catch(() => "");
       const res = await fetch("/api/registro/empresa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, deviceFingerprint }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));

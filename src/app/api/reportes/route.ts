@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { reportSchema } from "@/lib/validations";
+import { maybeAutoSuspend } from "@/lib/safety";
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -30,8 +31,12 @@ export async function POST(request: Request) {
       targetId: parsed.data.targetUserId,
       targetType: parsed.data.targetType,
       reason: parsed.data.reason,
+      severity: parsed.data.severity,
     },
   });
 
-  return NextResponse.json({ ok: true }, { status: 201 });
+  const autoSuspended =
+    parsed.data.severity === "GRAVE" && (await maybeAutoSuspend(parsed.data.targetUserId));
+
+  return NextResponse.json({ ok: true, autoSuspended }, { status: 201 });
 }

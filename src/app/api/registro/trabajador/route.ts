@@ -42,6 +42,7 @@ export async function POST(request: Request) {
       email,
       passwordHash,
       role: "WORKER",
+      deviceFingerprint: data.deviceFingerprint || null,
       workerProfile: {
         create: {
           fullName: textOrDefault(data.fullName),

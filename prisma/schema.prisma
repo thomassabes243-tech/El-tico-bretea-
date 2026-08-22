@@ -40,6 +40,12 @@ model User {
   // no cambian, solo lo que se muestra públicamente en los mensajes.
   chatAlias String?
 
+  // Huella de dispositivo (Sección 22): hash calculado en el navegador al
+  // registrarse (no es un identificador de hardware real, es una huella de
+  // atributos del navegador -- fuente débil, solo para detectar cuentas
+  // duplicadas obvias, nunca para bloquear automáticamente por sí sola).
+  deviceFingerprint String?
+
   workerProfile  WorkerProfile?
   companyProfile CompanyProfile?
   moderator      Moderator?
@@ -57,6 +63,11 @@ model User {
   scamAlertConfirmations ScamAlertConfirmation[]   @relation("ScamAlertConfirmationsGiven")
   scamAlertFlagsFiled    ScamAlertFlag[]           @relation("ScamAlertFlagsFiled")
 
+  trustedContacts    TrustedContact[]
+  locationSharesSent LocationShare[]  @relation("LocationSharesSent")
+  panicAlertsSent    PanicAlert[]     @relation("PanicAlertsSent")
+
+  @@index([deviceFingerprint])
   @@map("users")
 }
 
@@ -414,6 +425,16 @@ enum ReportTargetType {
   JOB_POSTING
 }
 
+// GRAVE: acoso, ubicación/identidad falsa, solicitud de datos personales
+// antes de tiempo, cualquier señal de riesgo físico -- acumular reportes
+// GRAVE contra la misma cuenta dispara la suspensión automática (Sección
+// 22). NORMAL es todo lo demás (spam, mala educación, etc.), no cuenta
+// para la suspensión automática.
+enum ReportSeverity {
+  NORMAL
+  GRAVE
+}
+
 model Report {
   id         String           @id @default(cuid())
   reporterId String
@@ -422,9 +443,11 @@ model Report {
   target     User?            @relation("ReportsReceived", fields: [targetId], references: [id], onDelete: SetNull)
   targetType ReportTargetType
   reason     String
+  severity   ReportSeverity   @default(NORMAL)
   createdAt  DateTime         @default(now())
   resolved   Boolean          @default(false)
 
+  @@index([targetId, severity, resolved])
   @@map("reports")
 }
 
@@ -586,4 +609,112 @@ model Advertisement {
   updatedAt   DateTime @updatedAt
 
   @@map("advertisements")
+}
+
+// ---------------------------------------------------------------------------
+// Section 22: Seguridad ante empleadores maliciosos -- contactos de
+// confianza, ubicación compartida (nunca con la empresa, solo con el
+// contacto elegido), botón de pánico y puntos de encuentro públicos
+// verificados para sugerir en vez de direcciones privadas.
+// ---------------------------------------------------------------------------
+
+model TrustedContact {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name  String
+  phone String
+
+  createdAt DateTime @default(now())
+
+  locationShares LocationShare[]
+  panicAlerts    PanicAlert[]
+
+  @@map("trusted_contacts")
+}
+
+enum LocationShareStatus {
+  ACTIVA
+  FINALIZADA
+}
+
+model LocationShare {
+  id               String         @id @default(cuid())
+  workerId         String
+  worker           User           @relation("LocationSharesSent", fields: [workerId], references: [id], onDelete: Cascade)
+  trustedContactId String
+  trustedContact   TrustedContact @relation(fields: [trustedContactId], references: [id], onDelete: Cascade)
+
+  latitude  Float
+  longitude Float
+  accuracy  Float?
+
+  // Señales heurísticas de sospecha (salto de posición imposible entre dos
+  // envíos, precisión GPS irregular) -- NO es detección real de mock
+  // location (esa API no existe en el navegador), solo marca para revisión.
+  suspicious      Boolean @default(false)
+  suspicionReason String?
+
+  // TrustedContact es solo nombre+teléfono, no una cuenta de la app -- no hay
+  // forma de "notificarlo" sin infraestructura de SMS/push. En su lugar, la
+  // propia trabajadora comparte este link de solo lectura por WhatsApp (como
+  // "compartir viaje" de Uber/Maps); token no adivinable, sin login.
+  shareToken String @unique @default(cuid())
+
+  status    LocationShareStatus @default(ACTIVA)
+  createdAt DateTime            @default(now())
+  expiresAt DateTime // borrado automático, mismo patrón que ChatFile (Sección 8)
+
+  @@index([workerId, createdAt])
+  @@map("location_shares")
+}
+
+enum PanicAlertStatus {
+  ACTIVA
+  ATENDIDA
+  FALSA_ALARMA
+}
+
+model PanicAlert {
+  id               String          @id @default(cuid())
+  workerId         String
+  worker           User            @relation("PanicAlertsSent", fields: [workerId], references: [id], onDelete: Cascade)
+  trustedContactId String?
+  trustedContact   TrustedContact? @relation(fields: [trustedContactId], references: [id], onDelete: SetNull)
+
+  latitude  Float?
+  longitude Float?
+  note      String?
+
+  // Mismo motivo que en LocationShare: link de solo lectura para compartir
+  // por WhatsApp, ya que TrustedContact no es necesariamente una cuenta.
+  shareToken String @unique @default(cuid())
+
+  status     PanicAlertStatus @default(ACTIVA)
+  createdAt  DateTime         @default(now())
+  resolvedAt DateTime?
+
+  @@index([workerId, status])
+  @@map("panic_alerts")
+}
+
+// Cargados por el admin (Sección 22) -- lugares públicos verificados para
+// sugerir como punto de la primera entrevista en vez de una dirección
+// privada. No son ubicaciones de usuarios, es un catálogo curado.
+model SafeMeetingPoint {
+  id      String  @id @default(cuid())
+  name    String
+  address String
+  city    String
+  state   String
+
+  latitude  Float?
+  longitude Float?
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([city, isActive])
+  @@map("safe_meeting_points")
 }
