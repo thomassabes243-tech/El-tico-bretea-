@@ -1,25 +1,16 @@
 import Link from "next/link";
-import type { ComponentType } from "react";
+import Image from "next/image";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
-import { GuanacasteScene } from "@/components/brand/scenery/GuanacasteScene";
-import { MonteverdeScene } from "@/components/brand/scenery/MonteverdeScene";
-import { CoffeeMountainsScene } from "@/components/brand/scenery/CoffeeMountainsScene";
-import { COMMUNITY_CATEGORIES } from "@/lib/constants";
+import { COMMUNITY_CATEGORIES, CATEGORY_PHOTOS } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { CommunityInviteBanner } from "@/components/community/CommunityInviteBanner";
 import { ChevronRight } from "lucide-react";
 import type { CommunityCategory } from "@prisma/client";
-
-const COMMUNITY_SCENES: Record<string, ComponentType<{ className?: string }>> = {
-  CONSTRUCCION: CoffeeMountainsScene,
-  HOTELES_TURISMO: GuanacasteScene,
-  PROFESIONALES: MonteverdeScene,
-};
 
 export default async function ComunidadPage() {
   const [rooms, adEligible, ads] = await Promise.all([
@@ -45,25 +36,25 @@ export default async function ComunidadPage() {
         <div className="mt-6 flex flex-col gap-3">
           {COMMUNITY_CATEGORIES.map((cat) => {
             const count = countByCategory.get(cat.value as CommunityCategory) ?? 0;
-            const Scene = COMMUNITY_SCENES[cat.value];
+            const photo = CATEGORY_PHOTOS[cat.value];
             return (
               <Link key={cat.value} href={`/comunidad/${cat.value.toLowerCase()}`}>
                 <Card className="relative overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-active">
-                  {Scene && (
+                  {photo && (
                     <>
-                      <Scene className="absolute inset-0 h-full w-full" />
-                      <div className="absolute inset-0 bg-gradient-to-r from-white via-white/85 to-white/40" />
+                      <Image src={photo} alt="" fill sizes="512px" className="object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-navy-950/90 via-navy-950/55 to-navy-950/10" />
                     </>
                   )}
                   <div className="relative flex items-center gap-3.5 p-4">
                     <CategoryIcon category={cat.value} size="md" />
                     <div className="flex-1">
-                      <p className="text-sm font-bold text-navy-900">{cat.label}</p>
-                      <p className="text-xs text-navy-800/50">
+                      <p className={`text-sm font-bold ${photo ? "text-white" : "text-navy-900"}`}>{cat.label}</p>
+                      <p className={`text-xs ${photo ? "text-white/70" : "text-navy-800/50"}`}>
                         {count === 0 ? "Aún no hay publicaciones" : `${count} publicaciones`}
                       </p>
                     </div>
-                    <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
+                    <ChevronRight className={`h-4.5 w-4.5 ${photo ? "text-white/50" : "text-navy-800/30"}`} />
                   </div>
                 </Card>
               </Link>

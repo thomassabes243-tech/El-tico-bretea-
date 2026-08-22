@@ -38,4 +38,21 @@ export const COMMUNITY_CATEGORIES = [
   { value: "PROFESIONALES", label: "Profesionales" },
 ] as const;
 
+// Foto real por categoría laboral (Adobe Stock, licenciadas), usada como
+// fondo de las tarjetas de categoría en Inicio, Buscar y Comunidad.
+// SIN_ESPECIFICAR no tiene foto -- esas tarjetas siguen mostrando solo el
+// ícono, porque no hay una categoría real que fotografiar.
+export const CATEGORY_PHOTOS: Partial<Record<string, string>> = {
+  CONSTRUCCION: "/categorias/construccion.jpg",
+  HOTELES_TURISMO: "/categorias/hoteles_turismo.jpg",
+  RESTAURANTES: "/categorias/restaurantes.jpg",
+  LIMPIEZA: "/categorias/limpieza.jpg",
+  TRANSPORTE: "/categorias/transporte.jpg",
+  SEGURIDAD: "/categorias/seguridad.jpg",
+  OFICINAS_ADMINISTRACION: "/categorias/oficinas_administracion.jpg",
+  VENTAS_COMERCIO: "/categorias/ventas_comercio.jpg",
+  TECNOLOGIA: "/categorias/tecnologia.jpg",
+  PROFESIONALES: "/categorias/profesionales.jpg",
+};
+
 export const CONTACT_EMAIL = "tg321920@gmail.com";

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { ComponentType } from "react";
 import {
   Search,
   Users,
@@ -21,20 +20,11 @@ import { Badge, TagChip } from "@/components/ui/Badge";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
-import { GuanacasteScene } from "@/components/brand/scenery/GuanacasteScene";
-import { MonteverdeScene } from "@/components/brand/scenery/MonteverdeScene";
-import { CoffeeMountainsScene } from "@/components/brand/scenery/CoffeeMountainsScene";
-import { COMMUNITY_CATEGORIES, LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
+import { COMMUNITY_CATEGORIES, LABOR_CATEGORIES, JOB_TYPES, CATEGORY_PHOTOS } from "@/lib/constants";
 import { getDailyQuote } from "@/lib/motivational-quotes";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { prisma } from "@/lib/prisma";
-
-const COMMUNITY_SCENES: Record<string, ComponentType<{ className?: string }>> = {
-  CONSTRUCCION: CoffeeMountainsScene,
-  HOTELES_TURISMO: GuanacasteScene,
-  PROFESIONALES: MonteverdeScene,
-};
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -239,19 +229,21 @@ export default async function Home({
           <SectionHeader title="Comunidades por gremio" href="/comunidad" linkLabel="Ver todas" />
           <div className="mt-3.5 flex gap-3 overflow-x-auto pb-1 scrollbar-none">
             {COMMUNITY_CATEGORIES.map((cat) => {
-              const Scene = COMMUNITY_SCENES[cat.value];
+              const photo = CATEGORY_PHOTOS[cat.value];
               return (
                 <Link key={cat.value} href={`/comunidad/${cat.value.toLowerCase()}`}>
-                  <Card className="relative w-36 shrink-0 overflow-hidden p-4">
-                    {Scene && (
+                  <Card className="relative flex h-32 w-36 shrink-0 flex-col items-start justify-end gap-1.5 overflow-hidden p-4">
+                    {photo && (
                       <>
-                        <Scene className="absolute inset-0 h-full w-full opacity-25" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/70 to-transparent" />
+                        <Image src={photo} alt="" fill sizes="144px" className="object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/25 to-transparent" />
                       </>
                     )}
-                    <div className="relative flex flex-col items-start gap-2.5">
-                      <CategoryIcon category={cat.value} size="md" />
-                      <span className="text-sm font-semibold text-navy-900">{cat.label}</span>
+                    <div className="relative flex flex-col items-start gap-1.5">
+                      <CategoryIcon category={cat.value} size="sm" />
+                      <span className={`text-sm font-semibold ${photo ? "text-white" : "text-navy-900"}`}>
+                        {cat.label}
+                      </span>
                     </div>
                   </Card>
                 </Link>

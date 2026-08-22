@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Search, MapPin, Users, Flame, ChevronRight, ChevronLeft } from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
@@ -6,7 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge, TagChip } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
-import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
+import { LABOR_CATEGORIES, JOB_TYPES, CATEGORY_PHOTOS } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
@@ -106,14 +107,36 @@ export default async function BuscarPage({
             </p>
 
             <div className="mt-5 grid grid-cols-2 gap-3">
-              {LABOR_CATEGORIES.map((cat) => (
-                <Link key={cat.value} href={`/buscar/${cat.value.toLowerCase()}`}>
-                  <Card className="flex flex-col items-start gap-2.5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-active">
-                    <CategoryIcon category={cat.value} size="md" />
-                    <span className="text-sm font-semibold text-navy-900">{cat.label}</span>
-                  </Card>
-                </Link>
-              ))}
+              {LABOR_CATEGORIES.map((cat) => {
+                const photo = CATEGORY_PHOTOS[cat.value];
+                return (
+                  <Link key={cat.value} href={`/buscar/${cat.value.toLowerCase()}`}>
+                    <Card className="relative flex h-32 flex-col items-start justify-end gap-1.5 overflow-hidden p-4 transition-all hover:-translate-y-0.5 hover:shadow-active">
+                      {photo ? (
+                        <>
+                          <Image
+                            src={photo}
+                            alt=""
+                            fill
+                            sizes="(max-width: 640px) 50vw, 220px"
+                            className="object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/25 to-transparent" />
+                          <div className="relative flex flex-col items-start gap-1.5">
+                            <CategoryIcon category={cat.value} size="sm" />
+                            <span className="text-sm font-semibold text-white">{cat.label}</span>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="flex flex-col items-start gap-1.5">
+                          <CategoryIcon category={cat.value} size="sm" />
+                          <span className="text-sm font-semibold text-navy-900">{cat.label}</span>
+                        </div>
+                      )}
+                    </Card>
+                  </Link>
+                );
+              })}
             </div>
           </>
         )}
