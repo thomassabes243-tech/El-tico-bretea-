@@ -26,7 +26,7 @@ export default async function ComunidadPage() {
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
         <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Comunidad Tica</h1>
         <p className="mt-1.5 text-sm leading-relaxed text-navy-800/60">
-          Salas de chat por gremio, en vivo. Publicaciones normales aparecen como
+          Chat en vivo para todos los ticos. Publicaciones normales aparecen como
           &ldquo;Publicación comunitaria&rdquo;; vacantes de empresas verificadas, como
           &ldquo;Vacante empresarial verificada ✓&rdquo;.
         </p>

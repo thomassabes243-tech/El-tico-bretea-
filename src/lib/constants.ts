@@ -31,11 +31,12 @@ export const AVAILABILITY_OPTIONS = [
   { value: "SIN_ESPECIFICAR", label: "Sin especificar" },
 ] as const;
 
-// Section 9: comunidades de chat por gremio.
+// Section 9: comunidad de chat -- una sola sala general para todos los
+// gremios (antes eran 3 salas separadas por rubro). El valor interno sigue
+// siendo CONSTRUCCION (así queda el ChatRoom en la base), pero ya no se
+// muestra como tal en ningún lado -- ver migración single_community_room.
 export const COMMUNITY_CATEGORIES = [
-  { value: "CONSTRUCCION", label: "Construcción" },
-  { value: "HOTELES_TURISMO", label: "Hoteles y turismo" },
-  { value: "PROFESIONALES", label: "Profesionales" },
+  { value: "CONSTRUCCION", label: "Comunidad Tica" },
 ] as const;
 
 // Foto real por categoría laboral (Adobe Stock, licenciadas), usada como

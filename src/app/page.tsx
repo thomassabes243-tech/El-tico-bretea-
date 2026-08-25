@@ -224,9 +224,9 @@ export default async function Home({
           </Link>
         </section>
 
-        {/* Comunidades por gremio */}
+        {/* Comunidad */}
         <section className="mt-9">
-          <SectionHeader title="Comunidades por gremio" href="/comunidad" linkLabel="Ver todas" />
+          <SectionHeader title="Comunidad Tica" href="/comunidad" linkLabel="Entrar" />
           <div className="mt-3.5 flex gap-3 overflow-x-auto pb-1 scrollbar-none">
             {COMMUNITY_CATEGORIES.map((cat) => {
               const photo = CATEGORY_PHOTOS[cat.value];
