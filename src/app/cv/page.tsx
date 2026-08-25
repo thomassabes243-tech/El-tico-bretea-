@@ -12,6 +12,7 @@ import { toWhatsappHref } from "@/lib/whatsapp";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { CriminalRecordSection } from "@/components/forms/CriminalRecordSection";
 import { CvPaymentClaimForm } from "@/components/forms/CvPaymentClaimForm";
+import { CvDownloadButton } from "@/components/forms/CvDownloadButton";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -128,12 +129,20 @@ export default async function CvPage() {
         </Card>
 
         {worker.cvUnlocked ? (
-          <Card className="mt-4 flex items-center gap-3 border-success-600/20 bg-success-600/[0.06] p-4">
-            <CheckCircle2 className="h-5 w-5 shrink-0 text-success-600" />
-            <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
-              Ya desbloqueaste la descarga del CV. El PDF se genera al momento con los datos
-              actuales de tu perfil.
+          <Card className="animate-fade-in-up mt-4 flex flex-col items-center gap-2 border-2 border-success-600/30 bg-gradient-to-b from-success-600/[0.08] to-transparent p-6 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-success-600/15">
+              <CheckCircle2 className="h-7 w-7 text-success-600" />
+            </div>
+            <p className="mt-1 text-sm font-bold text-navy-900">¡Pago confirmado!</p>
+            <p className="text-xs leading-relaxed text-navy-800/60">
+              Tu CV en PDF está listo, generado al momento con los datos actuales de tu perfil.
             </p>
+            <div className="mt-2 w-full">
+              <CvDownloadButton
+                hasCriminalRecord={Boolean(worker.criminalRecordKey)}
+                label="Descargar"
+              />
+            </div>
           </Card>
         ) : hasPendingClaim ? (
           <Card className="mt-4 flex items-start gap-3.5 border-colon-600/20 bg-colon-100/40 p-4">
@@ -215,8 +224,6 @@ export default async function CvPage() {
           <CriminalRecordSection
             initialUploaded={Boolean(worker.criminalRecordKey)}
             initialUploadedAt={worker.criminalRecordUploadedAt?.toISOString() ?? null}
-            downloadLabel="Descargar PDF"
-            canDownload={worker.cvUnlocked}
           />
         </Card>
       </main>

@@ -14,6 +14,7 @@ export async function updateAppSettings(data: {
   sinpeMovilNumber?: string | null;
   sinpeMovilName?: string | null;
   contactWhatsapp?: string | null;
+  contactName?: string | null;
 }) {
   return prisma.appSettings.upsert({
     where: { id: SETTINGS_ID },

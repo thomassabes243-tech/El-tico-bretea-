@@ -451,6 +451,10 @@ model AppSettings {
   // (coordinado directamente, no hay pasarela conectada todavía). Formato
   // internacional sin signos, ej. 50688881234.
   contactWhatsapp     String?
+  // Nombre de la persona detrás de contactWhatsapp -- se muestra junto al
+  // número dondequiera que se pida contactar al dueño de la app (ej. un
+  // moderador que solicita autorización para tomarse una pausa).
+  contactName         String?
   updatedAt           DateTime @updatedAt
 
   @@map("app_settings")

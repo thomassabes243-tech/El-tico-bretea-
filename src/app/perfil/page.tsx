@@ -15,6 +15,8 @@ import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { MyApplicationsTabs } from "@/components/profile/MyApplicationsTabs";
+import { RequestBreakCard } from "@/components/profile/RequestBreakCard";
+import { getAppSettings } from "@/lib/settings";
 import {
   MapPin,
   Phone,
@@ -32,6 +34,7 @@ import {
   FileText,
   Download,
   Eye,
+  Lock,
   LogOut,
   Building2,
   Users,
@@ -109,12 +112,21 @@ export default async function PerfilPage() {
               >
                 <Eye className="h-3.5 w-3.5" /> Ver
               </Link>
-              <a
-                href="/api/cv/descargar"
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-navy-900 py-2.5 text-xs font-bold text-white hover:bg-navy-800"
-              >
-                <Download className="h-3.5 w-3.5" /> Descargar
-              </a>
+              {worker.cvUnlocked ? (
+                <a
+                  href="/api/cv/descargar"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-navy-900 py-2.5 text-xs font-bold text-white hover:bg-navy-800"
+                >
+                  <Download className="h-3.5 w-3.5" /> Descargar
+                </a>
+              ) : (
+                <Link
+                  href="/cv"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-navy-900/40 py-2.5 text-xs font-bold text-white hover:bg-navy-900/50"
+                >
+                  <Lock className="h-3.5 w-3.5" /> Descargar
+                </Link>
+              )}
             </div>
           </Card>
 
@@ -478,10 +490,13 @@ export default async function PerfilPage() {
     );
   }
 
-  const moderator = await prisma.moderator.findUnique({
-    where: { userId: session.user.id },
-    include: { assignments: { include: { chatRoom: true } } },
-  });
+  const [moderator, settings] = await Promise.all([
+    prisma.moderator.findUnique({
+      where: { userId: session.user.id },
+      include: { assignments: { include: { chatRoom: true } } },
+    }),
+    getAppSettings(),
+  ]);
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
@@ -520,6 +535,13 @@ export default async function PerfilPage() {
             </div>
           )}
         </Card>
+
+        {settings.contactWhatsapp && (
+          <RequestBreakCard
+            contactName={settings.contactName || "Administración"}
+            contactWhatsapp={settings.contactWhatsapp}
+          />
+        )}
 
         <form
           className="mt-4"

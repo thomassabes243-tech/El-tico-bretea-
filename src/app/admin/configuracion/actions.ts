@@ -12,6 +12,7 @@ export async function saveSettings(formData: FormData) {
   const sinpeMovilNumber = String(formData.get("sinpeMovilNumber") || "").trim();
   const sinpeMovilName = String(formData.get("sinpeMovilName") || "").trim();
   const contactWhatsapp = String(formData.get("contactWhatsapp") || "").replace(/\D/g, "");
+  const contactName = String(formData.get("contactName") || "").trim();
 
   if ([cvPriceColones, premiumPriceColones].some((n) => !Number.isFinite(n) || n < 0)) {
     throw new Error("Todos los valores deben ser números válidos mayores o iguales a 0");
@@ -23,9 +24,11 @@ export async function saveSettings(formData: FormData) {
     sinpeMovilNumber: sinpeMovilNumber || null,
     sinpeMovilName: sinpeMovilName || null,
     contactWhatsapp: contactWhatsapp || null,
+    contactName: contactName || null,
   });
 
   revalidatePath("/admin/configuracion");
   revalidatePath("/premium");
   revalidatePath("/cv");
+  revalidatePath("/perfil");
 }

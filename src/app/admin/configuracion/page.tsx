@@ -79,18 +79,30 @@ export default async function AdminConfiguracionPage() {
               />
             </div>
           </div>
-          <div className="mt-3">
-            <FieldLabel
-              label="WhatsApp de contacto"
-              hint="para quien quiera pagar más rápido con tarjeta, coordinado directo con vos"
-            />
-            <input
-              name="contactWhatsapp"
-              type="text"
-              placeholder="50688881234 (código de país + número, sin signos)"
-              defaultValue={settings.contactWhatsapp ?? ""}
-              className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
-            />
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <div>
+              <FieldLabel
+                label="WhatsApp de contacto"
+                hint="para pagar más rápido, y para moderadores que pidan una pausa"
+              />
+              <input
+                name="contactWhatsapp"
+                type="text"
+                placeholder="50688881234 (código de país + número, sin signos)"
+                defaultValue={settings.contactWhatsapp ?? ""}
+                className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
+              />
+            </div>
+            <div>
+              <FieldLabel label="Nombre de contacto" hint="se muestra junto al WhatsApp de arriba" />
+              <input
+                name="contactName"
+                type="text"
+                placeholder="Ej. Juan Pérez"
+                defaultValue={settings.contactName ?? ""}
+                className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
+              />
+            </div>
           </div>
         </Card>
 
