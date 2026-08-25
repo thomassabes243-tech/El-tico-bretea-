@@ -13,6 +13,7 @@ import { ApplyButton } from "@/components/forms/ApplyButton";
 import { ShareJobButton } from "@/components/forms/ShareJobButton";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
+import { toWhatsappHref } from "@/lib/whatsapp";
 import { getSiteUrl } from "@/lib/site";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import {
@@ -209,7 +210,17 @@ export default async function VacanteDetailPage({
               {(jobPosting.whatsapp || jobPosting.contactEmail) && (
                 <div className="mt-3 flex flex-wrap gap-3 text-xs text-navy-800/60">
                   {jobPosting.whatsapp && (
-                    <span className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> WhatsApp: {jobPosting.whatsapp}</span>
+                    <a
+                      href={toWhatsappHref(
+                        jobPosting.whatsapp,
+                        `Hola, te escribo por la vacante "${jobPosting.title}" en El Tico Bretea.`
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 font-semibold text-success-600"
+                    >
+                      <Phone className="h-3.5 w-3.5" /> WhatsApp: {jobPosting.whatsapp}
+                    </a>
                   )}
                   {jobPosting.contactEmail && (
                     <span className="flex items-center gap-1"><Mail className="h-3.5 w-3.5" /> {jobPosting.contactEmail}</span>

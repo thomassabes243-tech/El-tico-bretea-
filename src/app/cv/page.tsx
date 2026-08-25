@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { PriceTag } from "@/components/ui/PriceTag";
 import { getAppSettings } from "@/lib/settings";
 import { formatColones } from "@/lib/format";
+import { toWhatsappHref } from "@/lib/whatsapp";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { CriminalRecordSection } from "@/components/forms/CriminalRecordSection";
 import { CvPaymentClaimForm } from "@/components/forms/CvPaymentClaimForm";
@@ -53,9 +54,10 @@ export default async function CvPage() {
   const wasRejected = latestClaim?.status === "RECHAZADO";
   const paymentConfigured = Boolean(settings.sinpeMovilNumber);
   const whatsappHref = settings.contactWhatsapp
-    ? `https://wa.me/${settings.contactWhatsapp}?text=${encodeURIComponent(
+    ? toWhatsappHref(
+        settings.contactWhatsapp,
         `Hola, soy ${worker.fullName} y quiero pagar la descarga de mi CV con tarjeta, más rápido que el SINPE.`
-      )}`
+      )
     : null;
 
   return (
