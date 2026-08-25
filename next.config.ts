@@ -20,6 +20,16 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: securityHeaders,
       },
+      {
+        // Herramientas de empaquetado como PWABuilder corren en el
+        // navegador del usuario, en el dominio de PWABuilder, y necesitan
+        // leer estos archivos de forma cross-origin para armar el paquete
+        // de Android/Windows. Sin este header el navegador bloquea la
+        // lectura con "Failed to fetch" aunque el archivo exista y
+        // responda 200 -- es un bloqueo de CORS, no del servidor.
+        source: "/(manifest.json|sw.js|icon-192.png|icon-512.png|icon-512-maskable.png)",
+        headers: [{ key: "Access-Control-Allow-Origin", value: "*" }],
+      },
     ];
   },
 };
