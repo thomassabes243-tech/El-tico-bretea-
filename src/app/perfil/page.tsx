@@ -13,7 +13,7 @@ import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { applicationStatusMeta } from "@/lib/application-status";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
-import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send, Info, Pencil, History } from "lucide-react";
+import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send, Info, Pencil, History, MessagesSquare } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -399,9 +399,11 @@ export default async function PerfilPage() {
           ) : (
             <div className="mt-3 flex flex-col gap-2.5">
               {moderator.assignments.map((a) => (
-                <Link key={a.id} href={`/comunidad/${a.chatRoom.category.toLowerCase()}/moderacion`}>
+                <Link key={a.id} href="/comunidad/moderacion">
                   <div className="flex items-center gap-3 rounded-xl border border-sand-200 p-3">
-                    <CategoryIcon category={a.chatRoom.category} size="sm" />
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-navy-900/[0.07] text-navy-800">
+                      <MessagesSquare className="h-4 w-4" strokeWidth={2.1} />
+                    </div>
                     <div className="flex-1">
                       <p className="text-sm font-semibold text-navy-900">{a.chatRoom.name}</p>
                     </div>

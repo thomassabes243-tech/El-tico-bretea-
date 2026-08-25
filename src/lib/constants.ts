@@ -31,13 +31,6 @@ export const AVAILABILITY_OPTIONS = [
   { value: "SIN_ESPECIFICAR", label: "Sin especificar" },
 ] as const;
 
-// Section 9: comunidades de chat por gremio.
-export const COMMUNITY_CATEGORIES = [
-  { value: "CONSTRUCCION", label: "Construcción" },
-  { value: "HOTELES_TURISMO", label: "Hoteles y turismo" },
-  { value: "PROFESIONALES", label: "Profesionales" },
-] as const;
-
 export const CONTACT_EMAIL = "contacto@mexicosinhambre.com";
 
 // Section 21: canal de alertas de estafas.

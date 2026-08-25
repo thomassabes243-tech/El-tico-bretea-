@@ -1,24 +1,12 @@
 import Link from "next/link";
-import type { ComponentType } from "react";
-import { Search, FileText, Users, MessagesSquare, ShieldCheck, HeartHandshake, Sparkles } from "lucide-react";
+import { Search, FileText, Users, MessagesSquare, ShieldCheck, HeartHandshake, Sparkles, ChevronRight } from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
-import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { PopocatepetlScene } from "@/components/brand/scenery/PopocatepetlScene";
-import { CancunScene } from "@/components/brand/scenery/CancunScene";
-import { ChiapasScene } from "@/components/brand/scenery/ChiapasScene";
-import { CoffeeMountainsScene } from "@/components/brand/scenery/CoffeeMountainsScene";
-import { COMMUNITY_CATEGORIES } from "@/lib/constants";
 import { getDailyQuote } from "@/lib/motivational-quotes";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
-
-const COMMUNITY_SCENES: Record<string, ComponentType<{ className?: string }>> = {
-  CONSTRUCCION: CoffeeMountainsScene,
-  HOTELES_TURISMO: CancunScene,
-  PROFESIONALES: ChiapasScene,
-};
 
 const QUICK_ACTIONS = [
   {
@@ -124,35 +112,21 @@ export default async function Home({
           </div>
         </section>
 
-        {/* Comunidades por gremio */}
+        {/* Comunidad */}
         <section className="mt-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-navy-900">Comunidades por gremio</h2>
-            <Link href="/comunidad" className="text-xs font-semibold text-mx-red-600">
-              Ver todas
-            </Link>
-          </div>
-          <div className="mt-3 flex gap-3 overflow-x-auto pb-1 scrollbar-none">
-            {COMMUNITY_CATEGORIES.map((cat) => {
-              const Scene = COMMUNITY_SCENES[cat.value];
-              return (
-                <Link key={cat.value} href={`/comunidad/${cat.value.toLowerCase()}`}>
-                  <Card className="relative w-36 shrink-0 overflow-hidden p-4">
-                    {Scene && (
-                      <>
-                        <Scene className="absolute inset-0 h-full w-full opacity-25" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/70 to-transparent" />
-                      </>
-                    )}
-                    <div className="relative flex flex-col items-start gap-2.5">
-                      <CategoryIcon category={cat.value} size="md" />
-                      <span className="text-sm font-semibold text-navy-900">{cat.label}</span>
-                    </div>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
+          <h2 className="text-base font-bold text-navy-900">Comunidad</h2>
+          <Link href="/comunidad" className="mt-3 block">
+            <Card className="flex items-center gap-3.5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-mx-red-600/[0.09] text-mx-red-600">
+                <MessagesSquare className="h-5 w-5" strokeWidth={2.1} />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-navy-900">Chat de la comunidad</p>
+                <p className="text-xs text-navy-800/50">Publicá, preguntá y conectá en vivo</p>
+              </div>
+              <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
+            </Card>
+          </Link>
         </section>
 
         {/* Publicidad (solo cuentas gratuitas, Sección 10) */}

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getChatRoomBySlug } from "@/lib/chat-rooms";
+import { getCommunityChatRoom } from "@/lib/chat-rooms";
 import { deleteChatImage } from "@/lib/storage";
 
 async function requireModeratorForRoom(userId: string, chatRoomId: string) {
@@ -19,14 +19,13 @@ async function requireModeratorForRoom(userId: string, chatRoomId: string) {
 // las fotos asociadas del almacenamiento (no solo la referencia en la BD).
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ category: string; messageId: string }> }
+  { params }: { params: Promise<{ messageId: string }> }
 ) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const { category, messageId } = await params;
-  const room = await getChatRoomBySlug(category);
-  if (!room) return NextResponse.json({ error: "Sala no encontrada" }, { status: 404 });
+  const { messageId } = await params;
+  const room = await getCommunityChatRoom();
 
   const message = await prisma.chatMessage.findUnique({
     where: { id: messageId },

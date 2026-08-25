@@ -315,16 +315,13 @@ model JobApplication {
 // acceso a la sala, sin acceso a datos administrativos sensibles)
 // ---------------------------------------------------------------------------
 
-enum CommunityCategory {
-  CONSTRUCCION
-  HOTELES_TURISMO
-  PROFESIONALES
-}
-
+// Un solo chat de comunidad para toda la app (ya no dividido por gremio) --
+// slug fijo "general" para poder resolverlo sin depender de un id guardado
+// en ningún otro lado.
 model ChatRoom {
-  id       String            @id @default(cuid())
-  name     String
-  category CommunityCategory
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique @default("general")
   createdAt DateTime @default(now())
 
   moderators ModeratorAssignment[]

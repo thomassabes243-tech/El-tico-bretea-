@@ -8,6 +8,7 @@ import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { AvatarImage } from "@/components/brand/AvatarImage";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { SaveWorkerButton } from "@/components/forms/SaveWorkerButton";
+import { toWhatsappHref } from "@/lib/whatsapp";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { MapPin, Briefcase, GraduationCap, Sparkles, Phone, Mail, Lock, History } from "lucide-react";
 
@@ -81,6 +82,19 @@ export default async function PublicWorkerProfilePage({
           {worker.showPhone || worker.showWhatsapp || worker.showEmail ? (
             <div className="mt-3 flex flex-col gap-2 text-sm text-navy-800/80">
               {worker.showPhone && worker.phone && <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-navy-800/40" /> {worker.phone}</span>}
+              {worker.showWhatsapp && worker.whatsapp && (
+                <a
+                  href={toWhatsappHref(
+                    worker.whatsapp,
+                    `Hola ${worker.fullName}, vi tu perfil en Méxicosinhambre.`
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 font-semibold text-success-600"
+                >
+                  <Phone className="h-4 w-4" /> WhatsApp: {worker.whatsapp}
+                </a>
+              )}
               {worker.showEmail && <span className="flex items-center gap-2"><Mail className="h-4 w-4 text-navy-800/40" /> {worker.email}</span>}
             </div>
           ) : (

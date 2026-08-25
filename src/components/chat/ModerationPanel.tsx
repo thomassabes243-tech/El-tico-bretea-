@@ -13,25 +13,25 @@ type BlockedUser = {
   createdAt: string;
 };
 
-export function ModerationPanel({ categorySlug }: { categorySlug: string }) {
+export function ModerationPanel() {
   const [blocks, setBlocks] = useState<BlockedUser[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [unblockingId, setUnblockingId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`/api/comunidad/${categorySlug}/bloqueos`)
+    fetch(`/api/comunidad/bloqueos`)
       .then((res) => {
         if (!res.ok) throw new Error("No se pudo cargar la lista");
         return res.json();
       })
       .then((data) => setBlocks(data.blocks))
       .catch((err) => setError(err instanceof Error ? err.message : "Error"));
-  }, [categorySlug]);
+  }, []);
 
   const unblock = async (userId: string) => {
     setUnblockingId(userId);
     try {
-      const res = await fetch(`/api/comunidad/${categorySlug}/bloqueos?userId=${userId}`, {
+      const res = await fetch(`/api/comunidad/bloqueos?userId=${userId}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("No se pudo desbloquear");

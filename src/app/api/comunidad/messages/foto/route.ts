@@ -1,17 +1,15 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getChatRoomBySlug, isUserBlockedFromRoom, CHAT_MESSAGE_INCLUDE, serializeChatMessage } from "@/lib/chat-rooms";
+import { getCommunityChatRoom, isUserBlockedFromRoom, CHAT_MESSAGE_INCLUDE, serializeChatMessage } from "@/lib/chat-rooms";
 import { MAX_UPLOAD_BYTES } from "@/lib/chat-limits";
 import { saveChatImage, StorageNotConfiguredError } from "@/lib/storage";
 
-export async function POST(request: Request, { params }: { params: Promise<{ category: string }> }) {
+export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const { category } = await params;
-  const room = await getChatRoomBySlug(category);
-  if (!room) return NextResponse.json({ error: "Sala no encontrada" }, { status: 404 });
+  const room = await getCommunityChatRoom();
 
   if (await isUserBlockedFromRoom(room.id, session.user.id)) {
     return NextResponse.json({ error: "Un moderador te bloqueó el acceso a esta sala" }, { status: 403 });

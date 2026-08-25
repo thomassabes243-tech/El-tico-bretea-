@@ -1,16 +1,14 @@
 import { prisma } from "@/lib/prisma";
-import { COMMUNITY_CATEGORIES } from "@/lib/constants";
-import type { CommunityCategory, Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
-export function communityCategoryFromSlug(slug: string): CommunityCategory | null {
-  const match = COMMUNITY_CATEGORIES.find((c) => c.value.toLowerCase() === slug);
-  return (match?.value as CommunityCategory) ?? null;
-}
-
-export async function getChatRoomBySlug(slug: string) {
-  const category = communityCategoryFromSlug(slug);
-  if (!category) return null;
-  return prisma.chatRoom.findFirst({ where: { category } });
+// Un solo chat de comunidad para toda la app -- ya no dividido por gremio.
+// Se resuelve/crea por un slug fijo en vez de guardar el id en otro lado.
+export async function getCommunityChatRoom() {
+  return prisma.chatRoom.upsert({
+    where: { slug: "general" },
+    create: { slug: "general", name: "Comunidad" },
+    update: {},
+  });
 }
 
 export async function isUserBlockedFromRoom(chatRoomId: string, userId: string) {

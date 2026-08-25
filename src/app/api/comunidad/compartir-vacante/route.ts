@@ -1,17 +1,15 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getChatRoomBySlug, isUserBlockedFromRoom, CHAT_MESSAGE_INCLUDE, serializeChatMessage } from "@/lib/chat-rooms";
+import { getCommunityChatRoom, isUserBlockedFromRoom, CHAT_MESSAGE_INCLUDE, serializeChatMessage } from "@/lib/chat-rooms";
 
-export async function POST(request: Request, { params }: { params: Promise<{ category: string }> }) {
+export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user || session.user.role !== "COMPANY") {
     return NextResponse.json({ error: "Solo empresas pueden compartir vacantes" }, { status: 403 });
   }
 
-  const { category } = await params;
-  const room = await getChatRoomBySlug(category);
-  if (!room) return NextResponse.json({ error: "Sala no encontrada" }, { status: 404 });
+  const room = await getCommunityChatRoom();
 
   if (await isUserBlockedFromRoom(room.id, session.user.id)) {
     return NextResponse.json({ error: "Un moderador te bloqueó el acceso a esta sala" }, { status: 403 });
@@ -31,12 +29,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ cat
   }
   if (!jobPosting.isActive) {
     return NextResponse.json({ error: "Esta vacante ya no está activa" }, { status: 400 });
-  }
-  if (jobPosting.laborCategory !== room.category) {
-    return NextResponse.json(
-      { error: "Solo podés compartir vacantes de la misma categoría que esta sala" },
-      { status: 400 }
-    );
   }
 
   const message = await prisma.chatMessage.create({

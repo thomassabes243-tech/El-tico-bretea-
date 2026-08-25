@@ -3,12 +3,6 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-const COMMUNITIES: { name: string; category: "CONSTRUCCION" | "HOTELES_TURISMO" | "PROFESIONALES" }[] = [
-  { name: "Construcción", category: "CONSTRUCCION" },
-  { name: "Hoteles y turismo", category: "HOTELES_TURISMO" },
-  { name: "Profesionales", category: "PROFESIONALES" },
-];
-
 const DEMO_MODERATOR_EMAIL = process.env.SEED_MODERATOR_EMAIL || "moderador.demo@mexicosinhambre.com";
 const DEMO_MODERATOR_PASSWORD = process.env.SEED_MODERATOR_PASSWORD || "moderador12345";
 const DEMO_ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL || "admin.demo@mexicosinhambre.com";
@@ -24,13 +18,12 @@ const DEMO_ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || "admin12345";
 // que hacerlo desde el panel admin, no volviendo a correr el seed.
 
 async function main() {
-  const rooms = [];
-  for (const community of COMMUNITIES) {
-    const existing = await prisma.chatRoom.findFirst({ where: { category: community.category } });
-    const room = existing ?? (await prisma.chatRoom.create({ data: community }));
-    rooms.push(room);
-  }
-  console.log("Comunidades base creadas.");
+  const room = await prisma.chatRoom.upsert({
+    where: { slug: "general" },
+    create: { slug: "general", name: "Comunidad" },
+    update: {},
+  });
+  console.log("Sala de comunidad creada.");
 
   const passwordHash = await bcrypt.hash(DEMO_MODERATOR_PASSWORD, 10);
   const moderatorUser = await prisma.user.upsert({
@@ -45,17 +38,13 @@ async function main() {
     update: {},
   });
 
-  for (const room of rooms) {
-    await prisma.moderatorAssignment.upsert({
-      where: { moderatorId_chatRoomId: { moderatorId: moderator.id, chatRoomId: room.id } },
-      create: { moderatorId: moderator.id, chatRoomId: room.id },
-      update: {},
-    });
-  }
+  await prisma.moderatorAssignment.upsert({
+    where: { moderatorId_chatRoomId: { moderatorId: moderator.id, chatRoomId: room.id } },
+    create: { moderatorId: moderator.id, chatRoomId: room.id },
+    update: {},
+  });
 
-  console.log(
-    `Moderador demo listo: ${DEMO_MODERATOR_EMAIL} / ${DEMO_MODERATOR_PASSWORD} (asignado a las 3 salas)`
-  );
+  console.log(`Moderador demo listo: ${DEMO_MODERATOR_EMAIL} / ${DEMO_MODERATOR_PASSWORD}`);
 
   const adminPasswordHash = await bcrypt.hash(DEMO_ADMIN_PASSWORD, 10);
   await prisma.user.upsert({

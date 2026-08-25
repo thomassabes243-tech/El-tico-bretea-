@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getChatRoomBySlug, displayNameFor } from "@/lib/chat-rooms";
+import { getCommunityChatRoom, displayNameFor } from "@/lib/chat-rooms";
 
 async function requireModeratorForRoom(userId: string, chatRoomId: string) {
   const moderator = await prisma.moderator.findUnique({ where: { userId } });
@@ -12,13 +12,11 @@ async function requireModeratorForRoom(userId: string, chatRoomId: string) {
   return Boolean(assignment);
 }
 
-export async function GET(request: Request, { params }: { params: Promise<{ category: string }> }) {
+export async function GET() {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const { category } = await params;
-  const room = await getChatRoomBySlug(category);
-  if (!room) return NextResponse.json({ error: "Sala no encontrada" }, { status: 404 });
+  const room = await getCommunityChatRoom();
 
   if (session.user.role !== "ADMIN" && !(await requireModeratorForRoom(session.user.id, room.id))) {
     return NextResponse.json({ error: "No sos moderador de esta sala" }, { status: 403 });
@@ -42,13 +40,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ cate
   });
 }
 
-export async function POST(request: Request, { params }: { params: Promise<{ category: string }> }) {
+export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const { category } = await params;
-  const room = await getChatRoomBySlug(category);
-  if (!room) return NextResponse.json({ error: "Sala no encontrada" }, { status: 404 });
+  const room = await getCommunityChatRoom();
 
   if (session.user.role !== "ADMIN" && !(await requireModeratorForRoom(session.user.id, room.id))) {
     return NextResponse.json({ error: "No sos moderador de esta sala" }, { status: 403 });
@@ -79,13 +75,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ cat
   return NextResponse.json({ ok: true }, { status: 201 });
 }
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ category: string }> }) {
+export async function DELETE(request: Request) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const { category } = await params;
-  const room = await getChatRoomBySlug(category);
-  if (!room) return NextResponse.json({ error: "Sala no encontrada" }, { status: 404 });
+  const room = await getCommunityChatRoom();
 
   if (session.user.role !== "ADMIN" && !(await requireModeratorForRoom(session.user.id, room.id))) {
     return NextResponse.json({ error: "No sos moderador de esta sala" }, { status: 403 });

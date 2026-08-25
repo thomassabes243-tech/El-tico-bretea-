@@ -8,7 +8,6 @@ import { ChatMessageList, type ChatMessage } from "@/components/chat/ChatMessage
 type CompanyJob = { id: string; title: string };
 
 export function ChatRoomView({
-  categorySlug,
   initialMessages,
   initialBlocked,
   currentUserId,
@@ -16,7 +15,6 @@ export function ChatRoomView({
   companyJobs,
   canModerate,
 }: {
-  categorySlug: string;
   initialMessages: ChatMessage[];
   initialBlocked: boolean;
   currentUserId: string;
@@ -56,7 +54,7 @@ export function ChatRoomView({
 
     async function poll() {
       try {
-        const url = `/api/comunidad/${categorySlug}/messages${
+        const url = `/api/comunidad/messages${
           lastTimestampRef.current ? `?after=${encodeURIComponent(lastTimestampRef.current)}` : ""
         }`;
         const res = await fetch(url);
@@ -83,7 +81,7 @@ export function ChatRoomView({
       cancelled = true;
       clearInterval(interval);
     };
-  }, [categorySlug]);
+  }, []);
 
   const sendText = async () => {
     const trimmed = text.trim();
@@ -91,7 +89,7 @@ export function ChatRoomView({
     setSending(true);
     setError(null);
     try {
-      const res = await fetch(`/api/comunidad/${categorySlug}/messages`, {
+      const res = await fetch(`/api/comunidad/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: trimmed }),
@@ -117,7 +115,7 @@ export function ChatRoomView({
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await fetch(`/api/comunidad/${categorySlug}/messages/foto`, {
+      const res = await fetch(`/api/comunidad/messages/foto`, {
         method: "POST",
         body: formData,
       });
@@ -139,7 +137,7 @@ export function ChatRoomView({
   const shareJob = async (jobPostingId: string) => {
     setError(null);
     try {
-      const res = await fetch(`/api/comunidad/${categorySlug}/compartir-vacante`, {
+      const res = await fetch(`/api/comunidad/compartir-vacante`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jobPostingId }),
@@ -157,49 +155,43 @@ export function ChatRoomView({
     }
   };
 
-  const blockAuthor = useCallback(
-    async (authorId: string) => {
-      try {
-        const res = await fetch(`/api/comunidad/${categorySlug}/bloqueos`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: authorId }),
-        });
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(body.error || "No se pudo bloquear");
-        }
-        setBlockedAuthorIds((prev) => new Set(prev).add(authorId));
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Ocurrió un error inesperado");
+  const blockAuthor = useCallback(async (authorId: string) => {
+    try {
+      const res = await fetch(`/api/comunidad/bloqueos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: authorId }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || "No se pudo bloquear");
       }
-    },
-    [categorySlug]
-  );
+      setBlockedAuthorIds((prev) => new Set(prev).add(authorId));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Ocurrió un error inesperado");
+    }
+  }, []);
 
-  const deleteMessage = useCallback(
-    async (messageId: string) => {
-      if (!window.confirm("¿Borrar esta publicación? No se puede deshacer.")) return;
-      try {
-        const res = await fetch(`/api/comunidad/${categorySlug}/messages/${messageId}`, {
-          method: "DELETE",
-        });
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(body.error || "No se pudo borrar la publicación");
-        }
-        deletedIdsRef.current.add(messageId);
-        setMessages((prev) => prev.filter((m) => m.id !== messageId));
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Ocurrió un error inesperado");
+  const deleteMessage = useCallback(async (messageId: string) => {
+    if (!window.confirm("¿Borrar esta publicación? No se puede deshacer.")) return;
+    try {
+      const res = await fetch(`/api/comunidad/messages/${messageId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || "No se pudo borrar la publicación");
       }
-    },
-    [categorySlug]
-  );
+      deletedIdsRef.current.add(messageId);
+      setMessages((prev) => prev.filter((m) => m.id !== messageId));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Ocurrió un error inesperado");
+    }
+  }, []);
 
   return (
-    <div className="flex flex-1 flex-col">
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4">
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
         <div className="flex flex-col gap-3">
           <ChatMessageList
             messages={messages}
@@ -213,13 +205,13 @@ export function ChatRoomView({
       </div>
 
       {error && (
-        <p className="mx-4 mb-2 rounded-lg bg-mx-red-100 px-3 py-1.5 text-xs font-medium text-mx-red-700">
+        <p className="mx-4 mb-2 shrink-0 rounded-lg bg-mx-red-100 px-3 py-1.5 text-xs font-medium text-mx-red-700">
           {error}
         </p>
       )}
 
       {showJobPicker && (
-        <Card className="mx-4 mb-2 flex flex-col gap-1.5 p-3">
+        <Card className="mx-4 mb-2 flex shrink-0 flex-col gap-1.5 p-3">
           <div className="flex items-center justify-between">
             <p className="text-xs font-bold text-navy-900">Elegí una vacante para compartir</p>
             <button onClick={() => setShowJobPicker(false)} className="text-navy-800/40">
@@ -243,12 +235,12 @@ export function ChatRoomView({
       )}
 
       {blocked ? (
-        <div className="mx-4 mb-4 flex items-center gap-2.5 rounded-xl bg-sand-100 px-4 py-3 text-sm text-navy-800/60">
+        <div className="mx-4 mb-4 flex shrink-0 items-center gap-2.5 rounded-xl bg-sand-100 px-4 py-3 text-sm text-navy-800/60">
           <Lock className="h-4 w-4 shrink-0" />
           Un moderador te bloqueó el acceso a esta sala. Podés ver el historial, pero no publicar.
         </div>
       ) : (
-        <div className="border-t border-sand-200 bg-white px-4 py-3">
+        <div className="shrink-0 border-t border-sand-200 bg-white px-4 py-3">
           <div className="flex items-end gap-2">
             <input
               ref={fileInputRef}

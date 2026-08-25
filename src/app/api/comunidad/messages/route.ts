@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
-  getChatRoomBySlug,
+  getCommunityChatRoom,
   isUserBlockedFromRoom,
   CHAT_MESSAGE_INCLUDE,
   serializeChatMessage,
@@ -11,13 +11,11 @@ import { chatMessageSchema } from "@/lib/validations";
 import { cleanupExpiredChatFiles } from "@/lib/storage";
 import { detectContactInfoLeak } from "@/lib/safety";
 
-export async function GET(request: Request, { params }: { params: Promise<{ category: string }> }) {
+export async function GET(request: Request) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const { category } = await params;
-  const room = await getChatRoomBySlug(category);
-  if (!room) return NextResponse.json({ error: "Sala no encontrada" }, { status: 404 });
+  const room = await getCommunityChatRoom();
 
   await cleanupExpiredChatFiles().catch(() => undefined);
 
@@ -51,13 +49,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ cate
   });
 }
 
-export async function POST(request: Request, { params }: { params: Promise<{ category: string }> }) {
+export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const { category } = await params;
-  const room = await getChatRoomBySlug(category);
-  if (!room) return NextResponse.json({ error: "Sala no encontrada" }, { status: 404 });
+  const room = await getCommunityChatRoom();
 
   if (await isUserBlockedFromRoom(room.id, session.user.id)) {
     return NextResponse.json({ error: "Un moderador te bloqueó el acceso a esta sala" }, { status: 403 });

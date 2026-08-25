@@ -1,8 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { CategoryIcon } from "@/components/brand/CategoryIcon";
-import { X } from "lucide-react";
+import { X, MessagesSquare } from "lucide-react";
 import { removeModeratorAssignment } from "./actions";
 import { AssignModeratorForm } from "@/components/admin/AssignModeratorForm";
 
@@ -57,7 +56,7 @@ export default async function AdminModeradoresPage() {
                   key={a.id}
                   className="flex items-center gap-1.5 rounded-full bg-sand-100 py-1 pl-1 pr-2 text-xs font-medium text-navy-800/70"
                 >
-                  <CategoryIcon category={a.chatRoom.category} size="sm" />
+                  <MessagesSquare className="h-3.5 w-3.5" />
                   {a.chatRoom.name}
                   <form
                     action={async () => {
