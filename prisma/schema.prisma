@@ -10,6 +10,10 @@ datasource db {
   // agrupar — la que usan las migraciones. En desarrollo local ambas
   // pueden apuntar a la misma base; en Neon son dos cadenas distintas que
   // el propio panel te da ("Pooled connection" y "Direct connection").
+  // Si DIRECT_URL no está definida, scripts/build-migrate.mjs la completa
+  // automáticamente con DATABASE_URL antes de correr `prisma migrate
+  // deploy` (única operación que la usa), para que el build no falle si
+  // esa variable quedó mal configurada en el hosting.
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
