@@ -164,14 +164,16 @@ export default async function CvPage() {
                 )}
               </p>
             </div>
-            <div className="flex items-center gap-2.5 rounded-xl border border-sand-200 bg-white p-3">
-              <Smartphone className="h-4 w-4 shrink-0 text-navy-700" />
-              <div className="min-w-0 flex-1 text-xs">
-                <p className="font-bold text-navy-900">{settings.sinpeMovilNumber}</p>
-                {settings.sinpeMovilName && (
-                  <p className="text-navy-800/50">{settings.sinpeMovilName}</p>
-                )}
-              </div>
+            <div className="flex flex-col items-center gap-1 rounded-2xl border-2 border-colon-600/30 bg-white px-4 py-5 text-center">
+              <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-colon-700">
+                <Smartphone className="h-4 w-4" /> SINPE Móvil
+              </span>
+              <p className="mt-1 text-4xl font-extrabold tracking-wider text-navy-900">
+                {settings.sinpeMovilNumber}
+              </p>
+              {settings.sinpeMovilName && (
+                <p className="text-sm font-semibold text-navy-800/60">{settings.sinpeMovilName}</p>
+              )}
             </div>
             <CvPaymentClaimForm />
           </Card>
