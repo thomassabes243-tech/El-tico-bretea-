@@ -13,6 +13,22 @@ if (!process.env.DIRECT_URL && process.env.DATABASE_URL) {
   process.env.DIRECT_URL = process.env.DATABASE_URL;
 }
 
+// Esta migración quedó marcada como "fallida" en _prisma_migrations en el
+// deploy anterior (índice único duplicado en chat_rooms.slug, cuando la base
+// de producción todavía tenía varias filas de ChatRoom). Por diseño, Prisma
+// se niega a aplicar CUALQUIER migración nueva mientras esa marca siga ahí
+// (error P3009), aunque la causa original ya no exista. La transacción
+// fallida no llegó a aplicar nada (Postgres la revirtió sola), así que
+// "rolled-back" refleja la realidad: no hay nada que deshacer, solo hay que
+// limpiar la marca para que Prisma vuelva a intentarla. Se ignora el
+// resultado a propósito: si ya está resuelta, correr esto de nuevo no debe
+// hacer fallar el build.
+spawnSync(
+  "npx",
+  ["prisma", "migrate", "resolve", "--rolled-back", "20260825024539_single_community_chat_room"],
+  { stdio: "inherit", env: process.env, shell: process.platform === "win32" }
+);
+
 const result = spawnSync("npx", ["prisma", "migrate", "deploy"], {
   stdio: "inherit",
   env: process.env,
