@@ -17,12 +17,6 @@ export async function GET(request: Request) {
   if (!worker) {
     return NextResponse.json({ error: "Completá tu perfil primero" }, { status: 400 });
   }
-  if (!worker.cvUnlocked) {
-    return NextResponse.json(
-      { error: "Todavía no desbloqueaste la descarga del CV. Pagá y enviá el comprobante desde /cv." },
-      { status: 402 }
-    );
-  }
 
   const includeCriminalRecord =
     new URL(request.url).searchParams.get("incluirHojaDelincuencia") === "1";

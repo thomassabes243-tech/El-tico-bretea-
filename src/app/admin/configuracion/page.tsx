@@ -25,70 +25,17 @@ export default async function AdminConfiguracionPage() {
       <form action={saveSettings} className="mt-5 flex flex-col gap-5">
         <Card className="p-4">
           <h2 className="text-sm font-bold text-navy-900">Precios ($ MXN)</h2>
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <div>
-              <FieldLabel label="Descarga de CV" hint="≈ US$2" />
-              <input
-                name="cvPriceColones"
-                type="number"
-                min={0}
-                defaultValue={settings.cvPriceColones}
-                className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
-              />
-            </div>
-            <div>
-              <FieldLabel label="Premium" hint="por mes" />
-              <input
-                name="premiumPriceColones"
-                type="number"
-                min={0}
-                defaultValue={settings.premiumPriceColones}
-                className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
-              />
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4">
-          <h2 className="text-sm font-bold text-navy-900">Cobro por transferencia bancaria</h2>
           <p className="mt-1 text-xs text-navy-800/50">
-            El número y nombre que se le muestran al trabajador para que transfiera manualmente
-            y desbloquee la descarga del CV. Sin esto, no se muestra ninguna forma de pagar.
-            Los pagos se aprueban a mano en «Pagos de CV» revisando el código que la persona
-            pega después de transferir.
+            La descarga del CV en PDF es gratuita. Este precio es solo para la membresía Premium
+            (todavía desactivada de la interfaz).
           </p>
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <div>
-              <FieldLabel label="Número transferencia bancaria" />
-              <input
-                name="bankTransferAccount"
-                type="text"
-                placeholder="8888-8888"
-                defaultValue={settings.bankTransferAccount ?? ""}
-                className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
-              />
-            </div>
-            <div>
-              <FieldLabel label="Nombre de la cuenta" hint="para que confirmen que es correcto" />
-              <input
-                name="bankTransferHolder"
-                type="text"
-                placeholder="Ej. Juan Pérez"
-                defaultValue={settings.bankTransferHolder ?? ""}
-                className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
-              />
-            </div>
-          </div>
           <div className="mt-3">
-            <FieldLabel
-              label="WhatsApp de contacto"
-              hint="para quien quiera pagar más rápido con tarjeta, coordinado directo con vos"
-            />
+            <FieldLabel label="Premium" hint="por mes" />
             <input
-              name="contactWhatsapp"
-              type="text"
-              placeholder="50688881234 (código de país + número, sin signos)"
-              defaultValue={settings.contactWhatsapp ?? ""}
+              name="premiumPricePesos"
+              type="number"
+              min={0}
+              defaultValue={settings.premiumPricePesos}
               className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
             />
           </div>

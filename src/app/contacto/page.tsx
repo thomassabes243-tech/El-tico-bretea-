@@ -1,8 +1,8 @@
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
-import { CONTACT_EMAIL } from "@/lib/constants";
-import { Mail } from "lucide-react";
+import { CONTACT_EMAIL, CREATOR_WHATSAPP_HREF } from "@/lib/constants";
+import { Mail, Phone } from "lucide-react";
 
 export default function ContactoPage() {
   return (
@@ -23,6 +23,23 @@ export default function ContactoPage() {
             <p className="text-xs text-navy-800/50">Publicidad y negocios</p>
             <a href={`mailto:${CONTACT_EMAIL}`} className="text-sm font-bold text-mx-red-600">
               {CONTACT_EMAIL}
+            </a>
+          </div>
+        </Card>
+
+        <Card className="mt-3 flex items-center gap-3.5 p-4">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-success-600/10 text-success-600">
+            <Phone className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-xs text-navy-800/50">¿Querés hablar con el creador de la app?</p>
+            <a
+              href={CREATOR_WHATSAPP_HREF}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-bold text-success-600"
+            >
+              Escribime por WhatsApp
             </a>
           </div>
         </Card>

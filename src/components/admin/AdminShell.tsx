@@ -17,7 +17,6 @@ const TABS = [
   { href: "/admin/moderadores", label: "Moderadores" },
   { href: "/admin/reportes", label: "Reportes" },
   { href: "/admin/puntos-encuentro", label: "Puntos de encuentro" },
-  { href: "/admin/pagos-cv", label: "Pagos de CV" },
   { href: "/admin/publicidad", label: "Publicidad" },
   { href: "/admin/configuracion", label: "Configuración" },
   { href: "/admin/almacenamiento", label: "Almacenamiento" },

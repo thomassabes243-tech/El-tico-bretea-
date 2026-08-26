@@ -1,17 +1,12 @@
 import { redirect } from "next/navigation";
-import { CheckCircle2, Clock, Smartphone, Zap } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
-import { PriceTag } from "@/components/ui/PriceTag";
-import { getAppSettings } from "@/lib/settings";
-import { formatPesos } from "@/lib/format";
-import { toWhatsappHref } from "@/lib/whatsapp";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { CriminalRecordSection } from "@/components/forms/CriminalRecordSection";
-import { CvPaymentClaimForm } from "@/components/forms/CvPaymentClaimForm";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -40,25 +35,6 @@ export default async function CvPage() {
     include: { references: true },
   });
   if (!worker) redirect("/registro/trabajador");
-
-  const settings = await getAppSettings();
-  const cvPrice = formatPesos(settings.cvPriceColones);
-
-  const latestClaim = worker.cvUnlocked
-    ? null
-    : await prisma.cvPaymentClaim.findFirst({
-        where: { workerId: worker.id },
-        orderBy: { createdAt: "desc" },
-      });
-  const hasPendingClaim = latestClaim?.status === "PENDIENTE";
-  const wasRejected = latestClaim?.status === "RECHAZADO";
-  const paymentConfigured = Boolean(settings.bankTransferAccount);
-  const whatsappHref = settings.contactWhatsapp
-    ? toWhatsappHref(
-        settings.contactWhatsapp,
-        `Hola, soy ${worker.fullName} y quiero pagar la descarga de mi CV con tarjeta, más rápido que la transferencia.`
-      )
-    : null;
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
@@ -127,81 +103,13 @@ export default async function CvPage() {
           )}
         </Card>
 
-        {worker.cvUnlocked ? (
-          <Card className="mt-4 flex items-center gap-3 border-success-600/20 bg-success-600/[0.06] p-4">
-            <CheckCircle2 className="h-5 w-5 shrink-0 text-success-600" />
-            <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
-              Ya desbloqueaste la descarga del CV. El PDF se genera al momento con los datos
-              actuales de tu perfil.
-            </p>
-          </Card>
-        ) : hasPendingClaim ? (
-          <Card className="mt-4 flex items-start gap-3.5 border-peso-600/20 bg-peso-100/40 p-4">
-            <Clock className="mt-0.5 h-5 w-5 shrink-0 text-peso-600" />
-            <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
-              <strong className="text-navy-900">Tu pago está en revisión.</strong> Enviaste el
-              código <span className="font-mono">{latestClaim!.referenceCode}</span>. En cuanto
-              el equipo lo confirme, vas a poder descargar el PDF.
-            </p>
-          </Card>
-        ) : paymentConfigured ? (
-          <Card className="mt-4 flex flex-col gap-3 border-peso-600/20 bg-peso-100/40 p-4">
-            <div className="flex items-start gap-3.5">
-              <PriceTag amount={cvPrice} size="lg" />
-              <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
-                {wasRejected ? (
-                  <>
-                    <strong className="text-mx-red-700">
-                      No pudimos confirmar tu comprobante anterior.
-                    </strong>{" "}
-                    Revisá el código y enviá uno nuevo, o escribinos si creés que fue un error.
-                  </>
-                ) : (
-                  <>
-                    Para descargar tu CV en PDF, hacé una transferencia bancaria por {cvPrice} y
-                    pegá acá el código de comprobante que te dio tu banco.
-                  </>
-                )}
-              </p>
-            </div>
-            <div className="flex items-center gap-2.5 rounded-xl border border-sand-200 bg-white p-3">
-              <Smartphone className="h-4 w-4 shrink-0 text-navy-700" />
-              <div className="min-w-0 flex-1 text-xs">
-                <p className="font-bold text-navy-900">{settings.bankTransferAccount}</p>
-                {settings.bankTransferHolder && (
-                  <p className="text-navy-800/50">{settings.bankTransferHolder}</p>
-                )}
-              </div>
-            </div>
-            <CvPaymentClaimForm />
-          </Card>
-        ) : (
-          <Card className="mt-4 flex items-start gap-3.5 border-peso-600/20 bg-peso-100/40 p-4">
-            <PriceTag amount={cvPrice} size="lg" />
-            <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
-              La descarga del CV todavía no está disponible para pagar -- el administrador
-              todavía no configuró un número de cobro. Volvé a intentarlo más adelante.
-            </p>
-          </Card>
-        )}
-
-        {!worker.cvUnlocked && whatsappHref && (
-          <Card className="mt-3 flex items-center gap-3 border-mx-red-600/20 bg-mx-red-100/30 p-3.5">
-            <Zap className="h-4 w-4 shrink-0 text-mx-red-600" />
-            <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
-              <strong className="text-navy-900">¿Lo querés más rápido?</strong> Escribinos por
-              WhatsApp y coordinamos el pago con tarjeta, sin esperar la revisión de la transferencia.
-            </p>
-            <a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 rounded-lg bg-mx-red-600 px-3 py-2 text-xs font-semibold text-white"
-            >
-              WhatsApp
-            </a>
-          </Card>
-        )}
+        <Card className="mt-4 flex items-center gap-3 border-success-600/20 bg-success-600/[0.06] p-4">
+          <CheckCircle2 className="h-5 w-5 shrink-0 text-success-600" />
+          <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
+            La descarga de tu CV en PDF es gratuita. Se genera al momento con los datos actuales
+            de tu perfil.
+          </p>
+        </Card>
 
         <Card className="mt-4 flex flex-col gap-3 p-4">
           <div>
@@ -214,7 +122,6 @@ export default async function CvPage() {
             initialUploaded={Boolean(worker.criminalRecordKey)}
             initialUploadedAt={worker.criminalRecordUploadedAt?.toISOString() ?? null}
             downloadLabel="Descargar PDF"
-            canDownload={worker.cvUnlocked}
           />
         </Card>
       </main>

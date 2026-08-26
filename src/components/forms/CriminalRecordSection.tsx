@@ -8,12 +8,10 @@ export function CriminalRecordSection({
   initialUploaded,
   initialUploadedAt,
   downloadLabel,
-  canDownload,
 }: {
   initialUploaded: boolean;
   initialUploadedAt: string | null;
   downloadLabel: string;
-  canDownload: boolean;
 }) {
   const [uploaded, setUploaded] = useState(initialUploaded);
 
@@ -24,7 +22,7 @@ export function CriminalRecordSection({
         initialUploadedAt={initialUploadedAt}
         onChange={setUploaded}
       />
-      {canDownload && <CvDownloadButton hasCriminalRecord={uploaded} label={downloadLabel} />}
+      <CvDownloadButton hasCriminalRecord={uploaded} label={downloadLabel} />
     </>
   );
 }

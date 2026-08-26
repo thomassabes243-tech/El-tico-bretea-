@@ -27,7 +27,7 @@ export default async function PremiumPage() {
   if (!PREMIUM_ENABLED) redirect("/");
 
   const settings = await getAppSettings();
-  const price = formatPesos(settings.premiumPriceColones);
+  const price = formatPesos(settings.premiumPricePesos);
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
