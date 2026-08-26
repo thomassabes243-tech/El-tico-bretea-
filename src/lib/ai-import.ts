@@ -4,10 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { LABOR_CATEGORIES } from "@/lib/constants";
 
 // Importar oferta desde texto/imagen de Facebook o WhatsApp (panel admin,
-// solo lectura para el resto de la app): la clave de Anthropic vive
+// solo lectura para el resto de la app): la clave de Gemini vive
 // únicamente acá, del lado del servidor -- nunca se manda al navegador.
-const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
-const ANTHROPIC_MODEL = "claude-sonnet-5";
+const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 export type ExtractedJobFields = {
   title: string | null;
@@ -19,7 +19,7 @@ export type ExtractedJobFields = {
 
 export class AiNotConfiguredError extends Error {
   constructor() {
-    super("Falta configurar ANTHROPIC_API_KEY en el servidor.");
+    super("Falta configurar GEMINI_API_KEY en el servidor.");
     this.name = "AiNotConfiguredError";
   }
 }
@@ -55,49 +55,40 @@ export async function extractJobFromText(input: {
   imageBase64?: string;
   imageMediaType?: string;
 }): Promise<ExtractedJobFields> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new AiNotConfiguredError();
 
-  const content: Array<
-    | { type: "text"; text: string }
-    | { type: "image"; source: { type: "base64"; media_type: string; data: string } }
+  const parts: Array<
+    | { text: string }
+    | { inline_data: { mime_type: string; data: string } }
   > = [];
 
   if (input.imageBase64 && input.imageMediaType) {
-    content.push({
-      type: "image",
-      source: { type: "base64", media_type: input.imageMediaType, data: input.imageBase64 },
-    });
+    parts.push({ inline_data: { mime_type: input.imageMediaType, data: input.imageBase64 } });
   }
-  content.push({
-    type: "text",
+  parts.push({
     text: input.text.trim()
       ? `Texto de la publicación:\n${input.text.trim()}`
       : "No se pegó texto -- extraé lo que puedas de la imagen adjunta.",
   });
 
-  const res = await fetch(ANTHROPIC_API_URL, {
+  const res = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
     method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-    },
+    headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      model: ANTHROPIC_MODEL,
-      max_tokens: 1024,
-      system: buildPrompt(),
-      messages: [{ role: "user", content }],
+      systemInstruction: { parts: [{ text: buildPrompt() }] },
+      contents: [{ role: "user", parts }],
+      generationConfig: { maxOutputTokens: 1024, responseMimeType: "application/json" },
     }),
   });
 
   if (!res.ok) {
     const errBody = await res.text().catch(() => "");
-    throw new Error(`Anthropic API respondió ${res.status}: ${errBody.slice(0, 300)}`);
+    throw new Error(`Gemini API respondió ${res.status}: ${errBody.slice(0, 300)}`);
   }
 
   const data = await res.json();
-  const rawText: string = data?.content?.[0]?.text ?? "";
+  const rawText: string = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 
   let parsed: unknown;
   try {
