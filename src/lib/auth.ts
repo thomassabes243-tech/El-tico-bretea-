@@ -9,6 +9,11 @@ const LOGIN_MAX_ATTEMPTS = 8;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  // Vercel es un host confiable (el proxy fija X-Forwarded-Host de forma
+  // correcta) -- se fija acá en vez de depender solo de AUTH_TRUST_HOST
+  // (una env var más, con el mismo riesgo de quedar cargada vacía que ya
+  // tumbó todo el sitio con AUTH_SECRET).
+  trustHost: true,
   session: { strategy: "jwt" },
   pages: {
     signIn: "/iniciar-sesion",
