@@ -28,5 +28,6 @@ export function serializeScamAlert(alert: ScamAlertWithRelations, viewerId?: str
     authorName: displayNameFor(alert.author),
     confirmationsCount: alert._count.confirmations,
     confirmedByViewer: viewerId ? alert.confirmations.some((c) => c.userId === viewerId) : false,
+    isAuthor: viewerId ? alert.authorId === viewerId : false,
   };
 }

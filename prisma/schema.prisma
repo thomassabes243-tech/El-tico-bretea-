@@ -511,9 +511,11 @@ model ScamAlertFlag {
   reporterId String
   reporter   User      @relation("ScamAlertFlagsFiled", fields: [reporterId], references: [id], onDelete: Cascade)
   reason     String
+  resolved   Boolean   @default(false)
 
   createdAt DateTime @default(now())
 
+  @@index([resolved, createdAt])
   @@map("scam_alert_flags")
 }
 

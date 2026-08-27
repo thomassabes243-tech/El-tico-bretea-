@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, Inbox, MapPin, ShieldCheck } from "lucide-react";
+import { AlertTriangle, Flag, Inbox, MapPin, ShieldCheck } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
@@ -7,7 +7,7 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { SCAM_ALERT_MODALITIES, SCAM_ALERT_STATUS_LABELS } from "@/lib/constants";
-import { SCAM_ALERT_INCLUDE, serializeScamAlert } from "@/lib/scam-alerts";
+import { SCAM_ALERT_INCLUDE, serializeScamAlert, canModerateScamAlerts } from "@/lib/scam-alerts";
 
 function modalityLabel(value: string | null) {
   if (!value) return null;
@@ -16,12 +16,22 @@ function modalityLabel(value: string | null) {
 
 export default async function AlertasEstafaPage() {
   const session = await auth();
+  const canModerate = canModerateScamAlerts(session?.user?.role);
   const alertsRaw = await prisma.scamAlert.findMany({
     include: SCAM_ALERT_INCLUDE,
     orderBy: { createdAt: "desc" },
     take: 50,
   });
   const alerts = alertsRaw.map((a) => serializeScamAlert(a, session?.user?.id));
+
+  const unresolvedFlagCounts = canModerate
+    ? await prisma.scamAlertFlag.groupBy({
+        by: ["alertId"],
+        where: { alertId: { in: alerts.map((a) => a.id) }, resolved: false },
+        _count: { alertId: true },
+      })
+    : [];
+  const flagCountByAlertId = new Map(unresolvedFlagCounts.map((f) => [f.alertId, f._count.alertId]));
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
@@ -64,17 +74,24 @@ export default async function AlertasEstafaPage() {
               <Card className="p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-sm font-bold text-navy-900">{alert.title}</p>
-                  <span
-                    className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                      alert.status === "VERIFICADO"
-                        ? "bg-success-600/10 text-success-600"
-                        : alert.status === "DESCARTADO"
-                          ? "bg-navy-800/10 text-navy-800/50"
-                          : "bg-warning-600/10 text-warning-600"
-                    }`}
-                  >
-                    {SCAM_ALERT_STATUS_LABELS[alert.status]}
-                  </span>
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    {canModerate && (flagCountByAlertId.get(alert.id) ?? 0) > 0 && (
+                      <span className="flex items-center gap-1 rounded-full bg-mx-red-100 px-2 py-0.5 text-[10px] font-semibold text-mx-red-600">
+                        <Flag className="h-3 w-3" /> {flagCountByAlertId.get(alert.id)}
+                      </span>
+                    )}
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                        alert.status === "VERIFICADO"
+                          ? "bg-success-600/10 text-success-600"
+                          : alert.status === "DESCARTADO"
+                            ? "bg-navy-800/10 text-navy-800/50"
+                            : "bg-warning-600/10 text-warning-600"
+                      }`}
+                    >
+                      {SCAM_ALERT_STATUS_LABELS[alert.status]}
+                    </span>
+                  </div>
                 </div>
                 <p className="mt-1 line-clamp-2 text-xs text-navy-800/60">{alert.offerDescription}</p>
                 <div className="mt-2 flex items-center gap-3 text-[11px] text-navy-800/45">

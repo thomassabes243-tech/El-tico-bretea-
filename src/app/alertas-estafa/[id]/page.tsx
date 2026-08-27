@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, MapPin } from "lucide-react";
+import { ChevronLeft, Flag, MapPin } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/Card";
 import { SCAM_ALERT_MODALITIES, SCAM_ALERT_STATUS_LABELS } from "@/lib/constants";
 import { SCAM_ALERT_INCLUDE, serializeScamAlert, canModerateScamAlerts } from "@/lib/scam-alerts";
 import { ScamAlertActions } from "@/components/community/ScamAlertActions";
+import { toggleScamAlertFlagResolved } from "./actions";
 
 function modalityLabel(value: string | null) {
   if (!value) return null;
@@ -30,6 +31,15 @@ export default async function AlertaEstafaDetallePage({
   if (!alertRaw) notFound();
 
   const alert = serializeScamAlert(alertRaw, session?.user?.id);
+  const canModerate = canModerateScamAlerts(session?.user?.role);
+
+  const flags = canModerate
+    ? await prisma.scamAlertFlag.findMany({
+        where: { alertId: id },
+        include: { reporter: { select: { email: true } } },
+        orderBy: [{ resolved: "asc" }, { createdAt: "desc" }],
+      })
+    : [];
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
@@ -78,12 +88,51 @@ export default async function AlertaEstafaDetallePage({
           <ScamAlertActions
             alertId={alert.id}
             isLoggedIn={Boolean(session?.user)}
+            isAuthor={alert.isAuthor}
             initialConfirmed={alert.confirmedByViewer}
             initialCount={alert.confirmationsCount}
-            canModerate={canModerateScamAlerts(session?.user?.role)}
+            canModerate={canModerate}
             status={alert.status}
           />
         </div>
+
+        {canModerate && flags.length > 0 && (
+          <Card className="mt-4 p-4">
+            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-navy-800/40">
+              <Flag className="h-3.5 w-3.5" /> Reportes de esta alerta ({flags.length})
+            </p>
+            <div className="mt-2 flex flex-col gap-2.5">
+              {flags.map((flag) => (
+                <div
+                  key={flag.id}
+                  className={`rounded-lg border border-sand-200 p-2.5 ${flag.resolved ? "opacity-60" : ""}`}
+                >
+                  <p className="text-xs text-navy-900">{flag.reason}</p>
+                  <div className="mt-1.5 flex items-center justify-between gap-2">
+                    <p className="text-[11px] text-navy-800/40">
+                      {flag.reporter.email} · {flag.createdAt.toLocaleDateString("es-MX")}
+                    </p>
+                    <form
+                      action={async () => {
+                        "use server";
+                        await toggleScamAlertFlagResolved(flag.id, alert.id, !flag.resolved);
+                      }}
+                    >
+                      <button
+                        type="submit"
+                        className={`shrink-0 rounded-lg border px-2 py-1 text-[11px] font-semibold ${
+                          flag.resolved ? "border-sand-200 text-navy-800/60" : "border-success-600/30 text-success-600"
+                        }`}
+                      >
+                        {flag.resolved ? "Reabrir" : "Marcar resuelto"}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
       </main>
       <BottomNav />
     </div>

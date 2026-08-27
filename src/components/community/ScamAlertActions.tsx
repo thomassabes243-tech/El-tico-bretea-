@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 export function ScamAlertActions({
   alertId,
   isLoggedIn,
+  isAuthor,
   initialConfirmed,
   initialCount,
   canModerate,
@@ -15,6 +16,7 @@ export function ScamAlertActions({
 }: {
   alertId: string;
   isLoggedIn: boolean;
+  isAuthor: boolean;
   initialConfirmed: boolean;
   initialCount: number;
   canModerate: boolean;
@@ -30,7 +32,7 @@ export function ScamAlertActions({
   const [error, setError] = useState<string | null>(null);
 
   const toggleConfirm = async () => {
-    if (pending || !isLoggedIn) return;
+    if (pending || !isLoggedIn || isAuthor) return;
     setPending(true);
     setError(null);
     const next = !confirmed;
@@ -95,7 +97,8 @@ export function ScamAlertActions({
       <div className="flex flex-wrap items-center gap-2.5">
         <button
           onClick={toggleConfirm}
-          disabled={pending || !isLoggedIn}
+          disabled={pending || !isLoggedIn || isAuthor}
+          title={isAuthor ? "No podés confirmar tu propia alerta" : undefined}
           className={`flex items-center gap-1.5 rounded-lg border px-3.5 py-2 text-xs font-semibold disabled:opacity-50 ${
             confirmed ? "border-navy-900 bg-navy-900 text-white" : "border-sand-200 text-navy-800/70"
           }`}

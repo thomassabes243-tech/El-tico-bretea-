@@ -11,6 +11,9 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
   const { id: alertId } = await params;
   const alert = await prisma.scamAlert.findUnique({ where: { id: alertId } });
   if (!alert) return NextResponse.json({ error: "Alerta no encontrada" }, { status: 404 });
+  if (alert.authorId === session.user.id) {
+    return NextResponse.json({ error: "No podés confirmar tu propia alerta" }, { status: 403 });
+  }
 
   await prisma.scamAlertConfirmation.upsert({
     where: { alertId_userId: { alertId, userId: session.user.id } },
