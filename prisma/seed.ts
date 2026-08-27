@@ -3,10 +3,13 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+// Una sola sala de comunidad (ver migración single_community_room): el
+// valor interno de category sigue siendo CONSTRUCCION, pero el nombre real
+// es "Comunidad Tica". No se siembran las otras dos categorías -- se
+// consolidaron y borraron a propósito, y volver a crearlas acá las
+// resucitaría en cada build.
 const COMMUNITIES: { name: string; category: "CONSTRUCCION" | "HOTELES_TURISMO" | "PROFESIONALES" }[] = [
-  { name: "Construcción", category: "CONSTRUCCION" },
-  { name: "Hoteles y turismo", category: "HOTELES_TURISMO" },
-  { name: "Profesionales", category: "PROFESIONALES" },
+  { name: "Comunidad Tica", category: "CONSTRUCCION" },
 ];
 
 const DEMO_MODERATOR_EMAIL = process.env.SEED_MODERATOR_EMAIL || "moderador.demo@eltico.cr";
@@ -54,7 +57,7 @@ async function main() {
   }
 
   console.log(
-    `Moderador demo listo: ${DEMO_MODERATOR_EMAIL} / ${DEMO_MODERATOR_PASSWORD} (asignado a las 3 salas)`
+    `Moderador demo listo: ${DEMO_MODERATOR_EMAIL} / ${DEMO_MODERATOR_PASSWORD} (asignado a ${rooms.length} sala${rooms.length === 1 ? "" : "s"})`
   );
 
   const adminPasswordHash = await bcrypt.hash(DEMO_ADMIN_PASSWORD, 10);
