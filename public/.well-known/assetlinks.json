@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.mexicosinhambre.app",
+      "sha256_cert_fingerprints": [
+        "E0:3C:71:83:1D:E1:D5:6A:27:13:04:D3:01:05:0A:63:1E:97:97:0B:69:03:41:C2:DD:FC:C7:18:96:9B:CA:1A"
+      ]
+    }
+  }
+]

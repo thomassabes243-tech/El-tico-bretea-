@@ -24,6 +24,11 @@
 .DS_Store
 *.pem
 
+# claves de firma de Android (TWA/Play Store) -- NUNCA versionar, es la
+# credencial que firma la app; sin ella no se pueden publicar actualizaciones
+android-signing/*.keystore
+android-signing/*.jks
+
 # debug
 npm-debug.log*
 yarn-debug.log*
