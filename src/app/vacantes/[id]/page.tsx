@@ -32,7 +32,7 @@ export async function generateMetadata({
   });
   if (!jobPosting) return {};
 
-  const title = `${jobPosting.title} en ${jobPosting.company.commercialName} — Méxicosinhambre`;
+  const title = `${jobPosting.title} en ${jobPosting.company.commercialName} — El Mexa Chamba`;
   const description = `${labelFor(LABOR_CATEGORIES, jobPosting.laborCategory)} en ${jobPosting.location}. ${jobPosting.description}`.slice(0, 200);
 
   return {
@@ -168,7 +168,7 @@ export default async function VacanteDetailPage({
                     <a
                       href={toWhatsappHref(
                         jobPosting.whatsapp,
-                        `Hola, te escribo por la vacante "${jobPosting.title}" en Méxicosinhambre.`
+                        `Hola, te escribo por la vacante "${jobPosting.title}" en El Mexa Chamba.`
                       )}
                       target="_blank"
                       rel="noopener noreferrer"

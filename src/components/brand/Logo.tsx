@@ -5,9 +5,9 @@ type LogoProps = {
 };
 
 /**
- * Marca "Méxicosinhambre": insignia circular con silueta de trabajador
- * (gorra + hombros) en azul marino/rojo, con un detalle tipo bandera
- * de México (verde/blanco/rojo) como listón inferior.
+ * Marca "El Mexa Chamba": insignia circular con rostro estilizado (sombrero
+ * verde, piel tostada, bigote) sobre fondo crema, con un detalle tipo
+ * bandera de México (verde/blanco/rojo) como listón inferior.
  */
 export function LogoMark({ size = 40, className }: { size?: number; className?: string }) {
   return (
@@ -19,27 +19,28 @@ export function LogoMark({ size = 40, className }: { size?: number; className?: 
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       role="img"
-      aria-label="Méxicosinhambre"
+      aria-label="El Mexa Chamba"
     >
-      <circle cx="50" cy="48" r="48" fill="#0a2647" />
-      <circle cx="50" cy="48" r="48" fill="url(#logoGradient)" fillOpacity="0.25" />
+      <circle cx="50" cy="48" r="48" fill="#faf3e6" />
+      <circle cx="50" cy="48" r="48" fill="url(#logoGradient)" fillOpacity="0.2" />
 
-      {/* Hombros / torso */}
-      <path d="M18 94 Q18 66 32 60 L68 60 Q82 66 82 94 Z" fill="#f6f7fb" />
+      {/* Cuello / hombros */}
+      <path d="M20 96 Q20 70 34 64 L66 64 Q80 70 80 96 Z" fill="#0b3d2e" />
 
-      {/* Cabeza */}
-      <circle cx="50" cy="43" r="15" fill="#f6f7fb" />
+      {/* Cara */}
+      <ellipse cx="50" cy="52" rx="19" ry="20" fill="#c98a53" />
 
-      {/* Gorra */}
-      <path d="M32 35 Q32 17 50 17 Q68 17 68 35 Z" fill="#ce1126" />
-      <ellipse cx="50" cy="35" rx="19" ry="5.5" fill="#a50e1f" />
+      {/* Bigote */}
+      <path
+        d="M33 58 Q40 65 50 61 Q60 65 67 58 Q60 60 50 56 Q40 60 33 58 Z"
+        fill="#241609"
+      />
 
-      {/* Llave inglesa */}
-      <g transform="translate(60 66) rotate(35)">
-        <rect x="-4" y="-16" width="8" height="30" rx="3" fill="#f6f7fb" />
-        <circle cx="0" cy="-16" r="8" fill="none" stroke="#f6f7fb" strokeWidth="4.5" />
-        <circle cx="0" cy="16" r="6" fill="none" stroke="#f6f7fb" strokeWidth="4" />
-      </g>
+      {/* Ala del sombrero */}
+      <ellipse cx="50" cy="34" rx="34" ry="9" fill="#0b3d2e" />
+      {/* Copa del sombrero */}
+      <path d="M32 34 Q32 12 50 12 Q68 12 68 34 Z" fill="#0f5c43" />
+      <ellipse cx="50" cy="34" rx="18" ry="4.5" fill="#0b3d2e" />
 
       {/* Listón bandera de México */}
       <clipPath id="flagClip">
@@ -67,8 +68,7 @@ export function Logo({ size = 40, showWordmark = true, className }: LogoProps) {
       <LogoMark size={size} />
       {showWordmark && (
         <span className="font-extrabold leading-tight tracking-tight text-navy-900" style={{ fontSize: size * 0.42 }}>
-          México<br className="hidden" />
-          <span className="text-mx-red-600">SinHambre</span>
+          El Mexa <span className="text-mx-red-600">Chamba</span>
         </span>
       )}
     </div>

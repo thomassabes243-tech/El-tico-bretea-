@@ -35,7 +35,7 @@ export default async function PremiumPage() {
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-peso-600" />
-          <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Méxicosinhambre Premium</h1>
+          <h1 className="text-xl font-extrabold tracking-tight text-navy-900">El Mexa Chamba Premium</h1>
         </div>
 
         <Card className="mt-5 overflow-hidden border-peso-600/20">

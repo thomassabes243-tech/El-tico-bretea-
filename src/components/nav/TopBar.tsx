@@ -14,8 +14,11 @@ export function TopBar() {
       <div className="mx-auto flex max-w-lg items-center justify-between px-4 py-3">
         <Link href="/" className="flex items-center gap-2">
           <LogoMark size={32} />
-          <span className="font-extrabold tracking-tight text-navy-900">
-            México <span className="text-mx-red-600">SinHambre</span>
+          <span className="leading-tight">
+            <span className="block font-extrabold tracking-tight text-navy-900">
+              El Mexa <span className="text-mx-red-600">Chamba</span>
+            </span>
+            <span className="block text-[11px] font-medium text-navy-800/50">Aquí sí hay chamba</span>
           </span>
         </Link>
 

@@ -86,7 +86,7 @@ export default async function PublicWorkerProfilePage({
                 <a
                   href={toWhatsappHref(
                     worker.whatsapp,
-                    `Hola ${worker.fullName}, vi tu perfil en Méxicosinhambre.`
+                    `Hola ${worker.fullName}, vi tu perfil en El Mexa Chamba.`
                   )}
                   target="_blank"
                   rel="noopener noreferrer"

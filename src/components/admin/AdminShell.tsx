@@ -32,7 +32,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-2">
             <LogoMark size={28} />
             <div>
-              <p className="text-sm font-extrabold leading-tight text-navy-900">Méxicosinhambre</p>
+              <p className="text-sm font-extrabold leading-tight text-navy-900">El Mexa Chamba</p>
               <p className="text-[11px] leading-tight text-navy-800/50">Panel administrador</p>
             </div>
           </div>

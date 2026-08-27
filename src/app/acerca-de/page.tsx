@@ -9,9 +9,9 @@ export default function AcercaDePage() {
     <div className="flex min-h-full flex-1 flex-col">
       <TopBar />
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
-        <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Acerca de Méxicosinhambre</h1>
+        <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Acerca de El Mexa Chamba</h1>
         <p className="mt-2 text-sm leading-relaxed text-navy-800/70">
-          Méxicosinhambre nace para ayudar al mexicano a conseguir trabajo de forma directa y
+          El Mexa Chamba nace para ayudar al mexicano a conseguir trabajo de forma directa y
           confiable, conectando a trabajadores y empresas sin intermediarios que compliquen
           el proceso.
         </p>

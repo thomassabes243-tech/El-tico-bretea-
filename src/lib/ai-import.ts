@@ -137,10 +137,10 @@ export async function getOrCreateImportCompany() {
       userId: user.id,
       commercialName: "Publicado en Facebook/WhatsApp",
       legalId: "IMPORTADO",
-      responsibleName: "Administración Méxicosinhambre",
+      responsibleName: "Administración El Mexa Chamba",
       contactEmail: IMPORT_SOURCE_EMAIL,
       location: "México",
-      activity: "Ofertas importadas de redes sociales por el equipo de Méxicosinhambre",
+      activity: "Ofertas importadas de redes sociales por el equipo de El Mexa Chamba",
       isVerified: false,
     },
   });

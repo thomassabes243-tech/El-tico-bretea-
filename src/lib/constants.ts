@@ -36,7 +36,7 @@ export const CONTACT_EMAIL = "contacto@mexicosinhambre.com";
 // WhatsApp del creador de la app, para quien quiera escribirle directo.
 export const CREATOR_WHATSAPP_HREF =
   "https://wa.me/5066322902?text=" +
-  encodeURIComponent("Hola, quiero comunicarme con el creador de Méxicosinhambre.");
+  encodeURIComponent("Hola, quiero comunicarme con el creador de El Mexa Chamba.");
 
 // Section 21: canal de alertas de estafas.
 export const SCAM_ALERT_MODALITIES = [

@@ -18,9 +18,9 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
-  title: "Méxicosinhambre — Conseguí trabajo en México",
+  title: "El Mexa Chamba — Aquí sí hay chamba",
   description:
-    "Méxicosinhambre conecta a trabajadores mexicanos con empresas de forma directa y confiable: perfiles profesionales, currículums, vacantes y comunidades por gremio.",
+    "El Mexa Chamba conecta a trabajadores mexicanos con empresas de forma directa y confiable: perfiles profesionales, currículums, vacantes y comunidades por gremio.",
   manifest: "/manifest.json",
 };
 

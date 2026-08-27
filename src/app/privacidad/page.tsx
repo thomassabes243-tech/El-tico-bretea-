@@ -41,7 +41,7 @@ export default function PrivacidadPage() {
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
         <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Política de privacidad</h1>
         <p className="mt-2 text-sm text-navy-800/60">
-          Cómo cuidamos tu información en Méxicosinhambre.
+          Cómo cuidamos tu información en El Mexa Chamba.
         </p>
 
         <div className="mt-5 flex flex-col gap-3">

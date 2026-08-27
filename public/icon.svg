@@ -1,22 +1,17 @@
 <svg width="100" height="114" viewBox="0 0 100 114" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="50" cy="48" r="48" fill="#0a2647" />
-  <path d="M18 94 Q18 66 32 60 L68 60 Q82 66 82 94 Z" fill="#f6f7fb" />
-  <circle cx="50" cy="43" r="15" fill="#f6f7fb" />
-  <path d="M32 35 Q32 17 50 17 Q68 17 68 35 Z" fill="#ce1126" />
-  <ellipse cx="50" cy="35" rx="19" ry="5.5" fill="#a50e1f" />
-  <g transform="translate(60 66) rotate(35)">
-    <rect x="-4" y="-16" width="8" height="30" rx="3" fill="#f6f7fb" />
-    <circle cx="0" cy="-16" r="8" fill="none" stroke="#f6f7fb" stroke-width="4.5" />
-    <circle cx="0" cy="16" r="6" fill="none" stroke="#f6f7fb" stroke-width="4" />
-  </g>
+  <circle cx="50" cy="48" r="48" fill="#faf3e6" />
+  <path d="M20 96 Q20 70 34 64 L66 64 Q80 70 80 96 Z" fill="#0b3d2e" />
+  <ellipse cx="50" cy="52" rx="19" ry="20" fill="#c98a53" />
+  <path d="M33 58 Q40 65 50 61 Q60 65 67 58 Q60 60 50 56 Q40 60 33 58 Z" fill="#241609" />
+  <ellipse cx="50" cy="34" rx="34" ry="9" fill="#0b3d2e" />
+  <path d="M32 34 Q32 12 50 12 Q68 12 68 34 Z" fill="#0f5c43" />
+  <ellipse cx="50" cy="34" rx="18" ry="4.5" fill="#0b3d2e" />
   <clipPath id="flagClip">
     <rect x="14" y="100" width="72" height="10" rx="5" />
   </clipPath>
   <g clip-path="url(#flagClip)">
-    <rect x="14" y="100" width="72" height="2" fill="#1c4d80" />
-    <rect x="14" y="102" width="72" height="2" fill="#f6f7fb" />
-    <rect x="14" y="104" width="72" height="2" fill="#ce1126" />
-    <rect x="14" y="106" width="72" height="2" fill="#f6f7fb" />
-    <rect x="14" y="108" width="72" height="2" fill="#1c4d80" />
+    <rect x="14" y="100" width="24" height="10" fill="#006341" />
+    <rect x="38" y="100" width="24" height="10" fill="#f6f7fb" />
+    <rect x="62" y="100" width="24" height="10" fill="#ce1126" />
   </g>
 </svg>

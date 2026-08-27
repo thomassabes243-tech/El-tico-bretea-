@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { LABOR_CATEGORIES } from "@/lib/constants";
 
 export const runtime = "nodejs";
-export const alt = "Vacante en Méxicosinhambre";
+export const alt = "Vacante en El Mexa Chamba";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -19,7 +19,7 @@ export default async function OpengraphImage({ params }: { params: Promise<{ id:
   });
 
   const title = jobPosting?.title ?? "Vacante disponible";
-  const company = jobPosting?.company.commercialName ?? "Méxicosinhambre";
+  const company = jobPosting?.company.commercialName ?? "El Mexa Chamba";
   const meta = jobPosting
     ? `${labelFor(LABOR_CATEGORIES, jobPosting.laborCategory)} · ${jobPosting.location}`
     : "México";

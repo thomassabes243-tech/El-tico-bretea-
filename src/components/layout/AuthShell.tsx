@@ -20,7 +20,7 @@ export function AuthShell({
           <Link href="/" className="flex items-center gap-2">
             <LogoMark size={28} />
             <span className="font-extrabold tracking-tight text-navy-900">
-              México <span className="text-mx-red-600">SinHambre</span>
+              El Mexa <span className="text-mx-red-600">Chamba</span>
             </span>
           </Link>
         </div>

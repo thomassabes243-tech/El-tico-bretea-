@@ -48,7 +48,7 @@ function CvDocument({
     .join(" · ");
 
   return (
-    <Document title={`CV - ${worker.fullName}`} author="Méxicosinhambre">
+    <Document title={`CV - ${worker.fullName}`} author="El Mexa Chamba">
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
           <Text style={styles.name}>{worker.fullName}</Text>
@@ -116,7 +116,7 @@ function CvDocument({
         )}
 
         <Text style={styles.footer}>
-          Generado por Méxicosinhambre · mexicosinhambre.com · Este documento refleja el perfil al
+          Generado por El Mexa Chamba · mexicosinhambre.com · Este documento refleja el perfil al
           momento de la descarga.
         </Text>
       </Page>

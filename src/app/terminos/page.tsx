@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 const SECTIONS = [
   {
     title: "Objetivo de la plataforma",
-    body: "Méxicosinhambre conecta a trabajadores y empresas en México. No garantizamos contratación ni resultados de ninguna búsqueda: facilitamos el contacto directo y confiable entre las partes.",
+    body: "El Mexa Chamba conecta a trabajadores y empresas en México. No garantizamos contratación ni resultados de ninguna búsqueda: facilitamos el contacto directo y confiable entre las partes.",
   },
   {
     title: "Tipos de cuenta",
@@ -36,7 +36,7 @@ export default function TerminosPage() {
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
         <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Términos de servicio</h1>
         <p className="mt-2 text-sm text-navy-800/60">
-          Las reglas básicas para usar Méxicosinhambre.
+          Las reglas básicas para usar El Mexa Chamba.
         </p>
 
         <div className="mt-5 flex flex-col gap-3">
