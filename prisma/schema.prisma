@@ -268,6 +268,13 @@ model JobPosting {
   // editorial, solo el admin lo activa (mismo patrón que WorkerProfile.isPremium).
   isUrgent      Boolean            @default(false)
   isFeatured    Boolean            @default(false)
+  // EMPRESA: publicada normalmente (formulario propio o importada por el
+  // admin -- ambas llevan una empresa real o la cuenta reservada de
+  // importados detrás). CHAT_COMUNIDAD: detectada automáticamente por IA a
+  // partir de un mensaje del chat de Comunidad (ver src/lib/job-auto-detect.ts)
+  // -- nadie la verificó, así que la tarjeta la marca como tal en vez de
+  // mostrar datos formales de empresa.
+  origin        JobPostingOrigin   @default(EMPRESA)
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
 
@@ -280,6 +287,11 @@ model JobPosting {
 enum JobClosureReason {
   PUESTO_LLENO
   CADUCADA
+}
+
+enum JobPostingOrigin {
+  EMPRESA
+  CHAT_COMUNIDAD
 }
 
 enum ApplicationStatus {

@@ -9,6 +9,7 @@ import { Badge, TagChip } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { AvatarImage } from "@/components/brand/AvatarImage";
+import { CommunityOriginBadge } from "@/components/jobs/CommunityOriginBadge";
 import { ApplyButton } from "@/components/forms/ApplyButton";
 import { ShareJobButton } from "@/components/forms/ShareJobButton";
 import { ReportButton } from "@/components/forms/ReportButton";
@@ -106,24 +107,30 @@ export default async function VacanteDetailPage({
               {closureReasonLabel(jobPosting.closureReason) && ` · ${closureReasonLabel(jobPosting.closureReason)}`}
             </Badge>
           )}
-          <AvatarImage
-            src={jobPosting.company.logoUrl}
-            alt={jobPosting.company.commercialName}
-            className="mb-3 h-20 w-20 rounded-2xl border border-sand-200 object-cover shadow-ambient"
-            fallback={
-              <div className="mb-3 flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-sand-200">
-                <CategoryIcon category={jobPosting.laborCategory} size="lg" className="h-full w-full rounded-none" />
-              </div>
-            }
-          />
+          {jobPosting.origin !== "CHAT_COMUNIDAD" && (
+            <AvatarImage
+              src={jobPosting.company.logoUrl}
+              alt={jobPosting.company.commercialName}
+              className="mb-3 h-20 w-20 rounded-2xl border border-sand-200 object-cover shadow-ambient"
+              fallback={
+                <div className="mb-3 flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-sand-200">
+                  <CategoryIcon category={jobPosting.laborCategory} size="lg" className="h-full w-full rounded-none" />
+                </div>
+              }
+            />
+          )}
           <h1 className="font-heading text-xl font-bold leading-snug text-navy-900">{jobPosting.title}</h1>
-          <Link
-            href={`/empresas/${jobPosting.companyId}`}
-            className="mt-1 flex items-center gap-1 text-sm font-medium text-navy-800/60"
-          >
-            {jobPosting.company.commercialName}
-            {jobPosting.company.isVerified && <ShieldCheck className="h-3.5 w-3.5 text-success-600" />}
-          </Link>
+          {jobPosting.origin === "CHAT_COMUNIDAD" ? (
+            <CommunityOriginBadge />
+          ) : (
+            <Link
+              href={`/empresas/${jobPosting.companyId}`}
+              className="mt-1 flex items-center gap-1 text-sm font-medium text-navy-800/60"
+            >
+              {jobPosting.company.commercialName}
+              {jobPosting.company.isVerified && <ShieldCheck className="h-3.5 w-3.5 text-success-600" />}
+            </Link>
+          )}
 
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             {jobPosting.salary && (

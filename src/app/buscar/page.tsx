@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge, TagChip } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
+import { CommunityOriginBadge } from "@/components/jobs/CommunityOriginBadge";
 import { LABOR_CATEGORIES, JOB_TYPES, CATEGORY_PHOTOS } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 
@@ -83,7 +84,11 @@ export default async function BuscarPage({
                             <Badge tone="red" icon={<Flame className="h-3 w-3" />}>Urgente</Badge>
                           )}
                         </div>
-                        <p className="mt-0.5 text-xs text-navy-800/50">{job.company.commercialName}</p>
+                        {job.origin === "CHAT_COMUNIDAD" ? (
+                          <CommunityOriginBadge />
+                        ) : (
+                          <p className="mt-0.5 text-xs text-navy-800/50">{job.company.commercialName}</p>
+                        )}
                       </div>
                       <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
                     </div>

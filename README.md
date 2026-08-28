@@ -146,7 +146,14 @@ todos con capa gratuita. `.env.example` documenta cada variable.
    en Vercel. Nunca se expone al navegador, solo la usan rutas de
    servidor.
 
-5. **Cuenta admin propia** (opcional, recomendado): el build también
+5. **Auto-publicación de changas desde el chat de Comunidad (Gemini) —
+   [aistudio.google.com/apikey](https://aistudio.google.com/apikey)**
+   (opcional; sin esto, el chat sigue funcionando normal, simplemente
+   nunca auto-publica vacantes): generá una API key gratis y agregá
+   `GEMINI_API_KEY` en Vercel. Nunca se expone al navegador, solo la usan
+   rutas de servidor (ver `src/lib/job-auto-detect.ts`).
+
+6. **Cuenta admin propia** (opcional, recomendado): el build también
    corre el seed automáticamente (comunidades de chat, configuración de
    precios/límites, cuenta admin + moderador). Sin más configuración,
    esa cuenta admin queda con el correo/contraseña de desarrollo que

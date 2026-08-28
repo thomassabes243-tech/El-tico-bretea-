@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
@@ -9,6 +9,7 @@ import {
 } from "@/lib/chat-rooms";
 import { chatMessageSchema } from "@/lib/validations";
 import { cleanupExpiredChatFiles } from "@/lib/storage";
+import { detectAndCreateJobFromMessage } from "@/lib/job-auto-detect";
 
 export async function GET(request: Request, { params }: { params: Promise<{ category: string }> }) {
   const session = await auth();
@@ -77,6 +78,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ cat
     },
     include: CHAT_MESSAGE_INCLUDE,
   });
+
+  // Auto-categorización/auto-publicación (ver src/lib/job-auto-detect.ts):
+  // corre después de responder, para no sumarle latencia al envío del
+  // mensaje -- si describe una changa real, crea sola una JobPosting sin
+  // verificar. Nunca puede hacer fallar el envío del mensaje.
+  after(() => detectAndCreateJobFromMessage(message.id));
 
   return NextResponse.json(serializeChatMessage(message), { status: 201 });
 }
