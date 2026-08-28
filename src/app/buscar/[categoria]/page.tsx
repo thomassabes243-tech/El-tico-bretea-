@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, Inbox, MapPin, Users, ChevronRight } from "lucide-react";
+import { ChevronLeft, Inbox, MapPin, Users, ChevronRight, ShieldCheck } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
@@ -64,7 +64,12 @@ export default async function BuscarCategoriaPage({
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="text-sm font-bold text-navy-900">{job.title}</p>
-                    <p className="text-xs text-navy-800/50">{job.company.commercialName}</p>
+                    <p className="flex items-center gap-1 text-xs text-navy-800/50">
+                      {job.company.commercialName}
+                      {job.company.isVerified && (
+                        <ShieldCheck className="h-3 w-3 shrink-0 text-success-600" aria-label="Empresa verificada" />
+                      )}
+                    </p>
                   </div>
                   <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
                 </div>

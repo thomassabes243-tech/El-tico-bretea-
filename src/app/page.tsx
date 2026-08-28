@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, Users, MessagesSquare, ShieldCheck, HeartHandshake, Star, Briefcase, MapPin, ChevronRight } from "lucide-react";
+import { Search, Users, MessagesSquare, ShieldCheck, ShieldAlert, HeartHandshake, Star, Briefcase, MapPin, ChevronRight } from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
@@ -57,6 +57,27 @@ export default async function Home({
             </Button>
           </div>
         </section>
+
+        {/* Seguridad -- razón de ser de la app: GPS real, botón de pánico y
+            contactos de confianza para ir a un trabajo nuevo con respaldo.
+            Antes solo estaba linkeado desde adentro de /perfil; se sube acá
+            arriba de todo porque es lo que más cuesta encontrar y lo más
+            importante para alguien que desconfía de una oferta. */}
+        <Link href="/seguridad" className="mt-4 block">
+          <Card className="flex items-center gap-3.5 border-mx-red-600/20 bg-mx-red-100/50 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-mx-red-600 text-white">
+              <ShieldAlert className="h-5 w-5" strokeWidth={2.2} />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-navy-900">Compartí tu ubicación antes de ir</p>
+              <p className="text-xs leading-snug text-navy-800/60">
+                GPS en vivo, botón de pánico y contactos de confianza — activalo si vas a un
+                trabajo nuevo y no confiás del todo.
+              </p>
+            </div>
+            <ChevronRight className="h-4.5 w-4.5 shrink-0 text-navy-800/30" />
+          </Card>
+        </Link>
 
         {/* Buscador */}
         <form action="/buscar/resultados" method="GET" className="mt-4">
@@ -146,7 +167,12 @@ export default async function Home({
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <p className="text-sm font-bold text-navy-900">{job.title}</p>
-                        <p className="text-xs text-navy-800/50">{job.company.commercialName}</p>
+                        <p className="flex items-center gap-1 text-xs text-navy-800/50">
+                          {job.company.commercialName}
+                          {job.company.isVerified && (
+                            <ShieldCheck className="h-3 w-3 shrink-0 text-success-600" aria-label="Empresa verificada" />
+                          )}
+                        </p>
                       </div>
                       <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
                     </div>

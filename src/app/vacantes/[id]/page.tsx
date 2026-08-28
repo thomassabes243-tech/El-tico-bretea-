@@ -82,7 +82,9 @@ export default async function VacanteDetailPage({
                 className="mt-0.5 flex items-center gap-1 text-sm font-medium text-navy-800/60"
               >
                 {jobPosting.company.commercialName}
-                {jobPosting.company.isVerified && <ShieldCheck className="h-3.5 w-3.5 text-success-600" />}
+                {jobPosting.company.isVerified && (
+                  <ShieldCheck className="h-3.5 w-3.5 text-success-600" aria-label="Empresa verificada" />
+                )}
               </Link>
             </div>
           </div>
