@@ -661,6 +661,32 @@ model PanicAlert {
   @@map("panic_alerts")
 }
 
+// ---------------------------------------------------------------------------
+// Monetización: donaciones voluntarias vía PayPal (pago único, sin cuenta,
+// monto libre). PENDIENTE se crea junto con la orden de PayPal, antes de que
+// la persona confirme el pago -- si nunca vuelve del checkout, queda así
+// para siempre y no se cuenta como donación real.
+// ---------------------------------------------------------------------------
+
+enum DonationStatus {
+  PENDIENTE
+  COMPLETADA
+  FALLIDA
+}
+
+model Donation {
+  id            String         @id @default(cuid())
+  amountPesos   Int
+  paypalOrderId String         @unique
+  status        DonationStatus @default(PENDIENTE)
+  payerEmail    String?
+  createdAt     DateTime       @default(now())
+  completedAt   DateTime?
+
+  @@index([status, createdAt])
+  @@map("donations")
+}
+
 // Cargados por el admin (Sección 22) -- lugares públicos verificados para
 // sugerir como punto de la primera entrevista en vez de una dirección
 // privada. No son ubicaciones de usuarios, es un catálogo curado.

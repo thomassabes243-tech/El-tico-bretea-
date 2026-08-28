@@ -1,7 +1,7 @@
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
-import { CONTACT_EMAIL } from "@/lib/constants";
+import { DonationForm } from "@/components/forms/DonationForm";
 import { HeartHandshake } from "lucide-react";
 
 export default function DonarPage() {
@@ -18,18 +18,12 @@ export default function DonarPage() {
           </h1>
           <p className="text-sm leading-relaxed text-navy-800/65">
             Si querés, podés darme una pequeña donación voluntaria. ¡Gracias! Es un monto
-            libre, con tarjeta, sin ningún beneficio asociado — solo una forma de apoyar el
-            mantenimiento de la app.
+            libre, con tarjeta o cuenta de PayPal, sin ningún beneficio asociado — solo una
+            forma de apoyar el mantenimiento de la app.
           </p>
-          <p className="text-xs text-navy-800/50">
-            El cobro con tarjeta está en desarrollo, a la espera de definir un procesador de
-            pagos compatible con México. Mientras tanto, si querés colaborar de otra
-            forma, escribinos a{" "}
-            <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-mx-red-600">
-              {CONTACT_EMAIL}
-            </a>
-            .
-          </p>
+          <div className="mt-2 w-full border-t border-sand-200 pt-5">
+            <DonationForm />
+          </div>
         </Card>
       </main>
       <BottomNav />
