@@ -13,6 +13,22 @@ export const LABOR_CATEGORIES = [
   { value: "SIN_ESPECIFICAR", label: "Sin especificar" },
 ] as const;
 
+// Fotos reales (Adobe Stock, licenciadas para esta app) para las tarjetas de
+// categoría de /buscar. SIN_ESPECIFICAR queda sin foto a propósito -- no hay
+// una categoría real que fotografiar, sigue mostrando solo el ícono.
+export const CATEGORY_PHOTOS: Partial<Record<string, string>> = {
+  CONSTRUCCION: "/categorias/construccion.jpg",
+  HOTELES_TURISMO: "/categorias/hoteles_turismo.jpg",
+  RESTAURANTES: "/categorias/restaurantes.jpg",
+  LIMPIEZA: "/categorias/limpieza.jpg",
+  TRANSPORTE: "/categorias/transporte.jpg",
+  SEGURIDAD: "/categorias/seguridad.jpg",
+  OFICINAS_ADMINISTRACION: "/categorias/oficinas_administracion.jpg",
+  VENTAS_COMERCIO: "/categorias/ventas_comercio.jpg",
+  TECNOLOGIA: "/categorias/tecnologia.jpg",
+  PROFESIONALES: "/categorias/profesionales.jpg",
+};
+
 export const JOB_TYPES = [
   { value: "TIEMPO_COMPLETO", label: "Tiempo completo" },
   { value: "MEDIO_TIEMPO", label: "Medio tiempo" },
