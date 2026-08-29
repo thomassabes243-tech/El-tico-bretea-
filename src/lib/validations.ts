@@ -287,3 +287,21 @@ export const serviceLocationSchema = z.object({
 });
 
 export type ServiceLocationInput = z.infer<typeof serviceLocationSchema>;
+
+export const serviceRequestSchema = z.object({
+  category: z.enum(serviceCategoryValues),
+  description: z.string().trim().min(10, "Contanos un poco más qué necesitás").max(600),
+  locationLabel: z.string().trim().min(2, "Ingresá tu ubicación o zona").max(120),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
+});
+
+export type ServiceRequestInput = z.infer<typeof serviceRequestSchema>;
+
+export const serviceQuoteSchema = z.object({
+  priceLabel: z.string().trim().min(1, "Ingresá un precio").max(60),
+  availability: z.string().trim().min(2, "Ingresá tu disponibilidad").max(80),
+  message: z.string().trim().max(300).optional().or(z.literal("")),
+});
+
+export type ServiceQuoteInput = z.infer<typeof serviceQuoteSchema>;

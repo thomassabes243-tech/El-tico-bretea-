@@ -66,6 +66,8 @@ model User {
   locationSharesSent LocationShare[]  @relation("LocationSharesSent")
   panicAlertsSent    PanicAlert[]     @relation("PanicAlertsSent")
 
+  serviceRequestsMade ServiceRequest[] @relation("ServiceRequestsMade")
+
   @@index([deviceFingerprint])
   @@map("users")
 }
@@ -240,6 +242,7 @@ model CompanyProfile {
   savedWorkers    SavedWorker[]
   jobPostings     JobPosting[]
   portfolioPhotos PortfolioPhoto[]
+  serviceQuotes   ServiceQuote[]
 
   @@map("company_profiles")
 }
@@ -286,6 +289,78 @@ model PortfolioPhoto {
 
   @@index([companyId])
   @@map("portfolio_photos")
+}
+
+// ---------------------------------------------------------------------------
+// Cotizaciones: solicitud de servicio puntual (cliente) y cotizaciones que
+// le responden los profesionales. URGENTE es lo único que soporta esta
+// etapa -- PROYECTO (con tope de cotizaciones formales) queda para más
+// adelante, el campo ya existe para no migrar de nuevo.
+// ---------------------------------------------------------------------------
+
+enum ServiceRequestMode {
+  URGENTE
+  PROYECTO
+}
+
+enum ServiceRequestStatus {
+  ABIERTA
+  CERRADA
+  CANCELADA
+}
+
+model ServiceRequest {
+  id          String @id @default(cuid())
+  requesterId String
+  requester   User   @relation("ServiceRequestsMade", fields: [requesterId], references: [id], onDelete: Cascade)
+
+  category      ServiceCategory
+  mode          ServiceRequestMode @default(URGENTE)
+  description   String
+  locationLabel String
+  // Opcional -- si el cliente comparte su ubicación (mismo GPS del
+  // navegador que ya usan las funciones de seguridad), se puede calcular
+  // distancia real contra la ubicación base del profesional. Sin esto, la
+  // tarjeta comparativa simplemente no muestra distancia.
+  latitude  Float?
+  longitude Float?
+
+  status    ServiceRequestStatus @default(ABIERTA)
+  createdAt DateTime             @default(now())
+  closedAt  DateTime?
+
+  quotes ServiceQuote[]
+
+  @@index([category, status, createdAt])
+  @@map("service_requests")
+}
+
+enum ServiceQuoteStatus {
+  ENVIADA
+  ACEPTADA
+  RECHAZADA
+}
+
+model ServiceQuote {
+  id               String         @id @default(cuid())
+  serviceRequestId String
+  serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  companyId        String
+  company          CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  // Texto libre, igual que JobPosting.salary -- un precio real de servicios
+  // puntuales varía demasiado (por hora, por trabajo, "a cotizar tras ver")
+  // como para forzarlo a un número único.
+  priceLabel   String
+  availability String
+  message      String?
+
+  status    ServiceQuoteStatus @default(ENVIADA)
+  createdAt DateTime           @default(now())
+
+  @@unique([serviceRequestId, companyId])
+  @@index([serviceRequestId, status])
+  @@map("service_quotes")
 }
 
 model SavedWorker {

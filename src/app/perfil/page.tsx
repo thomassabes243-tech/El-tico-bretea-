@@ -13,7 +13,7 @@ import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { applicationStatusMeta } from "@/lib/application-status";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
-import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send, Info, Pencil, History, MessagesSquare } from "lucide-react";
+import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send, Info, Pencil, History, MessagesSquare, Wrench } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -107,6 +107,19 @@ export default async function PerfilPage() {
               <div className="flex-1">
                 <p className="text-sm font-bold text-navy-900">Seguridad</p>
                 <p className="text-xs text-navy-800/50">Contactos de confianza, compartir ubicación y botón de pánico</p>
+              </div>
+              <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
+            </Card>
+          </Link>
+
+          <Link href="/servicios/mis-solicitudes" className="mt-3 block">
+            <Card className="flex items-center gap-3 p-4">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-peso-100 text-peso-600">
+                <Wrench className="h-4.5 w-4.5" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-navy-900">Cotizaciones</p>
+                <p className="text-xs text-navy-800/50">Pedí un electricista, plomero u otro servicio puntual</p>
               </div>
               <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
             </Card>
@@ -364,6 +377,34 @@ export default async function PerfilPage() {
                     ? "Ya ofrecés servicios puntuales — editar"
                     : "Ofrecé servicios puntuales a clientes (electricista, plomero, etc.)"}
                 </p>
+              </div>
+              <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
+            </Card>
+          </Link>
+
+          {company.offersServices && (
+            <Link href="/servicios/solicitudes" className="mt-2.5 block">
+              <Card className="flex items-center gap-3 p-3.5">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-peso-100 text-peso-600">
+                  <Wrench className="h-4.5 w-4.5" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-navy-900">Solicitudes para vos</p>
+                  <p className="text-xs text-navy-800/50">Clientes buscando lo que ofrecés</p>
+                </div>
+                <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
+              </Card>
+            </Link>
+          )}
+
+          <Link href="/servicios/mis-solicitudes" className="mt-2.5 block">
+            <Card className="flex items-center gap-3 p-3.5">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sand-100 text-navy-800/60">
+                <Wrench className="h-4.5 w-4.5" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-navy-900">Necesito un servicio</p>
+                <p className="text-xs text-navy-800/50">Pedí un electricista, plomero u otro servicio para tu negocio</p>
               </div>
               <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
             </Card>
