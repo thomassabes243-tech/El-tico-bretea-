@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
+import { ReportButton } from "@/components/forms/ReportButton";
 import { SERVICE_CATEGORIES } from "@/lib/constants";
 import { getServiceRatings } from "@/lib/service-ratings";
 import { Inbox, MapPin, Phone, Star } from "lucide-react";
@@ -87,6 +88,14 @@ export default async function MisCotizacionesPage() {
                     <Phone className="h-3.5 w-3.5" /> Contacto: {q.serviceRequest.contactPhone}
                   </p>
                 )}
+                <div className="mt-2">
+                  <ReportButton
+                    targetUserId={q.serviceRequest.requesterId}
+                    targetType="USER"
+                    contextLabel={`Cliente de cotización: ${cat?.label}`}
+                    isLoggedIn={Boolean(session.user)}
+                  />
+                </div>
               </Card>
             );
           })}

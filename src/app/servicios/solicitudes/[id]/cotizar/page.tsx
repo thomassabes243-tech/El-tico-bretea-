@@ -5,6 +5,7 @@ import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { ServiceQuoteForm } from "@/components/forms/ServiceQuoteForm";
+import { ReportButton } from "@/components/forms/ReportButton";
 import { SERVICE_CATEGORIES } from "@/lib/constants";
 import { MapPin } from "lucide-react";
 
@@ -35,6 +36,14 @@ export default async function CotizarPage({
           <p className="mt-2 flex items-center gap-1 text-xs text-navy-800/50">
             <MapPin className="h-3.5 w-3.5" /> {serviceRequest.locationLabel}
           </p>
+          <div className="mt-2">
+            <ReportButton
+              targetUserId={serviceRequest.requesterId}
+              targetType="USER"
+              contextLabel={`Solicitud de servicio: ${cat?.label}`}
+              isLoggedIn={Boolean(session.user)}
+            />
+          </div>
         </Card>
 
         <div className="mt-5">
