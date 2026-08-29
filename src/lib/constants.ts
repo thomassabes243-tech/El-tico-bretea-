@@ -13,6 +13,21 @@ export const LABOR_CATEGORIES = [
   { value: "SIN_ESPECIFICAR", label: "Sin especificar" },
 ] as const;
 
+// Emojis para los chips de categoría de Inicio (referencia visual de
+// Stitch) -- Seguridad queda afuera a propósito, sigue con el ícono de
+// Lucide (ShieldCheck), tal como pide esa misma referencia.
+export const CATEGORY_EMOJI: Partial<Record<string, string>> = {
+  CONSTRUCCION: "🏗️",
+  HOTELES_TURISMO: "🏨",
+  RESTAURANTES: "🍴",
+  LIMPIEZA: "🧹",
+  TRANSPORTE: "🚚",
+  OFICINAS_ADMINISTRACION: "🗂️",
+  VENTAS_COMERCIO: "🛒",
+  TECNOLOGIA: "💻",
+  PROFESIONALES: "👔",
+};
+
 // Fotos reales (Adobe Stock, licenciadas para esta app) para las tarjetas de
 // categoría de /buscar. SIN_ESPECIFICAR queda sin foto a propósito -- no hay
 // una categoría real que fotografiar, sigue mostrando solo el ícono.

@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { CATEGORY_ICON_MAP } from "@/components/brand/CategoryIcon";
 import { PopocatepetlScene } from "@/components/brand/scenery/PopocatepetlScene";
-import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
+import { LABOR_CATEGORIES, JOB_TYPES, CATEGORY_EMOJI } from "@/lib/constants";
 import { findJobPostingsFeaturedFirst, isFeatured } from "@/lib/job-postings";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
@@ -43,7 +43,7 @@ export default async function Home({
           <PopocatepetlScene className="absolute inset-0 h-full w-full" />
           <div className="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/45 to-navy-950/10" />
           <div className="relative px-6 py-8">
-            <h1 className="text-2xl font-extrabold leading-snug drop-shadow-sm">¡Aquí sí hay chamba!</h1>
+            <h1 className="font-serif text-3xl font-bold leading-snug drop-shadow-sm">¡Aquí sí hay chamba!</h1>
             <p className="mt-1.5 text-sm leading-relaxed text-white/85 drop-shadow-sm">
               El trabajo correcto no siempre llega rápido, pero llega a quien insiste.
             </p>
@@ -96,6 +96,7 @@ export default async function Home({
             Todos
           </Link>
           {LABOR_CATEGORIES.filter((c) => c.value !== "SIN_ESPECIFICAR").map((cat) => {
+            const emoji = CATEGORY_EMOJI[cat.value];
             const Icon = CATEGORY_ICON_MAP[cat.value] ?? CATEGORY_ICON_MAP.PROFESIONALES;
             return (
               <Link
@@ -103,7 +104,11 @@ export default async function Home({
                 href={`/buscar/${cat.value.toLowerCase()}`}
                 className="flex shrink-0 items-center gap-1.5 rounded-full border border-sand-200 bg-white px-3.5 py-2 text-xs font-semibold text-navy-800/70"
               >
-                <Icon className="h-3.5 w-3.5" strokeWidth={2.1} />
+                {emoji ? (
+                  <span className="text-sm leading-none">{emoji}</span>
+                ) : (
+                  <Icon className="h-3.5 w-3.5 text-peso-600" strokeWidth={2.1} />
+                )}
                 {cat.label}
               </Link>
             );
