@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { X, MapPin, Loader2 } from "lucide-react";
+import { X, MapPin, Loader2, FileText } from "lucide-react";
 import { SERVICE_CATEGORIES } from "@/lib/constants";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -17,21 +17,30 @@ export function ServiceProfileForm({
   initialCategories,
   initialZoneLabel,
   initialDescription,
+  initialYearsExperience,
   hasLocation,
   initialPhotos,
+  initialPortfolioDocName,
+  companyId,
 }: {
   initialOffersServices: boolean;
   initialCategories: string[];
   initialZoneLabel: string;
   initialDescription: string;
+  initialYearsExperience: number | null;
   hasLocation: boolean;
   initialPhotos: Photo[];
+  initialPortfolioDocName: string | null;
+  companyId: string;
 }) {
   const router = useRouter();
   const [offersServices, setOffersServices] = useState(initialOffersServices);
   const [categories, setCategories] = useState<string[]>(initialCategories);
   const [zoneLabel, setZoneLabel] = useState(initialZoneLabel);
   const [description, setDescription] = useState(initialDescription);
+  const [yearsExperience, setYearsExperience] = useState(
+    initialYearsExperience != null ? String(initialYearsExperience) : ""
+  );
   const [photos, setPhotos] = useState<Photo[]>(initialPhotos);
   const [locationSet, setLocationSet] = useState(hasLocation);
   const [saving, setSaving] = useState(false);
@@ -40,6 +49,9 @@ export function ServiceProfileForm({
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [portfolioDocName, setPortfolioDocName] = useState(initialPortfolioDocName);
+  const [uploadingDoc, setUploadingDoc] = useState(false);
+  const docInputRef = useRef<HTMLInputElement>(null);
 
   const toggleCategory = (value: string) => {
     setCategories((prev) =>
@@ -60,6 +72,7 @@ export function ServiceProfileForm({
           serviceCategories: categories,
           serviceZoneLabel: zoneLabel,
           serviceDescription: description,
+          serviceYearsExperience: yearsExperience.trim() === "" ? null : Number(yearsExperience),
         }),
       });
       const data = await res.json();
@@ -130,6 +143,31 @@ export function ServiceProfileForm({
     await fetch(`/api/perfil/empresa/portafolio/${id}`, { method: "DELETE" });
   };
 
+  const uploadDoc = async (file: File) => {
+    setUploadingDoc(true);
+    setError(null);
+    try {
+      if (file.type !== "application/pdf") {
+        throw new Error("Solo se permiten archivos PDF");
+      }
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/perfil/empresa/portafolio-doc", { method: "POST", body: formData });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "No se pudo subir el archivo");
+      setPortfolioDocName(data.name);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo subir el archivo");
+    } finally {
+      setUploadingDoc(false);
+    }
+  };
+
+  const removeDoc = async () => {
+    setPortfolioDocName(null);
+    await fetch("/api/perfil/empresa/portafolio-doc", { method: "DELETE" });
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <Card className="flex items-center justify-between gap-3 p-4">
@@ -183,6 +221,17 @@ export function ServiceProfileForm({
                 value={zoneLabel}
                 onChange={(e) => setZoneLabel(e.target.value)}
                 placeholder="Ej. Guadalajara y zona metropolitana"
+              />
+            </FieldWrapper>
+            <FieldWrapper label="Años de experiencia" htmlFor="serviceYearsExperience">
+              <TextInput
+                id="serviceYearsExperience"
+                type="number"
+                min={0}
+                max={60}
+                value={yearsExperience}
+                onChange={(e) => setYearsExperience(e.target.value)}
+                placeholder="Ej. 5"
               />
             </FieldWrapper>
             <FieldWrapper label="Descripción de tus servicios" htmlFor="serviceDescription">
@@ -255,6 +304,56 @@ export function ServiceProfileForm({
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) uploadPhoto(file);
+                e.target.value = "";
+              }}
+            />
+          </Card>
+
+          <Card className="p-4">
+            <p className="text-sm font-bold text-navy-900">Portafolio en PDF</p>
+            <p className="mt-0.5 text-xs text-navy-800/50">
+              Opcional -- si ya tenés un portafolio, certificado o currículum armado, subilo tal
+              cual en vez de reescribir todo acá arriba.
+            </p>
+            {portfolioDocName ? (
+              <div className="mt-2.5 flex items-center gap-2.5 rounded-xl border border-sand-200 p-3">
+                <FileText className="h-4.5 w-4.5 shrink-0 text-navy-800/40" />
+                <a
+                  href={`/api/perfil/empresa/portafolio-doc/publico/${companyId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="min-w-0 flex-1 truncate text-xs font-semibold text-mx-red-600"
+                >
+                  {portfolioDocName}
+                </a>
+                <button
+                  type="button"
+                  onClick={removeDoc}
+                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-navy-800/40 hover:text-mx-red-600"
+                  aria-label="Quitar PDF"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => docInputRef.current?.click()}
+                disabled={uploadingDoc}
+                className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-sand-200 p-3 text-xs font-semibold text-navy-800/50"
+              >
+                {uploadingDoc ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
+                {uploadingDoc ? "Subiendo..." : "Subir PDF"}
+              </button>
+            )}
+            <input
+              ref={docInputRef}
+              type="file"
+              accept="application/pdf"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) uploadDoc(file);
                 e.target.value = "";
               }}
             />

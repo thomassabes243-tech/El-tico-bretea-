@@ -30,6 +30,7 @@ export async function POST(request: Request) {
       serviceCategories: parsed.data.serviceCategories,
       serviceZoneLabel: parsed.data.serviceZoneLabel || null,
       serviceDescription: parsed.data.serviceDescription || null,
+      serviceYearsExperience: parsed.data.serviceYearsExperience ?? null,
     },
   });
 

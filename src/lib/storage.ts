@@ -243,6 +243,31 @@ export async function deletePortfolioPhoto(key: string) {
   await deleteObject(key);
 }
 
+// Documento de portafolio (Cotizaciones): PDF opcional además de los campos
+// estructurados (categoría, zona, descripción) -- portafolio armado,
+// certificado o currículum del profesional. A diferencia de las fotos, no
+// se recomprime (no tiene sentido re-codificar un PDF), se guarda tal
+// cual. Público (mismo criterio que las fotos de portafolio: contenido que
+// el propio profesional decide mostrar para dar confianza), clave estable
+// por empresa -- volver a subir reemplaza el archivo anterior.
+function portfolioDocKey(companyId: string) {
+  return `portfolio-doc-${companyId}.pdf`;
+}
+
+export async function savePortfolioDoc(companyId: string, buffer: Buffer) {
+  const key = portfolioDocKey(companyId);
+  await writeObject(key, buffer, "application/pdf");
+  return key;
+}
+
+export async function readPortfolioDoc(key: string) {
+  return readObject(key);
+}
+
+export async function deletePortfolioDoc(key: string) {
+  await deleteObject(key);
+}
+
 /**
  * Borra del almacenamiento y de la base de datos los archivos de chat
  * vencidos. Se llama de forma perezosa desde las rutas de chat, y también

@@ -285,6 +285,7 @@ export const serviceProfileSchema = z
     serviceCategories: z.array(z.enum(serviceCategoryValues)).max(serviceCategoryValues.length),
     serviceZoneLabel: z.string().trim().max(120).optional().or(z.literal("")),
     serviceDescription: z.string().trim().max(600).optional().or(z.literal("")),
+    serviceYearsExperience: z.number().int().min(0).max(60).optional().nullable(),
   })
   .refine((data) => !data.offersServices || data.serviceCategories.length > 0, {
     message: "Elegí al menos un servicio",

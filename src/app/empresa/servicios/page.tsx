@@ -31,15 +31,18 @@ export default async function ServiciosPage() {
       subtitle="Ofrecé tus servicios a clientes que necesitan un trabajo puntual, además de tus vacantes."
     >
       <ServiceProfileForm
+        companyId={company.id}
         initialOffersServices={company.offersServices}
         initialCategories={company.serviceCategories}
         initialZoneLabel={company.serviceZoneLabel ?? ""}
         initialDescription={company.serviceDescription ?? ""}
+        initialYearsExperience={company.serviceYearsExperience}
         hasLocation={company.serviceLatitude != null && company.serviceLongitude != null}
         initialPhotos={company.portfolioPhotos.map((p) => ({
           id: p.id,
           url: `/api/fotos/portafolio/${p.id}`,
         }))}
+        initialPortfolioDocName={company.servicePortfolioDocName}
       />
 
       {company.offersServices && (
