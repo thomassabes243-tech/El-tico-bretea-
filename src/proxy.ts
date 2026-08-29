@@ -26,6 +26,7 @@ export const config = {
     "/empresa/:path*",
     "/perfil/:path*",
     "/servicios/:path*",
+    "/cotizaciones",
     "/cv",
     "/premium",
     "/seguridad",

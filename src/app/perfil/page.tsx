@@ -125,6 +125,23 @@ export default async function PerfilPage() {
             </Card>
           </Link>
 
+          <Link href="/premium" className="mt-3 block">
+            <Card className="flex items-center gap-3 p-4">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-mx-red-600/[0.09] text-mx-red-600">
+                <Sparkles className="h-4.5 w-4.5" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-navy-900">
+                  {worker.isPremium ? "Ya sos Premium" : "El Mexa Chamba Premium"}
+                </p>
+                <p className="text-xs text-navy-800/50">
+                  {worker.isPremium ? "Gestioná tu suscripción" : "Perfil destacado, sin anuncios y más"}
+                </p>
+              </div>
+              <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
+            </Card>
+          </Link>
+
           {(worker.workExperience || worker.companiesWorkedAt || worker.previousPositions) && (
             <Card className="mt-4 p-5">
               <h2 className="flex items-center gap-2 text-sm font-bold text-navy-900">

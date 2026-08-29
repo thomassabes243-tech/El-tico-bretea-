@@ -2,16 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, MessagesSquare, FileText, CircleUserRound } from "lucide-react";
+import { Home, Search, MessagesSquare, Wrench, FileText, CircleUserRound } from "lucide-react";
 import clsx from "clsx";
 
 const NAV_ITEMS = [
   { href: "/", label: "Inicio", icon: Home },
   { href: "/buscar", label: "Buscar", icon: Search },
   { href: "/comunidad", label: "Comunidad", icon: MessagesSquare },
+  // Apunta a /cotizaciones, que redirige según el rol a /servicios/* o
+  // /empresa/servicios -- por eso isActive también matchea esos otros
+  // prefijos, no solo el literal "/cotizaciones".
+  { href: "/cotizaciones", label: "Cotizaciones", icon: Wrench },
   { href: "/cv", label: "CV", icon: FileText },
   { href: "/perfil", label: "Perfil", icon: CircleUserRound },
 ];
+
+const COTIZACIONES_PREFIXES = ["/cotizaciones", "/servicios", "/empresa/servicios"];
 
 export function BottomNav() {
   const pathname = usePathname();
@@ -20,7 +26,12 @@ export function BottomNav() {
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-sand-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
       <div className="mx-auto flex max-w-lg items-stretch justify-between px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)]">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-          const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
+          const isActive =
+            href === "/"
+              ? pathname === "/"
+              : href === "/cotizaciones"
+                ? COTIZACIONES_PREFIXES.some((p) => pathname.startsWith(p))
+                : pathname.startsWith(href);
           return (
             <Link
               key={href}
