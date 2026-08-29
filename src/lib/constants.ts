@@ -88,6 +88,13 @@ export const SERVICE_CATEGORIES = [
 
 export const CONTACT_EMAIL = "contacto@mexicosinhambre.com";
 
+// Recuperación de contraseña: código de 6 dígitos, vence a los 15 minutos --
+// mismo tipo de ventana que el límite de intentos de login, para que
+// "vencido" y "demasiados intentos" coincidan en el tiempo.
+export const PASSWORD_RESET_CODE_TTL_MS = 15 * 60 * 1000;
+export const PASSWORD_RESET_MAX_REQUESTS = 5; // pedidos de código por hora
+export const PASSWORD_RESET_MAX_ATTEMPTS = 8; // intentos de ingresar el código
+
 // Cotizaciones: tope de cotizaciones formales para el modo "proyecto
 // grande" -- el modo "urgente" no tiene límite.
 export const PROJECT_MAX_QUOTES = 4;

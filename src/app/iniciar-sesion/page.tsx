@@ -50,6 +50,10 @@ export default function IniciarSesionPage() {
           <TextInput id="password" type="password" placeholder="••••••••" {...register("password")} />
         </FieldWrapper>
 
+        <Link href="/olvide-password" className="-mt-2 self-end text-xs font-semibold text-mx-red-600">
+          ¿Olvidaste tu contraseña?
+        </Link>
+
         {submitError && (
           <p className="rounded-xl bg-mx-red-100 px-3.5 py-2.5 text-sm font-medium text-mx-red-700">
             {submitError}

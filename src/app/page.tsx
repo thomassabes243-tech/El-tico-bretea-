@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, Users, MessagesSquare, ShieldCheck, ShieldAlert, HeartHandshake, Star, Sparkles, Briefcase, MapPin, ChevronRight } from "lucide-react";
+import { Search, Users, MessagesSquare, ShieldCheck, ShieldAlert, HeartHandshake, Star, Sparkles, Briefcase, MapPin, ChevronRight, Wrench } from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
@@ -196,6 +196,26 @@ export default async function Home({
               ))}
             </div>
           )}
+        </section>
+
+        {/* Cotizaciones -- antes solo estaba como ítem del nav inferior, sin
+            nada visible en Inicio que la explique o lleve ahí; esta tarjeta
+            es el punto de descubrimiento real para quien no sabe que existe. */}
+        <section className="mt-7">
+          <Link href="/cotizaciones" className="block">
+            <Card className="flex items-center gap-3.5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-peso-600/[0.09] text-peso-600">
+                <Wrench className="h-5 w-5" strokeWidth={2.1} />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-navy-900">Cotizaciones</p>
+                <p className="text-xs text-navy-800/50">
+                  Pedí un servicio (electricista, plomero, niñera y más) o ofrecé el tuyo
+                </p>
+              </div>
+              <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
+            </Card>
+          </Link>
         </section>
 
         {/* Comunidad */}

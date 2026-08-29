@@ -174,6 +174,18 @@ export const loginSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
+export const forgotPasswordRequestSchema = z.object({
+  email: z.string().email("Correo inválido"),
+});
+export type ForgotPasswordRequestInput = z.infer<typeof forgotPasswordRequestSchema>;
+
+export const resetPasswordSchema = z.object({
+  email: z.string().email("Correo inválido"),
+  code: z.string().length(6, "El código tiene 6 dígitos"),
+  password: passwordSchema,
+});
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+
 export const jobPostingSchema = z.object({
   // Todo opcional -- se puede completar o corregir después de publicar.
   title: z.string().optional().or(z.literal("")),

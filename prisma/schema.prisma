@@ -69,8 +69,31 @@ model User {
   serviceRequestsMade ServiceRequest[] @relation("ServiceRequestsMade")
   serviceReviewsGiven ServiceReview[]
 
+  passwordResetCodes PasswordResetCode[]
+
   @@index([deviceFingerprint])
   @@map("users")
+}
+
+// ---------------------------------------------------------------------------
+// Recuperación de contraseña: código de 6 dígitos enviado por email, igual
+// que el patrón de RateLimitBucket -- respaldado en base de datos porque en
+// serverless (Vercel) no hay memoria de proceso compartida entre
+// invocaciones. Se guarda el hash del código (bcrypt), nunca el código en
+// texto plano -- mismo criterio que passwordHash en User.
+// ---------------------------------------------------------------------------
+
+model PasswordResetCode {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash  String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, expiresAt])
+  @@map("password_reset_codes")
 }
 
 // ---------------------------------------------------------------------------
