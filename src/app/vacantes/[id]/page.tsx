@@ -14,7 +14,8 @@ import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { toWhatsappHref } from "@/lib/whatsapp";
 import { getSiteUrl } from "@/lib/site";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
-import { MapPin, Briefcase, Users, Calendar, ShieldCheck, Phone, Mail } from "lucide-react";
+import { isFeatured } from "@/lib/job-postings";
+import { MapPin, Briefcase, Users, Calendar, ShieldCheck, Sparkles, Phone, Mail } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -76,7 +77,14 @@ export default async function VacanteDetailPage({
           <div className="flex items-start gap-3.5">
             <CategoryIcon category={jobPosting.laborCategory} size="lg" />
             <div className="flex-1">
-              <h1 className="text-lg font-extrabold text-navy-900">{jobPosting.title}</h1>
+              <h1 className="flex items-center gap-2 text-lg font-extrabold text-navy-900">
+                {jobPosting.title}
+                {isFeatured(jobPosting.featuredUntil) && (
+                  <span className="inline-flex items-center gap-0.5 rounded-full bg-peso-100 px-2 py-0.5 text-[10px] font-bold text-peso-700">
+                    <Sparkles className="h-2.5 w-2.5" /> Destacada
+                  </span>
+                )}
+              </h1>
               <Link
                 href={`/empresas/${jobPosting.companyId}`}
                 className="mt-0.5 flex items-center gap-1 text-sm font-medium text-navy-800/60"

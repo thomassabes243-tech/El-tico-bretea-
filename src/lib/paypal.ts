@@ -31,7 +31,11 @@ async function getAccessToken(): Promise<string> {
   return data.access_token;
 }
 
-export async function createPaypalOrder(amountPesos: number, description: string) {
+export async function createPaypalOrder(
+  amount: number,
+  currencyCode: "MXN" | "USD",
+  description: string
+) {
   const token = await getAccessToken();
   const res = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders`, {
     method: "POST",
@@ -40,7 +44,7 @@ export async function createPaypalOrder(amountPesos: number, description: string
       intent: "CAPTURE",
       purchase_units: [
         {
-          amount: { currency_code: "MXN", value: amountPesos.toFixed(2) },
+          amount: { currency_code: currencyCode, value: amount.toFixed(2) },
           description,
         },
       ],

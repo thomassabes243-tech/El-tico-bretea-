@@ -9,6 +9,7 @@ import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { recommendWorkersForJob } from "@/lib/recommendations";
 import { JobPostingStatusToggle } from "@/components/forms/JobPostingStatusToggle";
 import { ApplicationStatusSelect } from "@/components/forms/ApplicationStatusSelect";
+import { FeatureJobButton } from "@/components/forms/FeatureJobButton";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { MapPin, Briefcase, Sparkles, Info, Pencil } from "lucide-react";
 
@@ -66,6 +67,12 @@ export default async function AplicantesPage({
             {closureReasonLabel(jobPosting.closureReason) && ` · ${closureReasonLabel(jobPosting.closureReason)}`}
             : ya no aparece en búsquedas ni recibe nuevas aplicaciones.
           </p>
+        )}
+
+        {jobPosting.isActive && (
+          <div className="mt-4">
+            <FeatureJobButton jobPostingId={jobPosting.id} featuredUntil={jobPosting.featuredUntil} />
+          </div>
         )}
 
         <div className="mt-5 flex flex-col gap-3">

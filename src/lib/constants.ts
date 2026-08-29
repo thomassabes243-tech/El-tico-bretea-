@@ -33,6 +33,11 @@ export const AVAILABILITY_OPTIONS = [
 
 export const CONTACT_EMAIL = "contacto@mexicosinhambre.com";
 
+// Monetización: "Destacar oferta" (Etapa 2) -- pago único de la empresa vía
+// PayPal para aparecer primero en los listados por FEATURED_DAYS días.
+export const FEATURED_PRICE_USD = 2;
+export const FEATURED_DAYS = 7;
+
 // WhatsApp del creador de la app, para quien quiera escribirle directo.
 export const CREATOR_WHATSAPP_HREF =
   "https://wa.me/5066322902?text=" +

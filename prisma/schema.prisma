@@ -270,8 +270,13 @@ model JobPosting {
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
 
-  applications   JobApplication[]
-  communityPosts ChatMessage[]
+  // Monetización: "Destacar oferta" (pago único, PayPal) -- null o vencido
+  // significa que aparece en el orden normal, sin ningún trato distinto.
+  featuredUntil DateTime?
+
+  applications      JobApplication[]
+  communityPosts     ChatMessage[]
+  featuredPurchases FeaturedPurchase[]
 
   @@map("job_postings")
 }
@@ -685,6 +690,35 @@ model Donation {
 
   @@index([status, createdAt])
   @@map("donations")
+}
+
+// ---------------------------------------------------------------------------
+// Monetización: "Destacar oferta" -- pago único de la empresa (PayPal) para
+// que su vacante aparezca primero por un número fijo de días. amountCents y
+// days quedan grabados en cada compra (no se leen de una config global) para
+// que el historial no cambie si el precio se ajusta más adelante.
+// ---------------------------------------------------------------------------
+
+enum FeaturedPurchaseStatus {
+  PENDIENTE
+  COMPLETADA
+  FALLIDA
+}
+
+model FeaturedPurchase {
+  id            String                 @id @default(cuid())
+  jobPostingId  String
+  jobPosting    JobPosting             @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+  amountCents   Int
+  days          Int
+  paypalOrderId String                 @unique
+  status        FeaturedPurchaseStatus @default(PENDIENTE)
+  payerEmail    String?
+  createdAt     DateTime               @default(now())
+  completedAt   DateTime?
+
+  @@index([status, createdAt])
+  @@map("featured_purchases")
 }
 
 // Cargados por el admin (Sección 22) -- lugares públicos verificados para

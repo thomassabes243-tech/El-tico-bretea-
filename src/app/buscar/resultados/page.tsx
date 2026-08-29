@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { ChevronLeft, Inbox, MapPin, Users, ChevronRight, Search, ShieldCheck } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { ChevronLeft, Inbox, MapPin, Users, ChevronRight, Search, ShieldCheck, Sparkles } from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { JOB_TYPES } from "@/lib/constants";
+import { findJobPostingsFeaturedFirst, isFeatured } from "@/lib/job-postings";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -19,8 +19,8 @@ export default async function BuscarResultadosPage({
   const query = (q ?? "").trim();
 
   const jobPostings = query
-    ? await prisma.jobPosting.findMany({
-        where: {
+    ? await findJobPostingsFeaturedFirst(
+        {
           isActive: true,
           OR: [
             { title: { contains: query, mode: "insensitive" } },
@@ -29,10 +29,8 @@ export default async function BuscarResultadosPage({
             { company: { commercialName: { contains: query, mode: "insensitive" } } },
           ],
         },
-        include: { company: true },
-        orderBy: { createdAt: "desc" },
-        take: 30,
-      })
+        30
+      )
     : [];
 
   return (
@@ -73,7 +71,14 @@ export default async function BuscarResultadosPage({
               <Card className="p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-bold text-navy-900">{job.title}</p>
+                    <p className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
+                      {job.title}
+                      {isFeatured(job.featuredUntil) && (
+                        <span className="inline-flex items-center gap-0.5 rounded-full bg-peso-100 px-1.5 py-0.5 text-[10px] font-bold text-peso-700">
+                          <Sparkles className="h-2.5 w-2.5" /> Destacada
+                        </span>
+                      )}
+                    </p>
                     <p className="flex items-center gap-1 text-xs text-navy-800/50">
                       {job.company.commercialName}
                       {job.company.isVerified && (

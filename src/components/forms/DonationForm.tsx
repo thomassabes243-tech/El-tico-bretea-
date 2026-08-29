@@ -138,9 +138,9 @@ export function DonationForm() {
         <span className="text-sm font-medium text-navy-800/50">MXN</span>
       </div>
 
-      {error && <p className="text-xs font-medium text-mx-red-600">{error}</p>}
-
-      {!sdkReady ? (
+      {error ? (
+        <p className="text-xs font-medium text-mx-red-600">{error}</p>
+      ) : !sdkReady ? (
         <p className="text-center text-xs text-navy-800/40">Cargando PayPal...</p>
       ) : (
         <div id="paypal-donar-buttons" ref={buttonsContainerRef} />

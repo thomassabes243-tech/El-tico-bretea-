@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const paypalOrderId = await createPaypalOrder(amountPesos, "Donación a El Mexa Chamba");
+    const paypalOrderId = await createPaypalOrder(amountPesos, "MXN", "Donación a El Mexa Chamba");
     await prisma.donation.create({ data: { amountPesos, paypalOrderId } });
     return NextResponse.json({ orderId: paypalOrderId }, { status: 201 });
   } catch (err) {

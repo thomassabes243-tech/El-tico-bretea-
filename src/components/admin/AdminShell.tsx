@@ -19,6 +19,7 @@ const TABS = [
   { href: "/admin/puntos-encuentro", label: "Puntos de encuentro" },
   { href: "/admin/publicidad", label: "Publicidad" },
   { href: "/admin/donaciones", label: "Donaciones" },
+  { href: "/admin/destacadas", label: "Ofertas destacadas" },
   { href: "/admin/configuracion", label: "Configuración" },
   { href: "/admin/almacenamiento", label: "Almacenamiento" },
 ];

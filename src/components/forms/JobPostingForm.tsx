@@ -63,7 +63,7 @@ export function JobPostingForm() {
         throw new Error(body.error || "No se pudo publicar la vacante");
       }
       const { id } = await res.json();
-      router.push(`/vacantes/${id}`);
+      router.push(`/empresa/vacantes/${id}/publicada`);
       router.refresh();
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Ocurrió un error inesperado");
