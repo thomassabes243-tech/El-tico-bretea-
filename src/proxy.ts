@@ -36,7 +36,15 @@ export const config = {
 };
 
 export async function proxy(request: NextRequest) {
-  const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
+  // getToken() NO detecta solo si hace falta el nombre de cookie con
+  // prefijo __Secure- (lo usa Auth.js en HTTPS) -- sin decirle
+  // secureCookie explícitamente, asume que no y busca el nombre de
+  // desarrollo, que en producción no existe. Sin esto, cada visita ya
+  // logueada se trataba como sin sesión y se mandaba a /iniciar-sesion en
+  // TODAS las rutas de este matcher -- un bug real que ya llegó a
+  // producción, no solo un caso hipotético.
+  const secureCookie = request.nextUrl.protocol === "https:";
+  const token = await getToken({ req: request, secret: process.env.AUTH_SECRET, secureCookie });
   if (token) return NextResponse.next();
   return NextResponse.redirect(new URL("/iniciar-sesion", request.url));
 }
