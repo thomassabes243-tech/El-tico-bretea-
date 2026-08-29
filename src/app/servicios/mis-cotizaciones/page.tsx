@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { SERVICE_CATEGORIES } from "@/lib/constants";
 import { getServiceRatings } from "@/lib/service-ratings";
+import { canOfferServices } from "@/lib/company-profile";
 import { Inbox, MapPin, Phone, Star } from "lucide-react";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -18,10 +19,10 @@ const STATUS_LABEL: Record<string, string> = {
 export default async function MisCotizacionesPage() {
   const session = await auth();
   if (!session?.user) redirect("/iniciar-sesion");
-  if (session.user.role !== "COMPANY") redirect("/perfil");
+  if (!canOfferServices(session.user.role)) redirect("/perfil");
 
   const company = await prisma.companyProfile.findUnique({ where: { userId: session.user.id } });
-  if (!company) redirect("/registro/empresa");
+  if (!company) redirect("/empresa/servicios");
 
   const quotes = await prisma.serviceQuote.findMany({
     where: { companyId: company.id },

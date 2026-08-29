@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { ServiceQuoteForm } from "@/components/forms/ServiceQuoteForm";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { SERVICE_CATEGORIES } from "@/lib/constants";
+import { canOfferServices } from "@/lib/company-profile";
 import { MapPin } from "lucide-react";
 
 export default async function CotizarPage({
@@ -16,7 +17,7 @@ export default async function CotizarPage({
 }) {
   const session = await auth();
   if (!session?.user) redirect("/iniciar-sesion");
-  if (session.user.role !== "COMPANY") redirect("/perfil");
+  if (!canOfferServices(session.user.role)) redirect("/perfil");
 
   const { id } = await params;
   const serviceRequest = await prisma.serviceRequest.findUnique({ where: { id } });

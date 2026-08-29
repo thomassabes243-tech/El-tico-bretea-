@@ -8,15 +8,16 @@ import { Card } from "@/components/ui/Card";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { SERVICE_CATEGORIES, PROJECT_MAX_QUOTES } from "@/lib/constants";
 import { DistanceBadge } from "@/components/servicios/DistanceBadge";
+import { canOfferServices } from "@/lib/company-profile";
 import { MapPin, Inbox, ChevronRight, ClipboardList } from "lucide-react";
 
 export default async function SolicitudesDisponiblesPage() {
   const session = await auth();
   if (!session?.user) redirect("/iniciar-sesion");
-  if (session.user.role !== "COMPANY") redirect("/perfil");
+  if (!canOfferServices(session.user.role)) redirect("/perfil");
 
   const company = await prisma.companyProfile.findUnique({ where: { userId: session.user.id } });
-  if (!company) redirect("/registro/empresa");
+  if (!company) redirect("/empresa/servicios");
   if (!company.offersServices) redirect("/empresa/servicios");
 
   const openRequests = await prisma.serviceRequest.findMany({

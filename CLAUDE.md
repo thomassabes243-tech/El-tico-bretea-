@@ -106,16 +106,29 @@ plan ya existe en PayPal (ver arriba, solo se ve en `/admin/configuracion`).
 | Neon: "Can't reach database server" intermitente | ⚠️ Mitigado dos veces (`0d20ad8`, `b5e729b`) — reapareció una vez después del primer intento. Vigilar si vuelve a pasar después de `connection_limit=5`; si sigue, el próximo paso es revisar el límite de conexiones del plan de Neon en su propio dashboard (sin acceso a eso desde acá). |
 | Cotizaciones: el perfil público (`/empresas/[id]`) no mostraba nada del perfil de servicios (ni categoría, ni descripción, ni fotos, ni calificación, ni teléfono) aunque el profesional ya lo hubiera completado — de ahí que "no se viera bien ninguno de los dos lados" | ✅ Resuelto (`dbc2b27`) — agrega la sección "Cotizaciones" completa a esa pantalla, más años de experiencia y PDF de portafolio como campos nuevos |
 
-## Cotizaciones — decisión de producto pendiente (no resuelta, a propósito)
+## Cotizaciones — "Ofrecer mis servicios" ya no es exclusivo de COMPANY
 
-"Ofrecer mis servicios" (`/empresa/servicios`) sigue requiriendo una
-cuenta **COMPANY** (creada vía `/registro/empresa`) — una cuenta WORKER
-que hoy quiera ofrecerse como "electricista independiente" o "abogado"
-no puede acceder, la redirige a `/perfil`. Si el perfil de servicios va a
-seguir siendo exclusivo de cuentas de empresa, o si hace falta que
-cualquier cuenta (incluida WORKER) pueda abrir uno, es una decisión de
-producto que el dueño tiene que tomar — no se cambió sin confirmar,
-porque toca el control de acceso por rol en varias pantallas.
+✅ **Confirmado por el dueño**: una cuenta WORKER puede ofrecer servicios
+igual que una cuenta COMPANY (electricista/abogado independiente, no solo
+empresas registradas). Implementado reusando el mismo `CompanyProfile` de
+siempre (mismo perfil de servicios, fotos, PDF, Plan Profesional) — no un
+modelo nuevo. `src/lib/company-profile.ts`: `canOfferServices(role)` (true
+para COMPANY o WORKER) y `findOrCreateServiceProfile(userId, role)`, que le
+crea automáticamente un `CompanyProfile` liviano a una cuenta WORKER la
+primera vez que entra a `/empresa/servicios`, usando los datos que ya tenía
+cargados en su `WorkerProfile` (nombre, teléfono, zona, categoría como
+"actividad") — sin pasar por el registro de empresa completo (que pide
+RFC/legalId, sin sentido para un individuo). Se abrió el mismo chequeo de
+rol en todas las rutas relacionadas: subir foto/portafolio/PDF, activar el
+Plan Profesional, notificaciones push, ver y responder solicitudes
+("bandeja de Cotizaciones"), "Mis cotizaciones enviadas". El formulario de
+perfil de servicios (`ServiceProfileForm`) ahora también incluye foto de
+perfil y teléfono de contacto directamente (antes vivían en la pantalla de
+edición general de empresa, a la que una cuenta WORKER no tiene acceso).
+Probado de punta a punta con Playwright: cuenta WORKER de prueba pudo
+entrar a `/empresa/servicios`, activar "Ofrecer servicios", elegir
+categoría, cargar teléfono/zona/años de experiencia/descripción, guardar,
+y el perfil público (`/empresas/[id]`) mostró todo correctamente.
 
 ## Pausado a pedido explícito del dueño del producto
 

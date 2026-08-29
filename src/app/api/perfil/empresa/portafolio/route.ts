@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { MAX_UPLOAD_BYTES } from "@/lib/chat-limits";
 import { savePortfolioPhoto, StorageNotConfiguredError } from "@/lib/storage";
+import { canOfferServices } from "@/lib/company-profile";
 
 // Tope de fotos de portafolio por perfil -- suficiente para mostrar trabajos
 // realizados sin que la galería se vuelva infinita.
@@ -10,7 +11,7 @@ const MAX_PORTFOLIO_PHOTOS = 8;
 
 export async function POST(request: Request) {
   const session = await auth();
-  if (!session?.user || session.user.role !== "COMPANY") {
+  if (!session?.user || !canOfferServices(session.user.role)) {
     return NextResponse.json({ error: "No autorizado" }, { status: 403 });
   }
 

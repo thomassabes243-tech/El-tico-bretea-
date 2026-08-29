@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { MAX_UPLOAD_BYTES } from "@/lib/chat-limits";
 import { savePortfolioDoc, deletePortfolioDoc, StorageNotConfiguredError } from "@/lib/storage";
+import { canOfferServices } from "@/lib/company-profile";
 
 // Documento de portafolio (Cotizaciones): PDF opcional además de los campos
 // estructurados del perfil de servicios -- ver ServiceProfileForm. Público
@@ -11,7 +12,7 @@ import { savePortfolioDoc, deletePortfolioDoc, StorageNotConfiguredError } from 
 
 export async function POST(request: Request) {
   const session = await auth();
-  if (!session?.user || session.user.role !== "COMPANY") {
+  if (!session?.user || !canOfferServices(session.user.role)) {
     return NextResponse.json({ error: "No autorizado" }, { status: 403 });
   }
 
@@ -59,7 +60,7 @@ export async function POST(request: Request) {
 
 export async function DELETE() {
   const session = await auth();
-  if (!session?.user || session.user.role !== "COMPANY") {
+  if (!session?.user || !canOfferServices(session.user.role)) {
     return NextResponse.json({ error: "No autorizado" }, { status: 403 });
   }
 

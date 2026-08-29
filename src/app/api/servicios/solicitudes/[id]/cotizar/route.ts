@@ -3,14 +3,15 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { serviceQuoteSchema } from "@/lib/validations";
 import { PROJECT_MAX_QUOTES } from "@/lib/constants";
+import { canOfferServices } from "@/lib/company-profile";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
-  if (!session?.user || session.user.role !== "COMPANY") {
-    return NextResponse.json({ error: "Iniciá sesión con una cuenta de empresa" }, { status: 403 });
+  if (!session?.user || !canOfferServices(session.user.role)) {
+    return NextResponse.json({ error: "Iniciá sesión con una cuenta que ofrezca servicios" }, { status: 403 });
   }
 
   const { id } = await params;

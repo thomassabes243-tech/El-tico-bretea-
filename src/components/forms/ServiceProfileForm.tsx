@@ -3,11 +3,12 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { X, MapPin, Loader2, FileText } from "lucide-react";
+import { X, MapPin, Loader2, FileText, User } from "lucide-react";
 import { SERVICE_CATEGORIES } from "@/lib/constants";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { FieldWrapper, TextInput, Textarea } from "@/components/forms/FormField";
+import { ProfilePhotoUpload } from "@/components/forms/ProfilePhotoUpload";
 import { compressImageFile } from "@/lib/image-compress-client";
 
 type Photo = { id: string; url: string };
@@ -18,6 +19,8 @@ export function ServiceProfileForm({
   initialZoneLabel,
   initialDescription,
   initialYearsExperience,
+  initialContactPhone,
+  initialLogoUrl,
   hasLocation,
   initialPhotos,
   initialPortfolioDocName,
@@ -28,6 +31,8 @@ export function ServiceProfileForm({
   initialZoneLabel: string;
   initialDescription: string;
   initialYearsExperience: number | null;
+  initialContactPhone: string;
+  initialLogoUrl: string | null;
   hasLocation: boolean;
   initialPhotos: Photo[];
   initialPortfolioDocName: string | null;
@@ -38,6 +43,7 @@ export function ServiceProfileForm({
   const [categories, setCategories] = useState<string[]>(initialCategories);
   const [zoneLabel, setZoneLabel] = useState(initialZoneLabel);
   const [description, setDescription] = useState(initialDescription);
+  const [contactPhone, setContactPhone] = useState(initialContactPhone);
   const [yearsExperience, setYearsExperience] = useState(
     initialYearsExperience != null ? String(initialYearsExperience) : ""
   );
@@ -73,6 +79,7 @@ export function ServiceProfileForm({
           serviceZoneLabel: zoneLabel,
           serviceDescription: description,
           serviceYearsExperience: yearsExperience.trim() === "" ? null : Number(yearsExperience),
+          contactPhone,
         }),
       });
       const data = await res.json();
@@ -170,6 +177,23 @@ export function ServiceProfileForm({
 
   return (
     <div className="flex flex-col gap-4">
+      <Card className="flex flex-col items-center gap-3 p-4">
+        <ProfilePhotoUpload
+          kind="empresa"
+          initialUrl={initialLogoUrl}
+          alt="Foto de perfil"
+          shape="circle"
+          fallback={
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-mx-red-600/[0.09] text-mx-red-600">
+              <User className="h-8 w-8" />
+            </div>
+          }
+        />
+        <p className="text-xs text-navy-800/50">
+          Esta foto se muestra en tu perfil público de Cotizaciones.
+        </p>
+      </Card>
+
       <Card className="flex items-center justify-between gap-3 p-4">
         <div>
           <p className="text-sm font-bold text-navy-900">Ofrecer servicios (Cotizaciones)</p>
@@ -215,6 +239,14 @@ export function ServiceProfileForm({
           </Card>
 
           <Card className="flex flex-col gap-3 p-4">
+            <FieldWrapper label="Teléfono de contacto" htmlFor="contactPhone">
+              <TextInput
+                id="contactPhone"
+                value={contactPhone}
+                onChange={(e) => setContactPhone(e.target.value)}
+                placeholder="55 1234 5678"
+              />
+            </FieldWrapper>
             <FieldWrapper label="Zona de cobertura" htmlFor="serviceZoneLabel">
               <TextInput
                 id="serviceZoneLabel"

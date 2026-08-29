@@ -10,11 +10,14 @@ import { CancelSubscriptionButton } from "@/components/forms/CancelSubscriptionB
 import { PushNotificationToggle } from "@/components/forms/PushNotificationToggle";
 import { getAppSettings } from "@/lib/settings";
 import { formatPesos } from "@/lib/format";
+import { canOfferServices, findOrCreateServiceProfile } from "@/lib/company-profile";
 
 export default async function ServiciosPage() {
   const session = await auth();
   if (!session?.user) redirect("/iniciar-sesion");
-  if (session.user.role !== "COMPANY") redirect("/perfil");
+  if (!canOfferServices(session.user.role)) redirect("/perfil");
+
+  await findOrCreateServiceProfile(session.user.id, session.user.role);
 
   const [company, settings] = await Promise.all([
     prisma.companyProfile.findUnique({
@@ -23,6 +26,8 @@ export default async function ServiciosPage() {
     }),
     getAppSettings(),
   ]);
+  // Solo puede faltar acá para una cuenta COMPANY sin perfil de empresa
+  // todavía -- una cuenta WORKER siempre sale con uno recién creado arriba.
   if (!company) redirect("/registro/empresa");
 
   return (
@@ -37,6 +42,8 @@ export default async function ServiciosPage() {
         initialZoneLabel={company.serviceZoneLabel ?? ""}
         initialDescription={company.serviceDescription ?? ""}
         initialYearsExperience={company.serviceYearsExperience}
+        initialContactPhone={company.contactPhone ?? ""}
+        initialLogoUrl={company.logoUrl}
         hasLocation={company.serviceLatitude != null && company.serviceLongitude != null}
         initialPhotos={company.portfolioPhotos.map((p) => ({
           id: p.id,
