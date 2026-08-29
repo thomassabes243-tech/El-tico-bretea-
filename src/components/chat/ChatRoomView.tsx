@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Send, ImagePlus, Briefcase, Lock, X } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { ChatMessageList, type ChatMessage } from "@/components/chat/ChatMessageList";
+import { compressImageFile } from "@/lib/image-compress-client";
 
 type CompanyJob = { id: string; title: string };
 
@@ -113,8 +114,9 @@ export function ChatRoomView({
     setUploadingPhoto(true);
     setError(null);
     try {
+      const compressed = await compressImageFile(file);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", compressed);
       const res = await fetch(`/api/comunidad/messages/foto`, {
         method: "POST",
         body: formData,

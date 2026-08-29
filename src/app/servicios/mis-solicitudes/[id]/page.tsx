@@ -8,7 +8,7 @@ import { AcceptQuoteButton } from "@/components/forms/AcceptQuoteButton";
 import { RateQuoteForm } from "@/components/forms/RateQuoteForm";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { SERVICE_CATEGORIES, PROJECT_MAX_QUOTES } from "@/lib/constants";
-import { distanceKm } from "@/lib/geo";
+import { DistanceBadge } from "@/components/servicios/DistanceBadge";
 import { getServiceRatings } from "@/lib/service-ratings";
 import { MapPin, ShieldCheck, Inbox, ClipboardList, Star } from "lucide-react";
 
@@ -44,7 +44,6 @@ export default async function SolicitudDetallePage({
   serviceRequest.quotes.sort((a, b) => Number(b.company.professionalPlanActive) - Number(a.company.professionalPlanActive));
 
   const cat = SERVICE_CATEGORIES.find((c) => c.value === serviceRequest.category);
-  const hasClientLocation = serviceRequest.latitude != null && serviceRequest.longitude != null;
   const ratings = await getServiceRatings(serviceRequest.quotes.map((q) => q.companyId));
 
   return (
@@ -95,15 +94,6 @@ export default async function SolicitudDetallePage({
             </Card>
           )}
           {serviceRequest.quotes.map((quote) => {
-            const km =
-              hasClientLocation && quote.company.serviceLatitude != null && quote.company.serviceLongitude != null
-                ? distanceKm(
-                    serviceRequest.latitude!,
-                    serviceRequest.longitude!,
-                    quote.company.serviceLatitude,
-                    quote.company.serviceLongitude
-                  )
-                : null;
             const rating = ratings.get(quote.companyId);
 
             return (
@@ -146,9 +136,13 @@ export default async function SolicitudDetallePage({
                     💰 {quote.priceLabel}
                   </span>
                   <span className="rounded-full bg-sand-100 px-2.5 py-1">🕐 {quote.availability}</span>
-                  {km != null && (
-                    <span className="rounded-full bg-sand-100 px-2.5 py-1">📍 {km.toFixed(1)} km</span>
-                  )}
+                  <DistanceBadge
+                    aLat={serviceRequest.latitude}
+                    aLon={serviceRequest.longitude}
+                    bLat={quote.company.serviceLatitude}
+                    bLon={quote.company.serviceLongitude}
+                    className="rounded-full bg-sand-100 px-2.5 py-1"
+                  />
                 </div>
 
                 {quote.message && (

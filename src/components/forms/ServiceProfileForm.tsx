@@ -8,6 +8,7 @@ import { SERVICE_CATEGORIES } from "@/lib/constants";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { FieldWrapper, TextInput, Textarea } from "@/components/forms/FormField";
+import { compressImageFile } from "@/lib/image-compress-client";
 
 type Photo = { id: string; url: string };
 
@@ -110,8 +111,9 @@ export function ServiceProfileForm({
     setUploading(true);
     setError(null);
     try {
+      const compressed = await compressImageFile(file);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", compressed);
       const res = await fetch("/api/perfil/empresa/portafolio", { method: "POST", body: formData });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "No se pudo subir la foto");

@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Camera, Trash2 } from "lucide-react";
 import { AvatarImage } from "@/components/brand/AvatarImage";
+import { compressImageFile } from "@/lib/image-compress-client";
 
 const ENDPOINT: Record<"trabajador" | "empresa", string> = {
   trabajador: "/api/perfil/trabajador/foto",
@@ -33,8 +34,9 @@ export function ProfilePhotoUpload({
     setError(null);
     setBusy(true);
     try {
+      const compressed = await compressImageFile(file);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", compressed);
       const res = await fetch(ENDPOINT[kind], { method: "POST", body: formData });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body.error || "No se pudo subir la foto");

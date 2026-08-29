@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { jobPostingSchema } from "@/lib/validations";
 import { textOrDefault, enumOrDefault } from "@/lib/form-defaults";
+import { JOB_POSTINGS_CACHE_TAG } from "@/lib/job-postings";
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -46,5 +48,6 @@ export async function POST(request: Request) {
     },
   });
 
+  revalidateTag(JOB_POSTINGS_CACHE_TAG, { expire: 0 });
   return NextResponse.json({ id: jobPosting.id }, { status: 201 });
 }

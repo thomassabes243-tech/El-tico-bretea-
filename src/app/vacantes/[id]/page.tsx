@@ -14,7 +14,8 @@ import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { toWhatsappHref } from "@/lib/whatsapp";
 import { getSiteUrl } from "@/lib/site";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
-import { isFeatured } from "@/lib/job-postings";
+import { getJobPostingById, isFeatured } from "@/lib/job-postings";
+import { SalarySemaforo } from "@/components/vacantes/SalarySemaforo";
 import { MapPin, Briefcase, Users, Calendar, ShieldCheck, Sparkles, Phone, Mail } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
@@ -27,10 +28,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const jobPosting = await prisma.jobPosting.findUnique({
-    where: { id },
-    include: { company: { select: { commercialName: true } } },
-  });
+  const jobPosting = await getJobPostingById(id);
   if (!jobPosting) return {};
 
   const title = `${jobPosting.title} en ${jobPosting.company.commercialName} — El Mexa Chamba`;
@@ -52,10 +50,7 @@ export default async function VacanteDetailPage({
   const { id } = await params;
   const session = await auth();
 
-  const jobPosting = await prisma.jobPosting.findUnique({
-    where: { id },
-    include: { company: true },
-  });
+  const jobPosting = await getJobPostingById(id);
   if (!jobPosting) notFound();
 
   let alreadyApplied = false;
@@ -140,7 +135,12 @@ export default async function VacanteDetailPage({
           <Card className="mt-4 p-5">
             <h2 className="text-sm font-bold text-navy-900">Detalles</h2>
             <dl className="mt-2 flex flex-col gap-1.5 text-sm text-navy-800/75">
-              {jobPosting.salary && <div>Salario: <span className="font-semibold text-navy-900">{jobPosting.salary}</span></div>}
+              {jobPosting.salary && (
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  Salario: <span className="font-semibold text-navy-900">{jobPosting.salary}</span>
+                  <SalarySemaforo category={jobPosting.laborCategory} salaryText={jobPosting.salary} />
+                </div>
+              )}
               {jobPosting.schedule && <div>Horario: <span className="font-semibold text-navy-900">{jobPosting.schedule}</span></div>}
               {jobPosting.experienceRequired && <div>Experiencia: <span className="font-semibold text-navy-900">{jobPosting.experienceRequired}</span></div>}
               {jobPosting.educationRequired && <div>Estudios: <span className="font-semibold text-navy-900">{jobPosting.educationRequired}</span></div>}

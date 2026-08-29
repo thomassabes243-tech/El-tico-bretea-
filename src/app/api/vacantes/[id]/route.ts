@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { jobPostingSchema } from "@/lib/validations";
 import { JOB_CLOSURE_REASONS } from "@/lib/job-closure-reason";
 import { textOrDefault, enumOrDefault } from "@/lib/form-defaults";
+import { JOB_POSTINGS_CACHE_TAG } from "@/lib/job-postings";
 
 const VALID_CLOSURE_REASONS = JOB_CLOSURE_REASONS.map((r) => r.value);
 
@@ -36,6 +38,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         where: { id },
         data: { isActive: true, closureReason: null },
       });
+      revalidateTag(JOB_POSTINGS_CACHE_TAG, { expire: 0 });
       return NextResponse.json({ ok: true });
     }
 
@@ -46,6 +49,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       where: { id },
       data: { isActive: false, closureReason: body.closureReason ?? null },
     });
+    revalidateTag(JOB_POSTINGS_CACHE_TAG, { expire: 0 });
     return NextResponse.json({ ok: true });
   }
 
@@ -78,5 +82,6 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     },
   });
 
+  revalidateTag(JOB_POSTINGS_CACHE_TAG, { expire: 0 });
   return NextResponse.json({ ok: true });
 }

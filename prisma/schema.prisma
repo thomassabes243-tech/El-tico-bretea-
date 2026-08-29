@@ -460,6 +460,9 @@ model JobPosting {
   communityPosts     ChatMessage[]
   featuredPurchases FeaturedPurchase[]
 
+  // Sirve la consulta de /buscar/[categoria] tal cual se hace hoy (categoría +
+  // activa + featuredUntil para el orden "destacadas primero").
+  @@index([laborCategory, isActive, featuredUntil])
   @@map("job_postings")
 }
 

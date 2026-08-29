@@ -8,6 +8,7 @@ import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import { findJobPostingsFeaturedFirst, isFeatured } from "@/lib/job-postings";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
+import { SalarySemaforo } from "@/components/vacantes/SalarySemaforo";
 import { AdSlot } from "@/components/ads/AdSlot";
 import type { LaborCategory } from "@prisma/client";
 
@@ -90,6 +91,7 @@ export default async function BuscarCategoriaPage({
                   {job.salary && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-mx-red-100 px-2 py-0.5 text-mx-red-700">
                       {job.salary}
+                      <SalarySemaforo category={job.laborCategory} salaryText={job.salary} compact />
                     </span>
                   )}
                 </div>

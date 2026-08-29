@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { capturePaypalOrder } from "@/lib/paypal";
+import { JOB_POSTINGS_CACHE_TAG } from "@/lib/job-postings";
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -49,6 +51,7 @@ export async function POST(request: Request) {
       prisma.jobPosting.update({ where: { id: purchase.jobPostingId }, data: { featuredUntil } }),
     ]);
 
+    revalidateTag(JOB_POSTINGS_CACHE_TAG, { expire: 0 });
     return NextResponse.json({ ok: true, featuredUntil: updatedJob.featuredUntil }, { status: 200 });
   } catch (err) {
     await prisma.featuredPurchase.update({ where: { paypalOrderId: orderId }, data: { status: "FALLIDA" } }).catch(() => undefined);

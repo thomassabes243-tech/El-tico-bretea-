@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { distanceKmBetween } from "@/lib/geo";
 
 // Sección 22: bloquea que una empresa TODAVÍA NO VERIFICADA pida/comparta
 // datos de contacto directo en el chat de comunidad -- es un patrón típico
@@ -75,7 +76,7 @@ export function detectIpLocationMismatch(
   const ipPoint = { latitude: parseFloat(ipLat), longitude: parseFloat(ipLon) };
   if (Number.isNaN(ipPoint.latitude) || Number.isNaN(ipPoint.longitude)) return null;
 
-  const distanceKm = haversineKm(ipPoint, point);
+  const distanceKm = distanceKmBetween(ipPoint, point);
   if (distanceKm > 500) {
     const city = request.headers.get("x-vercel-ip-city");
     return `La ubicación reportada está a ~${Math.round(distanceKm)} km de donde tu conexión a internet parece estar${city ? ` (${decodeURIComponent(city)})` : ""}`;
@@ -118,19 +119,6 @@ export function approximateCoordinates(latitude: number, longitude: number) {
   };
 }
 
-const EARTH_RADIUS_KM = 6371;
-
-function haversineKm(a: { latitude: number; longitude: number }, b: { latitude: number; longitude: number }) {
-  const toRad = (deg: number) => (deg * Math.PI) / 180;
-  const dLat = toRad(b.latitude - a.latitude);
-  const dLon = toRad(b.longitude - a.longitude);
-  const lat1 = toRad(a.latitude);
-  const lat2 = toRad(b.latitude);
-  const h =
-    Math.sin(dLat / 2) ** 2 + Math.sin(dLon / 2) ** 2 * Math.cos(lat1) * Math.cos(lat2);
-  return 2 * EARTH_RADIUS_KM * Math.asin(Math.sqrt(h));
-}
-
 // Heurísticas de sospecha de ubicación falsa -- NO es detección real de
 // mock location (esa señal no existe en el navegador web). Solo marca casos
 // llamativos para que un moderador los revise; nunca bloquea solo.
@@ -151,7 +139,7 @@ export async function detectSuspiciousLocation(
   const elapsedHours = (Date.now() - previous.createdAt.getTime()) / (1000 * 60 * 60);
   if (elapsedHours <= 0) return null;
 
-  const distanceKm = haversineKm(previous, point);
+  const distanceKm = distanceKmBetween(previous, point);
   const impliedSpeedKmh = distanceKm / elapsedHours;
 
   // Más rápido que un vuelo comercial entre dos puntos consecutivos: salto

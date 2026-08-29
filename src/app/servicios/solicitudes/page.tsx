@@ -7,7 +7,7 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { SERVICE_CATEGORIES, PROJECT_MAX_QUOTES } from "@/lib/constants";
-import { distanceKm } from "@/lib/geo";
+import { DistanceBadge } from "@/components/servicios/DistanceBadge";
 import { MapPin, Inbox, ChevronRight, ClipboardList } from "lucide-react";
 
 export default async function SolicitudesDisponiblesPage() {
@@ -60,13 +60,6 @@ export default async function SolicitudesDisponiblesPage() {
           )}
           {requests.map((r) => {
             const cat = SERVICE_CATEGORIES.find((c) => c.value === r.category);
-            const km =
-              r.latitude != null &&
-              r.longitude != null &&
-              company.serviceLatitude != null &&
-              company.serviceLongitude != null
-                ? distanceKm(r.latitude, r.longitude, company.serviceLatitude, company.serviceLongitude)
-                : null;
 
             return (
               <Card key={r.id} className="p-4">
@@ -92,9 +85,12 @@ export default async function SolicitudesDisponiblesPage() {
                     <span className="flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
                       <MapPin className="h-3 w-3" /> {r.locationLabel}
                     </span>
-                    {km != null && (
-                      <span className="rounded-full bg-sand-100 px-2 py-0.5">📍 {km.toFixed(1)} km</span>
-                    )}
+                    <DistanceBadge
+                      aLat={r.latitude}
+                      aLon={r.longitude}
+                      bLat={company.serviceLatitude}
+                      bLon={company.serviceLongitude}
+                    />
                     {r.budgetLabel && (
                       <span className="rounded-full bg-mx-red-100 px-2 py-0.5 text-mx-red-700">
                         💰 {r.budgetLabel}

@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { jobPostingSchema } from "@/lib/validations";
 import { getOrCreateImportCompany } from "@/lib/ai-import";
 import { textOrDefault, enumOrDefault } from "@/lib/form-defaults";
+import { JOB_POSTINGS_CACHE_TAG } from "@/lib/job-postings";
 
 // Publica una oferta importada de Facebook/WhatsApp. Usa exactamente el
 // mismo modelo/validación que /api/vacantes (creación normal de una
@@ -47,5 +49,6 @@ export async function POST(request: Request) {
     },
   });
 
+  revalidateTag(JOB_POSTINGS_CACHE_TAG, { expire: 0 });
   return NextResponse.json({ id: jobPosting.id }, { status: 201 });
 }

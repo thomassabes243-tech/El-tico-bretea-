@@ -1,8 +1,9 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { JOB_POSTINGS_CACHE_TAG } from "@/lib/job-postings";
 
 export async function toggleJobPostingActive(jobPostingId: string, nextValue: boolean) {
   await requireAdmin();
@@ -13,5 +14,6 @@ export async function toggleJobPostingActive(jobPostingId: string, nextValue: bo
     where: { id: jobPostingId },
     data: { isActive: nextValue, closureReason: null },
   });
+  updateTag(JOB_POSTINGS_CACHE_TAG);
   revalidatePath("/admin/vacantes");
 }
