@@ -80,7 +80,7 @@ export default async function Home({
 
         {/* Buscador */}
         <form action="/buscar/resultados" method="GET" className="mt-4">
-          <div className="flex items-center gap-2 rounded-2xl border border-sand-200 bg-white px-4 py-3 shadow-sm shadow-navy-900/[0.04]">
+          <div className="flex items-center gap-2 rounded-2xl border border-sand-200 bg-white px-4 py-3.5 shadow-lg shadow-navy-900/[0.08]">
             <Search className="h-4.5 w-4.5 shrink-0 text-navy-800/40" />
             <input
               type="text"
