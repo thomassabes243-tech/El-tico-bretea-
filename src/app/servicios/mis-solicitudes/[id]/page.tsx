@@ -5,10 +5,12 @@ import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { AcceptQuoteButton } from "@/components/forms/AcceptQuoteButton";
+import { RateQuoteForm } from "@/components/forms/RateQuoteForm";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { SERVICE_CATEGORIES, PROJECT_MAX_QUOTES } from "@/lib/constants";
 import { distanceKm } from "@/lib/geo";
-import { MapPin, ShieldCheck, Inbox, ClipboardList } from "lucide-react";
+import { getServiceRatings } from "@/lib/service-ratings";
+import { MapPin, ShieldCheck, Inbox, ClipboardList, Star } from "lucide-react";
 
 const STATUS_LABEL: Record<string, string> = {
   ABIERTA: "Esperando cotizaciones",
@@ -30,7 +32,7 @@ export default async function SolicitudDetallePage({
     include: {
       quotes: {
         orderBy: { createdAt: "asc" },
-        include: { company: true },
+        include: { company: true, review: true },
       },
     },
   });
@@ -38,6 +40,7 @@ export default async function SolicitudDetallePage({
 
   const cat = SERVICE_CATEGORIES.find((c) => c.value === serviceRequest.category);
   const hasClientLocation = serviceRequest.latitude != null && serviceRequest.longitude != null;
+  const ratings = await getServiceRatings(serviceRequest.quotes.map((q) => q.companyId));
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
@@ -96,6 +99,7 @@ export default async function SolicitudDetallePage({
                     quote.company.serviceLongitude
                   )
                 : null;
+            const rating = ratings.get(quote.companyId);
 
             return (
               <Card key={quote.id} className="p-4">
@@ -107,8 +111,17 @@ export default async function SolicitudDetallePage({
                         <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-success-600" aria-label="Empresa verificada" />
                       )}
                     </p>
-                    <p className="text-[11px] text-navy-800/45">
-                      {quote.company.isVerified ? "Verificado" : "Verificación pendiente"} · Nuevo en la plataforma
+                    <p className="flex items-center gap-1 text-[11px] text-navy-800/45">
+                      {quote.company.isVerified ? "Verificado" : "Verificación pendiente"}
+                      {rating && rating.count > 0 ? (
+                        <>
+                          {" · "}
+                          <Star className="h-3 w-3 fill-warning-600 text-warning-600" />
+                          {rating.average.toFixed(1)} · {rating.count} trabajo{rating.count !== 1 ? "s" : ""}
+                        </>
+                      ) : (
+                        " · Nuevo en la plataforma"
+                      )}
                     </p>
                   </div>
                   {quote.status === "ACEPTADA" && (
@@ -152,6 +165,25 @@ export default async function SolicitudDetallePage({
                     isLoggedIn={Boolean(session.user)}
                   />
                 </div>
+
+                {quote.status === "ACEPTADA" &&
+                  (quote.review ? (
+                    <div className="mt-3 rounded-xl border border-sand-200 p-3">
+                      <div className="flex items-center gap-0.5">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <Star
+                            key={n}
+                            className={`h-4 w-4 ${n <= quote.review!.rating ? "fill-warning-600 text-warning-600" : "text-sand-200"}`}
+                          />
+                        ))}
+                      </div>
+                      {quote.review.comment && (
+                        <p className="mt-1.5 text-xs text-navy-800/70">{quote.review.comment}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <RateQuoteForm quoteId={quote.id} />
+                  ))}
               </Card>
             );
           })}

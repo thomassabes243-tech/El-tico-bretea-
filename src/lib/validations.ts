@@ -306,6 +306,13 @@ export const serviceRequestSchema = z
 
 export type ServiceRequestInput = z.infer<typeof serviceRequestSchema>;
 
+export const serviceReviewSchema = z.object({
+  rating: z.number().int().min(1).max(5),
+  comment: z.string().trim().max(400).optional().or(z.literal("")),
+});
+
+export type ServiceReviewInput = z.infer<typeof serviceReviewSchema>;
+
 export const serviceQuoteSchema = z.object({
   priceLabel: z.string().trim().min(1, "Ingresá un precio").max(60),
   availability: z.string().trim().min(2, "Ingresá tu disponibilidad").max(80),

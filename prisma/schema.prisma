@@ -67,6 +67,7 @@ model User {
   panicAlertsSent    PanicAlert[]     @relation("PanicAlertsSent")
 
   serviceRequestsMade ServiceRequest[] @relation("ServiceRequestsMade")
+  serviceReviewsGiven ServiceReview[]
 
   @@index([deviceFingerprint])
   @@map("users")
@@ -243,6 +244,7 @@ model CompanyProfile {
   jobPostings     JobPosting[]
   portfolioPhotos PortfolioPhoto[]
   serviceQuotes   ServiceQuote[]
+  serviceReviews  ServiceReview[]
 
   @@map("company_profiles")
 }
@@ -366,9 +368,33 @@ model ServiceQuote {
   status    ServiceQuoteStatus @default(ENVIADA)
   createdAt DateTime           @default(now())
 
+  review ServiceReview?
+
   @@unique([serviceRequestId, companyId])
   @@index([serviceRequestId, status])
   @@map("service_quotes")
+}
+
+// Calificación del cliente al profesional, una sola por cotización
+// aceptada (no se puede calificar sin haber contratado). companyId queda
+// denormalizado acá para poder calcular el promedio de todo un profesional
+// con una sola consulta agrupada, sin tener que pasar por ServiceQuote.
+model ServiceReview {
+  id             String       @id @default(cuid())
+  serviceQuoteId String       @unique
+  serviceQuote   ServiceQuote @relation(fields: [serviceQuoteId], references: [id], onDelete: Cascade)
+  companyId      String
+  company        CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  reviewerId     String
+  reviewer       User         @relation(fields: [reviewerId], references: [id], onDelete: Cascade)
+
+  rating  Int
+  comment String?
+
+  createdAt DateTime @default(now())
+
+  @@index([companyId])
+  @@map("service_reviews")
 }
 
 model SavedWorker {

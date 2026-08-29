@@ -5,7 +5,8 @@ import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { SERVICE_CATEGORIES } from "@/lib/constants";
-import { Inbox, MapPin, Phone } from "lucide-react";
+import { getServiceRatings } from "@/lib/service-ratings";
+import { Inbox, MapPin, Phone, Star } from "lucide-react";
 
 const STATUS_LABEL: Record<string, string> = {
   ENVIADA: "Esperando respuesta",
@@ -26,12 +27,21 @@ export default async function MisCotizacionesPage() {
     orderBy: { createdAt: "desc" },
     include: { serviceRequest: true },
   });
+  const ratings = await getServiceRatings([company.id]);
+  const myRating = ratings.get(company.id);
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <TopBar />
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
         <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Mis cotizaciones enviadas</h1>
+        {myRating && myRating.count > 0 && (
+          <p className="mt-1 flex items-center gap-1 text-sm text-navy-800/60">
+            <Star className="h-4 w-4 fill-warning-600 text-warning-600" />
+            {myRating.average.toFixed(1)} · {myRating.count} trabajo{myRating.count !== 1 ? "s" : ""} completado
+            {myRating.count !== 1 ? "s" : ""}
+          </p>
+        )}
 
         <div className="mt-5 flex flex-col gap-3">
           {quotes.length === 0 && (
