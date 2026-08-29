@@ -70,3 +70,85 @@ export async function capturePaypalOrder(orderId: string): Promise<PaypalCapture
   if (!res.ok) throw new Error(data.message || "No se pudo confirmar el pago con PayPal");
   return data;
 }
+
+// --- Suscripciones (Premium trabajador, Plan Profesional de Cotizaciones) ---
+// Mismo Client ID/Secret que las órdenes de arriba -- no es una cuenta ni
+// una integración nueva, es la misma API REST de PayPal, otro producto de
+// su catálogo (Subscriptions en vez de Orders).
+
+async function createPaypalProduct(name: string, description: string): Promise<string> {
+  const token = await getAccessToken();
+  const res = await fetch(`${PAYPAL_API_BASE}/v1/catalogs/products`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ name, description, type: "SERVICE", category: "SOFTWARE" }),
+  });
+  const data = (await res.json()) as { id?: string; message?: string };
+  if (!res.ok || !data.id) throw new Error(data.message || "No se pudo crear el producto en PayPal");
+  return data.id;
+}
+
+export async function createPaypalMonthlyPlan(
+  productName: string,
+  productDescription: string,
+  planName: string,
+  amountPesos: number
+): Promise<string> {
+  const productId = await createPaypalProduct(productName, productDescription);
+  const token = await getAccessToken();
+  const res = await fetch(`${PAYPAL_API_BASE}/v1/billing/plans`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      product_id: productId,
+      name: planName,
+      billing_cycles: [
+        {
+          frequency: { interval_unit: "MONTH", interval_count: 1 },
+          tenure_type: "REGULAR",
+          sequence: 1,
+          total_cycles: 0,
+          pricing_scheme: {
+            fixed_price: { value: amountPesos.toFixed(2), currency_code: "MXN" },
+          },
+        },
+      ],
+      payment_preferences: {
+        auto_bill_outstanding: true,
+        payment_failure_threshold: 2,
+      },
+    }),
+  });
+  const data = (await res.json()) as { id?: string; message?: string };
+  if (!res.ok || !data.id) throw new Error(data.message || "No se pudo crear el plan en PayPal");
+  return data.id;
+}
+
+type PaypalSubscription = {
+  id: string;
+  status: string;
+  subscriber?: { email_address?: string };
+};
+
+export async function getPaypalSubscription(subscriptionId: string): Promise<PaypalSubscription> {
+  const token = await getAccessToken();
+  const res = await fetch(`${PAYPAL_API_BASE}/v1/billing/subscriptions/${subscriptionId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = (await res.json()) as PaypalSubscription & { message?: string };
+  if (!res.ok) throw new Error(data.message || "No se pudo consultar la suscripción");
+  return data;
+}
+
+export async function cancelPaypalSubscription(subscriptionId: string, reason: string): Promise<void> {
+  const token = await getAccessToken();
+  const res = await fetch(`${PAYPAL_API_BASE}/v1/billing/subscriptions/${subscriptionId}/cancel`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ reason }),
+  });
+  if (!res.ok && res.status !== 422) {
+    // 422 = ya estaba cancelada, no es un error real para nuestro flujo.
+    throw new Error("No se pudo cancelar la suscripción");
+  }
+}

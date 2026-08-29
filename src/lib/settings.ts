@@ -9,11 +9,29 @@ export async function getAppSettings() {
 }
 
 export async function updateAppSettings(data: {
-  premiumPricePesos: number;
+  premiumPricePesos?: number;
+  professionalPricePesos?: number;
 }) {
+  const current = await getAppSettings();
+  // Si el precio cambia, el plan de PayPal ya creado quedó con el precio
+  // viejo (PayPal no permite cambiar el monto de un plan existente) -- se
+  // borra el ID guardado para que /api/admin/paypal/planes cree uno nuevo
+  // con el precio actual la próxima vez que se ejecute. Los que ya estaban
+  // suscriptos siguen pagando el precio con el que se suscribieron.
+  const resetPlans: { paypalPremiumPlanId?: null; paypalProfessionalPlanId?: null } = {};
+  if (data.premiumPricePesos != null && data.premiumPricePesos !== current.premiumPricePesos) {
+    resetPlans.paypalPremiumPlanId = null;
+  }
+  if (
+    data.professionalPricePesos != null &&
+    data.professionalPricePesos !== current.professionalPricePesos
+  ) {
+    resetPlans.paypalProfessionalPlanId = null;
+  }
+
   return prisma.appSettings.upsert({
     where: { id: SETTINGS_ID },
     create: { id: SETTINGS_ID, ...data },
-    update: data,
+    update: { ...data, ...resetPlans },
   });
 }

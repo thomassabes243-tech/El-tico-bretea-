@@ -3,19 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { HeartHandshake } from "lucide-react";
 
-declare global {
-  interface Window {
-    paypal?: {
-      Buttons: (config: {
-        style?: Record<string, string | number>;
-        createOrder: () => Promise<string>;
-        onApprove: (data: { orderID: string }) => Promise<void>;
-        onError?: (err: unknown) => void;
-      }) => { render: (selector: string) => void };
-    };
-  }
-}
-
 const SUGGESTED_AMOUNTS = [20, 50, 100];
 const SDK_SRC_PREFIX = "https://www.paypal.com/sdk/js";
 

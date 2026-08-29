@@ -38,6 +38,11 @@ export default async function SolicitudDetallePage({
   });
   if (!serviceRequest || serviceRequest.requesterId !== session.user.id) notFound();
 
+  // Perk del Plan Profesional: aparecer primero entre las cotizaciones de
+  // esta misma solicitud. Nunca oculta ni bloquea a quien no paga, solo
+  // reordena -- todas las cotizaciones siguen ahí.
+  serviceRequest.quotes.sort((a, b) => Number(b.company.professionalPlanActive) - Number(a.company.professionalPlanActive));
+
   const cat = SERVICE_CATEGORIES.find((c) => c.value === serviceRequest.category);
   const hasClientLocation = serviceRequest.latitude != null && serviceRequest.longitude != null;
   const ratings = await getServiceRatings(serviceRequest.quotes.map((q) => q.companyId));

@@ -5,18 +5,6 @@ import { useRouter } from "next/navigation";
 import { Sparkles } from "lucide-react";
 import { FEATURED_PRICE_USD, FEATURED_DAYS } from "@/lib/constants";
 
-declare global {
-  interface Window {
-    paypal?: {
-      Buttons: (config: {
-        style?: Record<string, string | number>;
-        createOrder: () => Promise<string>;
-        onApprove: (data: { orderID: string }) => Promise<void>;
-        onError?: (err: unknown) => void;
-      }) => { render: (selector: string) => void };
-    };
-  }
-}
 
 const SDK_SRC_PREFIX = "https://www.paypal.com/sdk/js";
 

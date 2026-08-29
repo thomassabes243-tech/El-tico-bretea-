@@ -1,17 +1,25 @@
-// Service worker mínimo. La app es esencialmente dinámica (sesión, chat en
-// vivo, formularios), así que no cachea nada propio -- deja pasar todas las
-// peticiones a la red tal cual. Existe solo para cumplir el criterio de
-// instalabilidad de Chrome/Android (necesario para que "Agregar a pantalla
-// de inicio" instale la app en modo standalone en vez de abrir un simple
-// acceso directo al navegador, y para empaquetarla como TWA en Play Store).
-self.addEventListener("install", () => {
-  self.skipWaiting();
+// Service worker mínimo, solo para notificaciones push (Plan Profesional de
+// Cotizaciones) -- no cachea nada, no intercepta fetch, no es un PWA
+// offline-first. Un único trabajo: mostrar la notificación que llega.
+
+self.addEventListener("push", (event) => {
+  let data = { title: "El Mexa Chamba", body: "Tenés una solicitud nueva", url: "/servicios/solicitudes" };
+  try {
+    if (event.data) data = { ...data, ...event.data.json() };
+  } catch {
+    // payload no era JSON válido -- se usa el mensaje genérico de arriba.
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: "/icon-192.png",
+      data: { url: data.url },
+    })
+  );
 });
 
-self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
-});
-
-self.addEventListener("fetch", (event) => {
-  event.respondWith(fetch(event.request));
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || "/";
+  event.waitUntil(clients.openWindow(url));
 });

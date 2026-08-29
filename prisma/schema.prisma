@@ -177,9 +177,15 @@ model WorkerProfile {
   criminalRecordKey        String?
   criminalRecordUploadedAt DateTime?
 
-  isPremium  Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  // Premium (suscripción PayPal, ver Sección Monetización) -- isPremium ya
+  // existía (usado para ordenar en recomendaciones); paypalSubscriptionId
+  // es el ID real de la suscripción, para poder consultar/cancelar contra
+  // la API de PayPal. Nunca sobre seguridad -- esas funciones siguen
+  // gratis siempre, sin excepción.
+  isPremium            Boolean  @default(false)
+  paypalSubscriptionId String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   references   WorkerReference[]
   savedBy      SavedWorker[]
@@ -240,11 +246,19 @@ model CompanyProfile {
   serviceLatitude    Float?
   serviceLongitude   Float?
 
+  // Plan Profesional (Cotizaciones, $120 MXN/mes vía PayPal): mejor
+  // posición en la bandeja de solicitudes. La verificación de identidad
+  // sigue el mismo criterio exacto que el plan gratis -- esto nunca la
+  // reemplaza, solo puede acelerar la revisión (ver /admin/empresas).
+  professionalPlanActive Boolean @default(false)
+  paypalSubscriptionId   String?
+
   savedWorkers    SavedWorker[]
   jobPostings     JobPosting[]
   portfolioPhotos PortfolioPhoto[]
   serviceQuotes   ServiceQuote[]
   serviceReviews  ServiceReview[]
+  pushSubscriptions PushSubscription[]
 
   @@map("company_profiles")
 }
@@ -701,9 +715,19 @@ model ScamAlertFlag {
 // pago para eso. Premium sigue siendo una membresía paga (desactivada de la
 // interfaz por ahora, ver PREMIUM_ENABLED en /premium), con precio propio.
 model AppSettings {
-  id                String   @id @default("singleton")
-  premiumPricePesos Int      @default(1500)
-  updatedAt         DateTime @updatedAt
+  id                    String   @id @default("singleton")
+  premiumPricePesos     Int      @default(1500)
+  professionalPricePesos Int     @default(120)
+
+  // IDs de los planes de suscripción creados una sola vez contra la API de
+  // PayPal (POST /v1/billing/plans) -- null hasta que se ejecute el setup
+  // (ver /api/admin/paypal/planes). El precio real cobrado es el que tenía
+  // este mismo AppSettings en el momento de crear el plan en PayPal; para
+  // cambiarlo hay que volver a crear el plan y actualizar el ID acá.
+  paypalPremiumPlanId      String?
+  paypalProfessionalPlanId String?
+
+  updatedAt DateTime @updatedAt
 
   @@map("app_settings")
 }
@@ -721,6 +745,28 @@ model RateLimitBucket {
   resetAt DateTime
 
   @@map("rate_limit_buckets")
+}
+
+// ---------------------------------------------------------------------------
+// Notificaciones push (Web Push, gratis -- sin ningún servicio de terceros
+// pago) para el Plan Profesional de Cotizaciones: "notificaciones
+// inmediatas de nuevas solicitudes" real, no simulado. Una fila por
+// dispositivo suscripto (una empresa puede tener varios).
+// ---------------------------------------------------------------------------
+
+model PushSubscription {
+  id        String @id @default(cuid())
+  companyId String
+  company   CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  endpoint String @unique
+  p256dh   String
+  auth     String
+
+  createdAt DateTime @default(now())
+
+  @@index([companyId])
+  @@map("push_subscriptions")
 }
 
 // ---------------------------------------------------------------------------
