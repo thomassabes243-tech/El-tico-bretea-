@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { loginSchema } from "@/lib/validations";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { isLoginRateLimited, recordFailedLogin, clearLoginRateLimit } from "@/lib/rate-limit";
 
 const LOGIN_MAX_ATTEMPTS = 8;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
@@ -32,15 +32,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // Limita intentos por correo (no por IP): protege una cuenta puntual
         // de fuerza bruta sin depender de la IP del cliente, que el
         // provider de credenciales no expone de forma confiable acá.
-        const { allowed } = await checkRateLimit(`login:${email}`, LOGIN_MAX_ATTEMPTS, LOGIN_WINDOW_MS);
-        if (!allowed) return null;
+        const rateLimitKey = `login:${email}`;
+        if (await isLoginRateLimited(rateLimitKey, LOGIN_MAX_ATTEMPTS)) return null;
 
         const user = await prisma.user.findUnique({ where: { email } });
-        if (!user || user.isBlocked) return null;
+        if (!user || user.isBlocked) {
+          await recordFailedLogin(rateLimitKey, LOGIN_WINDOW_MS);
+          return null;
+        }
 
         const isValid = await bcrypt.compare(parsed.data.password, user.passwordHash);
-        if (!isValid) return null;
+        if (!isValid) {
+          await recordFailedLogin(rateLimitKey, LOGIN_WINDOW_MS);
+          return null;
+        }
 
+        await clearLoginRateLimit(rateLimitKey);
         return { id: user.id, email: user.email, role: user.role };
       },
     }),

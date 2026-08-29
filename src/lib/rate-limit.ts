@@ -45,3 +45,36 @@ export async function checkRateLimit(
   });
   return { allowed: true };
 }
+
+// Variante para login (src/lib/auth.ts): con checkRateLimit tal cual, un
+// intento CORRECTO consumía el mismo presupuesto que uno fallido -- si
+// antes hubo varios intentos con la contraseña mal tipeada (algo muy común
+// en un celular), el intento bueno inmediatamente después podía terminar
+// bloqueado igual, con el mismo error genérico que una contraseña
+// incorrecta, sin ninguna señal de que en realidad era por exceso de
+// intentos. Acá el conteo solo avanza en un fallo real, y un login
+// correcto limpia el bucket -- así nunca se le cobra a alguien que
+// demostró tener la contraseña correcta.
+export async function isLoginRateLimited(key: string, max: number): Promise<boolean> {
+  const bucket = await prisma.rateLimitBucket.findUnique({ where: { key } });
+  if (!bucket || bucket.resetAt <= new Date()) return false;
+  return bucket.count >= max;
+}
+
+export async function recordFailedLogin(key: string, windowMs: number): Promise<void> {
+  const now = new Date();
+  const bucket = await prisma.rateLimitBucket.findUnique({ where: { key } });
+  if (!bucket || bucket.resetAt <= now) {
+    await prisma.rateLimitBucket.upsert({
+      where: { key },
+      create: { key, count: 1, resetAt: new Date(now.getTime() + windowMs) },
+      update: { count: 1, resetAt: new Date(now.getTime() + windowMs) },
+    });
+    return;
+  }
+  await prisma.rateLimitBucket.update({ where: { key }, data: { count: { increment: 1 } } });
+}
+
+export async function clearLoginRateLimit(key: string): Promise<void> {
+  await prisma.rateLimitBucket.deleteMany({ where: { key } }).catch(() => undefined);
+}
