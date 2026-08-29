@@ -97,6 +97,15 @@ export const PROJECT_MAX_QUOTES = 4;
 export const FEATURED_PRICE_USD = 2;
 export const FEATURED_DAYS = 7;
 
+// Monetización: Plan Empleador -- vacantes ACTIVAS simultáneas gratis antes
+// de necesitar el plan pago. 3 alcanza para la enorme mayoría de negocios
+// chicos/medianos que publican unas pocas búsquedas a la vez (restaurantes,
+// construcción, comercio) sin gatekeeping real -- una empresa que necesita
+// más ya está en un volumen de contratación donde tiene sentido pagar.
+// Nunca limita vacantes ya publicadas o cerradas, solo cuántas pueden estar
+// abiertas al mismo tiempo.
+export const FREE_ACTIVE_JOBS_LIMIT = 3;
+
 // WhatsApp del creador de la app, para quien quiera escribirle directo.
 export const CREATOR_WHATSAPP_HREF =
   "https://wa.me/5066322902?text=" +

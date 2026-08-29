@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { jobPostingSchema } from "@/lib/validations";
 import { textOrDefault, enumOrDefault } from "@/lib/form-defaults";
 import { JOB_POSTINGS_CACHE_TAG } from "@/lib/job-postings";
+import { canActivateAnotherJobPosting } from "@/lib/job-posting-limits";
+import { FREE_ACTIVE_JOBS_LIMIT } from "@/lib/constants";
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -15,6 +17,16 @@ export async function POST(request: Request) {
   const company = await prisma.companyProfile.findUnique({ where: { userId: session.user.id } });
   if (!company) {
     return NextResponse.json({ error: "Completá el perfil de tu empresa primero" }, { status: 400 });
+  }
+
+  if (!(await canActivateAnotherJobPosting(company.id, company.employerPlanActive))) {
+    return NextResponse.json(
+      {
+        error: `Llegaste al límite de ${FREE_ACTIVE_JOBS_LIMIT} vacantes activas del plan gratis. Cerrá alguna vacante o activá el Plan Empleador para publicar más.`,
+        limitReached: true,
+      },
+      { status: 403 }
+    );
   }
 
   const body = await request.json();

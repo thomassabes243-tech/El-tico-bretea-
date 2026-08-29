@@ -8,7 +8,11 @@ import { createPaypalMonthlyPlan } from "@/lib/paypal";
 // desde la ruta que se dispara una sola vez al desplegar.
 export async function ensurePaypalPlansExist() {
   const settings = await getAppSettings();
-  const updates: { paypalPremiumPlanId?: string; paypalProfessionalPlanId?: string } = {};
+  const updates: {
+    paypalPremiumPlanId?: string;
+    paypalProfessionalPlanId?: string;
+    paypalEmployerPlanId?: string;
+  } = {};
 
   if (!settings.paypalPremiumPlanId) {
     updates.paypalPremiumPlanId = await createPaypalMonthlyPlan(
@@ -26,6 +30,14 @@ export async function ensurePaypalPlansExist() {
       settings.professionalPricePesos
     );
   }
+  if (!settings.paypalEmployerPlanId) {
+    updates.paypalEmployerPlanId = await createPaypalMonthlyPlan(
+      "El Mexa Chamba — Plan Empleador",
+      "Suscripción mensual Plan Empleador (vacantes activas ilimitadas)",
+      "Plan Empleador",
+      settings.employerPlanPricePesos
+    );
+  }
 
   if (Object.keys(updates).length > 0) {
     await prisma.appSettings.update({ where: { id: settings.id }, data: updates });
@@ -34,5 +46,6 @@ export async function ensurePaypalPlansExist() {
   return {
     paypalPremiumPlanId: updates.paypalPremiumPlanId ?? settings.paypalPremiumPlanId,
     paypalProfessionalPlanId: updates.paypalProfessionalPlanId ?? settings.paypalProfessionalPlanId,
+    paypalEmployerPlanId: updates.paypalEmployerPlanId ?? settings.paypalEmployerPlanId,
   };
 }

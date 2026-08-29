@@ -6,6 +6,8 @@ import { jobPostingSchema } from "@/lib/validations";
 import { JOB_CLOSURE_REASONS } from "@/lib/job-closure-reason";
 import { textOrDefault, enumOrDefault } from "@/lib/form-defaults";
 import { JOB_POSTINGS_CACHE_TAG } from "@/lib/job-postings";
+import { canActivateAnotherJobPosting } from "@/lib/job-posting-limits";
+import { FREE_ACTIVE_JOBS_LIMIT } from "@/lib/constants";
 
 const VALID_CLOSURE_REASONS = JOB_CLOSURE_REASONS.map((r) => r.value);
 
@@ -18,7 +20,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { id } = await params;
   const jobPosting = await prisma.jobPosting.findUnique({
     where: { id },
-    include: { company: { select: { userId: true } } },
+    include: { company: { select: { id: true, userId: true, employerPlanActive: true } } },
   });
   if (!jobPosting || jobPosting.company.userId !== session.user.id) {
     return NextResponse.json({ error: "Vacante no encontrada" }, { status: 404 });
@@ -34,6 +36,18 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   if (isQuickStatusChange) {
     if (body.isActive) {
+      if (
+        !jobPosting.isActive &&
+        !(await canActivateAnotherJobPosting(jobPosting.company.id, jobPosting.company.employerPlanActive))
+      ) {
+        return NextResponse.json(
+          {
+            error: `Llegaste al límite de ${FREE_ACTIVE_JOBS_LIMIT} vacantes activas del plan gratis. Cerrá alguna vacante o activá el Plan Empleador para reabrir esta.`,
+            limitReached: true,
+          },
+          { status: 403 }
+        );
+      }
       await prisma.jobPosting.update({
         where: { id },
         data: { isActive: true, closureReason: null },

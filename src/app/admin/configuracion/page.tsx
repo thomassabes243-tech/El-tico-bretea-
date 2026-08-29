@@ -51,6 +51,16 @@ export default async function AdminConfiguracionPage() {
                 className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
               />
             </div>
+            <div>
+              <FieldLabel label="Plan Empleador (más vacantes activas)" hint="por mes" />
+              <input
+                name="employerPlanPricePesos"
+                type="number"
+                min={0}
+                defaultValue={settings.employerPlanPricePesos}
+                className="mt-1 h-10 w-full rounded-lg border border-sand-200 px-3 text-sm"
+              />
+            </div>
           </div>
         </Card>
 
@@ -72,6 +82,10 @@ export default async function AdminConfiguracionPage() {
           <div>
             <dt className="inline font-semibold text-navy-900">Plan Profesional: </dt>
             <dd className="inline">{settings.paypalProfessionalPlanId ? "✅ Creado" : "⚠️ Falta crear"}</dd>
+          </div>
+          <div>
+            <dt className="inline font-semibold text-navy-900">Plan Empleador: </dt>
+            <dd className="inline">{settings.paypalEmployerPlanId ? "✅ Creado" : "⚠️ Falta crear"}</dd>
           </div>
         </dl>
         <div className="mt-3">

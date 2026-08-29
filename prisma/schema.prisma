@@ -253,6 +253,14 @@ model CompanyProfile {
   professionalPlanActive Boolean @default(false)
   paypalSubscriptionId   String?
 
+  // Plan Empleador ($ MXN/mes vía PayPal): sin esto, la empresa tiene un
+  // límite de vacantes ACTIVAS simultáneas (FREE_ACTIVE_JOBS_LIMIT en
+  // src/lib/constants.ts) -- puede publicar cuantas quiera, pero no tener
+  // más de ese número abiertas a la vez. No afecta nada de lo ya
+  // publicado ni de Cotizaciones, que son planes independientes.
+  employerPlanActive           Boolean @default(false)
+  employerPaypalSubscriptionId String?
+
   savedWorkers    SavedWorker[]
   jobPostings     JobPosting[]
   portfolioPhotos PortfolioPhoto[]
@@ -729,6 +737,10 @@ model AppSettings {
   // cambiarlo hay que volver a crear el plan y actualizar el ID acá.
   paypalPremiumPlanId      String?
   paypalProfessionalPlanId String?
+  paypalEmployerPlanId     String?
+
+  // Plan Empleador (más vacantes activas a la vez) -- ver CompanyProfile.
+  employerPlanPricePesos Int @default(250)
 
   updatedAt DateTime @updatedAt
 
