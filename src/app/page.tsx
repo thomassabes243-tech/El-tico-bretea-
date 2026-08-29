@@ -41,26 +41,13 @@ export default async function Home({
         {/* Hero */}
         <section className="animate-fade-in-up relative overflow-hidden rounded-3xl text-white shadow-lg shadow-navy-900/20">
           <PopocatepetlScene className="absolute inset-0 h-full w-full" />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/40 to-navy-950/10" />
-          {/* Marco decorativo -- pendiente cambiar el fondo de PopocatepetlScene
-              por la foto real de portada que va a mandar el usuario; el
-              texto y el marco ya quedan armados para recibirla tal cual. */}
-          <div className="pointer-events-none absolute inset-3 rounded-2xl border border-[#D8C29D]/50" />
-          <div className="relative max-w-[68%] px-6 py-8">
-            <h1 className="font-serif text-[2.35rem] font-bold leading-[1.05] text-[#F5E7D0] drop-shadow-sm">
-              Buscar
-              <br />
-              trabajo
-            </h1>
-            <p className="mt-2.5 font-serif text-lg text-[#F5E7D0]/90">sea una</p>
-            <p className="font-serif text-[1.85rem] font-semibold italic leading-tight text-[#F5E7D0]">
-              bendición
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/45 to-navy-950/10" />
+          <div className="relative px-6 py-8">
+            <h1 className="text-2xl font-extrabold leading-snug drop-shadow-sm">¡Aquí sí hay chamba!</h1>
+            <p className="mt-1.5 text-sm leading-relaxed text-white/85 drop-shadow-sm">
+              El trabajo correcto no siempre llega rápido, pero llega a quien insiste.
             </p>
-            <p className="mt-1 font-serif text-lg text-[#F5E7D0]/90">no una</p>
-            <p className="font-serif text-[1.85rem] font-semibold italic leading-tight text-[#F5E7D0]">
-              tragedia
-            </p>
-            <Button href="/buscar-personal" variant="secondary" className="mt-6">
+            <Button href="/buscar-personal" variant="secondary" fullWidth className="mt-5">
               <Users className="h-4 w-4" /> Buscar personal
             </Button>
           </div>
