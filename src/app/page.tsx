@@ -5,7 +5,7 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { CATEGORY_ICON_MAP } from "@/components/brand/CategoryIcon";
-import { PopocatepetlScene } from "@/components/brand/scenery/PopocatepetlScene";
+import { HeroImage } from "@/components/brand/HeroImage";
 import { LABOR_CATEGORIES, JOB_TYPES, CATEGORY_EMOJI } from "@/lib/constants";
 import { findJobPostingsFeaturedFirst, isFeatured } from "@/lib/job-postings";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
@@ -40,8 +40,12 @@ export default async function Home({
 
         {/* Hero */}
         <section className="animate-fade-in-up relative overflow-hidden rounded-3xl text-white shadow-lg shadow-navy-900/20">
-          <PopocatepetlScene className="absolute inset-0 h-full w-full" />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy-950/85 via-navy-950/45 to-navy-950/10" />
+          <HeroImage
+            src="/assets/images/hero-worker.jpg"
+            alt="Trabajador sonriendo con los brazos cruzados"
+            className="absolute inset-0 h-full w-full object-[center_30%]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-950/90 via-navy-950/55 to-navy-950/15" />
           <div className="relative px-6 py-8">
             <h1 className="font-serif text-3xl font-bold leading-snug drop-shadow-sm">¡Aquí sí hay chamba!</h1>
             <p className="mt-1.5 text-sm leading-relaxed text-white/85 drop-shadow-sm">
