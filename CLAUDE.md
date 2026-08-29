@@ -87,13 +87,13 @@ para cada plan, "✅ Creado" o "⚠️ Falta crear".
 | Plan Profesional (Cotizaciones) | $120 MXN/mes | Empresas/profesionales que ofrecen servicios en Cotizaciones (mejor posición en la bandeja de solicitudes) | `professionalPricePesos` | `paypalProfessionalPlanId` |
 | Plan Empleador | $250 MXN/mes | Empresas que publican vacantes (sin límite de vacantes activas simultáneas) | `employerPlanPricePesos` | `paypalEmployerPlanId` |
 
-⚠️ **Pendiente de confirmar con el dueño**: en algún momento reportó haber
-puesto $1500 en el campo de Plan Profesional también (pensando en usar "un
-mismo plan para los dos lados"), lo cual no es como está diseñado el
-sistema — son y deben seguir siendo 3 planes separados, cada uno con su
-propio precio. Si ese campo todavía dice $1500 en `/admin/configuracion`,
-hay que volver a poner `120` y guardar. Actualizar esta tabla en cuanto se
-confirme el estado real.
+✅ **Confirmado por el dueño**: Premium trabajador se queda en $1500 (el
+$1500 que mencionó en un momento era de otra app, no un pedido de bajarlo
+acá) — Plan Profesional confirmado en $120. Hubo un intento de poner
+"todo a $120" (incluyendo Premium) que se implementó y se revirtió en la
+misma sesión, antes de llegar a producción — no quedó nada de eso en el
+código ni en la base. Igual sigue sin poder confirmarse desde acá si cada
+plan ya existe en PayPal (ver arriba, solo se ve en `/admin/configuracion`).
 
 ## Bugs conocidos
 
@@ -104,6 +104,18 @@ confirme el estado real.
 | Crash `toLocaleDateString` en `/vacantes/[id]` (Date llegaba como string tras cache hit) | ✅ Resuelto (`470eb71`) |
 | `/cotizaciones` servía redirect cacheado a cualquiera (bug de caché estático) | ✅ Resuelto (`53bba64`, en el commit de fase 1 del rediseño) |
 | Neon: "Can't reach database server" intermitente | ⚠️ Mitigado dos veces (`0d20ad8`, `b5e729b`) — reapareció una vez después del primer intento. Vigilar si vuelve a pasar después de `connection_limit=5`; si sigue, el próximo paso es revisar el límite de conexiones del plan de Neon en su propio dashboard (sin acceso a eso desde acá). |
+| Cotizaciones: el perfil público (`/empresas/[id]`) no mostraba nada del perfil de servicios (ni categoría, ni descripción, ni fotos, ni calificación, ni teléfono) aunque el profesional ya lo hubiera completado — de ahí que "no se viera bien ninguno de los dos lados" | ✅ Resuelto (`dbc2b27`) — agrega la sección "Cotizaciones" completa a esa pantalla, más años de experiencia y PDF de portafolio como campos nuevos |
+
+## Cotizaciones — decisión de producto pendiente (no resuelta, a propósito)
+
+"Ofrecer mis servicios" (`/empresa/servicios`) sigue requiriendo una
+cuenta **COMPANY** (creada vía `/registro/empresa`) — una cuenta WORKER
+que hoy quiera ofrecerse como "electricista independiente" o "abogado"
+no puede acceder, la redirige a `/perfil`. Si el perfil de servicios va a
+seguir siendo exclusivo de cuentas de empresa, o si hace falta que
+cualquier cuenta (incluida WORKER) pueda abrir uno, es una decisión de
+producto que el dueño tiene que tomar — no se cambió sin confirmar,
+porque toca el control de acceso por rol en varias pantallas.
 
 ## Pausado a pedido explícito del dueño del producto
 
@@ -113,6 +125,17 @@ No tocar esto hasta que él mismo diga que se retoma:
   tri-estado, flujo dedicado "Voy al trabajo", confirmación de llegada +
   escalamiento, líneas 089/800 5533 000, expediente de seguridad.
 - `apple-touch-icon`.
+
+## Pendiente: referencia visual de "otra página"
+
+El dueño mencionó haber mandado una referencia visual de otra página que
+quería imitar en estilo, y que el resultado actual no se le parece. En el
+historial de la conversación no hay ninguna imagen que sea eso — lo que sí
+se mandó fueron capturas de esta misma app (mockups de sus propias
+pantallas) y un HTML/Tailwind genérico con un placeholder de imagen roto,
+usados como referencia de estilo puntual (ver fase 1 del rediseño). Si
+existe esa referencia de una página distinta, hay que pedirle que la
+vuelva a mandar en el chat.
 
 ## Rediseño visual (brief de 19 secciones, ver commits `53bba64`/`d227181`)
 
