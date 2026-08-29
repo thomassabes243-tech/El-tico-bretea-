@@ -39,10 +39,22 @@ export async function POST(request: Request) {
         expiresAt: new Date(Date.now() + PASSWORD_RESET_CODE_TTL_MS),
       },
     });
-    const sent = await sendPasswordResetEmail(email, code);
-    if (!sent) {
+    try {
+      const sent = await sendPasswordResetEmail(email, code);
+      if (!sent) {
+        return NextResponse.json(
+          { error: "El envío de correos no está configurado todavía. Avisale al administrador del sitio." },
+          { status: 503 }
+        );
+      }
+    } catch (err) {
+      // Típicamente Resend rechazando el envío -- ej. sin un dominio propio
+      // verificado, solo deja mandar a la casilla dueña del API key, no a
+      // cualquier usuario real. Se muestra el motivo tal cual para que se
+      // pueda diagnosticar rápido, en vez de un 500 genérico sin contexto.
+      const message = err instanceof Error ? err.message : "Error desconocido";
       return NextResponse.json(
-        { error: "El envío de correos no está configurado todavía. Avisale al administrador del sitio." },
+        { error: `No se pudo enviar el correo: ${message}` },
         { status: 503 }
       );
     }
