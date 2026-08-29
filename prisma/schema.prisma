@@ -325,6 +325,14 @@ model ServiceRequest {
   latitude  Float?
   longitude Float?
 
+  // Solo para mode=PROYECTO. budgetLabel es texto libre (igual que
+  // JobPosting.salary) porque un presupuesto de proyecto varía demasiado
+  // para forzarlo a un número. contactPhone nunca se expone en el listado
+  // de solicitudes abiertas -- solo a quien ya envió una cotización (ver
+  // /servicios/mis-cotizaciones), tal como pidió el usuario.
+  budgetLabel  String?
+  contactPhone String?
+
   status    ServiceRequestStatus @default(ABIERTA)
   createdAt DateTime             @default(now())
   closedAt  DateTime?

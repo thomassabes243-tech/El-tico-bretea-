@@ -88,6 +88,10 @@ export const SERVICE_CATEGORIES = [
 
 export const CONTACT_EMAIL = "contacto@mexicosinhambre.com";
 
+// Cotizaciones: tope de cotizaciones formales para el modo "proyecto
+// grande" -- el modo "urgente" no tiene límite.
+export const PROJECT_MAX_QUOTES = 4;
+
 // Monetización: "Destacar oferta" (Etapa 2) -- pago único de la empresa vía
 // PayPal para aparecer primero en los listados por FEATURED_DAYS días.
 export const FEATURED_PRICE_USD = 2;

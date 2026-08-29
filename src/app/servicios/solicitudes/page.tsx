@@ -6,9 +6,9 @@ import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { ReportButton } from "@/components/forms/ReportButton";
-import { SERVICE_CATEGORIES } from "@/lib/constants";
+import { SERVICE_CATEGORIES, PROJECT_MAX_QUOTES } from "@/lib/constants";
 import { distanceKm } from "@/lib/geo";
-import { MapPin, Inbox, ChevronRight } from "lucide-react";
+import { MapPin, Inbox, ChevronRight, ClipboardList } from "lucide-react";
 
 export default async function SolicitudesDisponiblesPage() {
   const session = await auth();
@@ -19,22 +19,33 @@ export default async function SolicitudesDisponiblesPage() {
   if (!company) redirect("/registro/empresa");
   if (!company.offersServices) redirect("/empresa/servicios");
 
-  const requests = await prisma.serviceRequest.findMany({
+  const openRequests = await prisma.serviceRequest.findMany({
     where: {
       status: "ABIERTA",
       category: { in: company.serviceCategories },
       quotes: { none: { companyId: company.id } },
     },
     orderBy: { createdAt: "desc" },
-    include: { requester: { select: { id: true } } },
-    take: 30,
+    include: { requester: { select: { id: true } }, _count: { select: { quotes: true } } },
+    take: 40,
   });
+  // Un proyecto que ya llegó al tope de cotizaciones no acepta más -- no
+  // tiene sentido mostrarlo en la bandeja aunque siga técnicamente "abierta"
+  // hasta que el cliente elija a alguien.
+  const requests = openRequests.filter(
+    (r) => r.mode !== "PROYECTO" || r._count.quotes < PROJECT_MAX_QUOTES
+  );
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <TopBar />
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
-        <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Solicitudes para vos</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Solicitudes para vos</h1>
+          <Link href="/servicios/mis-cotizaciones" className="text-xs font-semibold text-mx-red-600">
+            Mis cotizaciones
+          </Link>
+        </div>
         <p className="mt-1 text-sm text-navy-800/60">
           Según los servicios que ofrecés. Respondé con tu precio y disponibilidad.
         </p>
@@ -64,7 +75,14 @@ export default async function SolicitudesDisponiblesPage() {
                     <div className="flex items-start gap-2.5">
                       <span className="text-xl">{cat?.emoji}</span>
                       <div>
-                        <p className="text-sm font-bold text-navy-900">{cat?.label}</p>
+                        <p className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
+                          {cat?.label}
+                          {r.mode === "PROYECTO" && (
+                            <span className="flex items-center gap-1 rounded-full bg-peso-100 px-2 py-0.5 text-[10px] font-bold text-peso-700">
+                              <ClipboardList className="h-2.5 w-2.5" /> Proyecto
+                            </span>
+                          )}
+                        </p>
                         <p className="mt-0.5 line-clamp-2 text-xs text-navy-800/60">{r.description}</p>
                       </div>
                     </div>
@@ -76,6 +94,16 @@ export default async function SolicitudesDisponiblesPage() {
                     </span>
                     {km != null && (
                       <span className="rounded-full bg-sand-100 px-2 py-0.5">📍 {km.toFixed(1)} km</span>
+                    )}
+                    {r.budgetLabel && (
+                      <span className="rounded-full bg-mx-red-100 px-2 py-0.5 text-mx-red-700">
+                        💰 {r.budgetLabel}
+                      </span>
+                    )}
+                    {r.mode === "PROYECTO" && (
+                      <span className="rounded-full bg-sand-100 px-2 py-0.5">
+                        {r._count.quotes}/{PROJECT_MAX_QUOTES} cotizaciones
+                      </span>
                     )}
                   </div>
                 </Link>

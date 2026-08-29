@@ -288,13 +288,21 @@ export const serviceLocationSchema = z.object({
 
 export type ServiceLocationInput = z.infer<typeof serviceLocationSchema>;
 
-export const serviceRequestSchema = z.object({
-  category: z.enum(serviceCategoryValues),
-  description: z.string().trim().min(10, "Contanos un poco más qué necesitás").max(600),
-  locationLabel: z.string().trim().min(2, "Ingresá tu ubicación o zona").max(120),
-  latitude: z.number().min(-90).max(90).optional(),
-  longitude: z.number().min(-180).max(180).optional(),
-});
+export const serviceRequestSchema = z
+  .object({
+    category: z.enum(serviceCategoryValues),
+    mode: z.enum(["URGENTE", "PROYECTO"]).default("URGENTE"),
+    description: z.string().trim().min(10, "Contanos un poco más qué necesitás").max(600),
+    locationLabel: z.string().trim().min(2, "Ingresá tu ubicación o zona").max(120),
+    latitude: z.number().min(-90).max(90).optional(),
+    longitude: z.number().min(-180).max(180).optional(),
+    budgetLabel: z.string().trim().max(60).optional().or(z.literal("")),
+    contactPhone: z.string().trim().max(20).optional().or(z.literal("")),
+  })
+  .refine((data) => data.mode !== "PROYECTO" || (data.contactPhone && data.contactPhone.length >= 7), {
+    message: "Ingresá un teléfono de contacto para proyectos",
+    path: ["contactPhone"],
+  });
 
 export type ServiceRequestInput = z.infer<typeof serviceRequestSchema>;
 

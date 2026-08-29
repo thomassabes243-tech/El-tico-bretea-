@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { serviceQuoteSchema } from "@/lib/validations";
+import { PROJECT_MAX_QUOTES } from "@/lib/constants";
 
 export async function POST(
   request: Request,
@@ -27,12 +28,21 @@ export async function POST(
     return NextResponse.json({ error: "Activá 'Ofrecer servicios' en tu perfil primero" }, { status: 400 });
   }
 
-  const serviceRequest = await prisma.serviceRequest.findUnique({ where: { id } });
+  const serviceRequest = await prisma.serviceRequest.findUnique({
+    where: { id },
+    include: { _count: { select: { quotes: true } } },
+  });
   if (!serviceRequest || serviceRequest.status !== "ABIERTA") {
     return NextResponse.json({ error: "Esta solicitud ya no está disponible" }, { status: 400 });
   }
   if (!company.serviceCategories.includes(serviceRequest.category)) {
     return NextResponse.json({ error: "Esta solicitud no es de una categoría que ofrecés" }, { status: 400 });
+  }
+  if (serviceRequest.mode === "PROYECTO" && serviceRequest._count.quotes >= PROJECT_MAX_QUOTES) {
+    return NextResponse.json(
+      { error: "Este proyecto ya alcanzó el máximo de cotizaciones" },
+      { status: 400 }
+    );
   }
 
   try {

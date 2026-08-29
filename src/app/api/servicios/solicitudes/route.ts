@@ -22,10 +22,13 @@ export async function POST(request: Request) {
     data: {
       requesterId: session.user.id,
       category: parsed.data.category,
+      mode: parsed.data.mode,
       description: parsed.data.description,
       locationLabel: parsed.data.locationLabel,
       latitude: parsed.data.latitude,
       longitude: parsed.data.longitude,
+      budgetLabel: parsed.data.budgetLabel || null,
+      contactPhone: parsed.data.contactPhone || null,
     },
   });
 

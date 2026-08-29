@@ -6,9 +6,9 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { AcceptQuoteButton } from "@/components/forms/AcceptQuoteButton";
 import { ReportButton } from "@/components/forms/ReportButton";
-import { SERVICE_CATEGORIES } from "@/lib/constants";
+import { SERVICE_CATEGORIES, PROJECT_MAX_QUOTES } from "@/lib/constants";
 import { distanceKm } from "@/lib/geo";
-import { MapPin, ShieldCheck, Inbox } from "lucide-react";
+import { MapPin, ShieldCheck, Inbox, ClipboardList } from "lucide-react";
 
 const STATUS_LABEL: Record<string, string> = {
   ABIERTA: "Esperando cotizaciones",
@@ -47,16 +47,29 @@ export default async function SolicitudDetallePage({
           <div className="flex items-start gap-3">
             <span className="text-2xl">{cat?.emoji}</span>
             <div className="flex-1">
-              <h1 className="text-lg font-extrabold text-navy-900">{cat?.label}</h1>
+              <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
+                {cat?.label}
+                {serviceRequest.mode === "PROYECTO" && (
+                  <span className="flex items-center gap-1 rounded-full bg-peso-100 px-2 py-0.5 text-[10px] font-bold text-peso-700">
+                    <ClipboardList className="h-2.5 w-2.5" /> Proyecto
+                  </span>
+                )}
+              </h1>
               <p className="text-xs font-semibold text-navy-800/50">
                 {STATUS_LABEL[serviceRequest.status]}
+                {serviceRequest.mode === "PROYECTO" &&
+                  serviceRequest.status === "ABIERTA" &&
+                  ` · ${serviceRequest.quotes.length}/${PROJECT_MAX_QUOTES} cotizaciones`}
               </p>
             </div>
           </div>
           <p className="mt-3 whitespace-pre-line text-sm text-navy-800/75">{serviceRequest.description}</p>
-          <p className="mt-2 flex items-center gap-1 text-xs text-navy-800/50">
-            <MapPin className="h-3.5 w-3.5" /> {serviceRequest.locationLabel}
-          </p>
+          <div className="mt-2 flex flex-wrap gap-2 text-xs text-navy-800/50">
+            <span className="flex items-center gap-1">
+              <MapPin className="h-3.5 w-3.5" /> {serviceRequest.locationLabel}
+            </span>
+            {serviceRequest.budgetLabel && <span>💰 Presupuesto: {serviceRequest.budgetLabel}</span>}
+          </div>
         </Card>
 
         <h2 className="mt-6 text-base font-bold text-navy-900">
