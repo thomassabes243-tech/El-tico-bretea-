@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import { CheckCircle2, Sparkles, ChevronRight } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
@@ -110,6 +111,27 @@ export default async function CvPage() {
             de tu perfil.
           </p>
         </Card>
+
+        {worker.isPremium ? (
+          <Card className="mt-3 flex items-center gap-3 border-peso-600/20 bg-peso-100/40 p-4">
+            <Sparkles className="h-5 w-5 shrink-0 text-peso-600" />
+            <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
+              Tu PDF ya incluye la insignia <strong className="text-peso-600">Premium</strong> junto
+              a tu nombre.
+            </p>
+          </Card>
+        ) : (
+          <Link href="/premium" className="mt-3 block">
+            <Card className="flex items-center gap-3 p-4">
+              <Sparkles className="h-5 w-5 shrink-0 text-peso-600" />
+              <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
+                Con <strong className="text-navy-900">Premium</strong>, tu PDF lleva la insignia
+                Premium junto a tu nombre.
+              </p>
+              <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
+            </Card>
+          </Link>
+        )}
 
         <Card className="mt-4 flex flex-col gap-3 p-4">
           <div>

@@ -2,6 +2,18 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import type { AdItem } from "@/lib/ad-icons";
 
+// Client ID público de Google AdSense — no es un secreto, aparece igual en
+// el código fuente de cualquier sitio con AdSense, por eso va directo acá
+// en vez de en una variable de entorno.
+export const ADSENSE_CLIENT_ID = "ca-pub-6733879285050684";
+
+// ID del bloque de anuncio (ad unit) de AdSense a mostrar entre resultados
+// (ver AdSenseSlot) -- a diferencia del client ID, este si depende de la
+// cuenta y hay que crearlo en el panel de AdSense (Anuncios → Por unidad de
+// anuncio → Anuncio de display). Mientras no esté configurado, AdSenseSlot
+// no renderiza nada, en vez de un espacio de anuncio roto.
+export const ADSENSE_SLOT_ID = process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID || null;
+
 // Sección 10/20: publicidad propia ("house ads"), editable desde
 // /admin/publicidad. Mientras no haya una red publicitaria externa
 // contratada, promocionamos funciones de la propia app. El mismo AdSlot se

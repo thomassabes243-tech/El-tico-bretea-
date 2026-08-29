@@ -3,12 +3,8 @@ import { Plus_Jakarta_Sans, Merriweather } from "next/font/google";
 import Script from "next/script";
 import { Providers } from "@/components/Providers";
 import { getSiteUrl } from "@/lib/site";
+import { ADSENSE_CLIENT_ID } from "@/lib/ads";
 import "./globals.css";
-
-// Client ID público de Google AdSense — no es un secreto, aparece igual en
-// el código fuente de cualquier sitio con AdSense, por eso va directo acá
-// en vez de en una variable de entorno.
-const ADSENSE_CLIENT_ID = "ca-pub-6733879285050684";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",

@@ -29,6 +29,17 @@ const styles = StyleSheet.create({
   },
   text: { fontSize: 10, color: "#1f2937", lineHeight: 1.5 },
   referenceRow: { fontSize: 10, marginBottom: 2 },
+  premiumBadge: {
+    alignSelf: "flex-start",
+    marginTop: 6,
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+    backgroundColor: "#f1e8f9",
+    color: "#4a2472",
+    fontSize: 8,
+    fontWeight: 700,
+  },
   footer: { position: "absolute", bottom: 24, left: 40, right: 40, fontSize: 8, color: "#9ca3af", textAlign: "center" },
   attachmentTitle: { fontSize: 12, fontWeight: 700, color: NAVY, marginBottom: 10 },
   attachmentImage: { maxWidth: "100%", maxHeight: 700, objectFit: "contain" },
@@ -58,6 +69,7 @@ function CvDocument({
           <Text style={styles.meta}>
             {worker.residence} · {worker.yearsExperience} años de experiencia
           </Text>
+          {worker.isPremium && <Text style={styles.premiumBadge}>✦ PERFIL PREMIUM</Text>}
         </View>
 
         {(worker.workExperience || worker.companiesWorkedAt || worker.previousPositions) && (

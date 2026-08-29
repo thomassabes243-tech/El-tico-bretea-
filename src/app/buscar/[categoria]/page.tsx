@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, Inbox, MapPin, Users, ChevronRight, ShieldCheck, Sparkles } from "lucide-react";
@@ -10,6 +11,7 @@ import { findJobPostingsFeaturedFirst, isFeatured } from "@/lib/job-postings";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { SalarySemaforo } from "@/components/vacantes/SalarySemaforo";
 import { AdSlot } from "@/components/ads/AdSlot";
+import { AdSenseSlot } from "@/components/ads/AdSenseSlot";
 import type { LaborCategory } from "@prisma/client";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
@@ -54,49 +56,52 @@ export default async function BuscarCategoriaPage({
               <p className="text-xs text-navy-800/50">Volvé pronto.</p>
             </Card>
           )}
-          {jobPostings.map((job) => (
-            <Link key={job.id} href={`/vacantes/${job.id}`}>
-              <Card className="p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
-                      {job.title}
-                      {isFeatured(job.featuredUntil) && (
-                        <span className="inline-flex items-center gap-0.5 rounded-full bg-peso-100 px-1.5 py-0.5 text-[10px] font-bold text-peso-700">
-                          <Sparkles className="h-2.5 w-2.5" /> Destacada
-                        </span>
-                      )}
-                    </p>
-                    <p className="flex items-center gap-1 text-xs text-navy-800/50">
-                      {job.company.commercialName}
-                      {job.company.isVerified && (
-                        <ShieldCheck className="h-3 w-3 shrink-0 text-success-600" aria-label="Empresa verificada" />
-                      )}
-                    </p>
+          {jobPostings.map((job, index) => (
+            <Fragment key={job.id}>
+              {index === 3 && jobPostings.length > 4 && <AdSenseSlot eligible={adEligible} />}
+              <Link href={`/vacantes/${job.id}`}>
+                <Card className="p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
+                        {job.title}
+                        {isFeatured(job.featuredUntil) && (
+                          <span className="inline-flex items-center gap-0.5 rounded-full bg-peso-100 px-1.5 py-0.5 text-[10px] font-bold text-peso-700">
+                            <Sparkles className="h-2.5 w-2.5" /> Destacada
+                          </span>
+                        )}
+                      </p>
+                      <p className="flex items-center gap-1 text-xs text-navy-800/50">
+                        {job.company.commercialName}
+                        {job.company.isVerified && (
+                          <ShieldCheck className="h-3 w-3 shrink-0 text-success-600" aria-label="Empresa verificada" />
+                        )}
+                      </p>
+                    </div>
+                    <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
                   </div>
-                  <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
-                </div>
-                <div className="mt-2.5 flex flex-wrap gap-2 text-[11px] font-medium text-navy-800/60">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
-                    <MapPin className="h-3 w-3" /> {job.location}
-                  </span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
-                    {labelFor(JOB_TYPES, job.contractType)}
-                  </span>
-                  {job.quantity && (
+                  <div className="mt-2.5 flex flex-wrap gap-2 text-[11px] font-medium text-navy-800/60">
                     <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
-                      <Users className="h-3 w-3" /> {job.quantity}
+                      <MapPin className="h-3 w-3" /> {job.location}
                     </span>
-                  )}
-                  {job.salary && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-mx-red-100 px-2 py-0.5 text-mx-red-700">
-                      {job.salary}
-                      <SalarySemaforo category={job.laborCategory} salaryText={job.salary} compact />
+                    <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
+                      {labelFor(JOB_TYPES, job.contractType)}
                     </span>
-                  )}
-                </div>
-              </Card>
-            </Link>
+                    {job.quantity && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
+                        <Users className="h-3 w-3" /> {job.quantity}
+                      </span>
+                    )}
+                    {job.salary && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-mx-red-100 px-2 py-0.5 text-mx-red-700">
+                        {job.salary}
+                        <SalarySemaforo category={job.laborCategory} salaryText={job.salary} compact />
+                      </span>
+                    )}
+                  </div>
+                </Card>
+              </Link>
+            </Fragment>
           ))}
         </div>
 
