@@ -352,6 +352,23 @@ export default async function PerfilPage() {
             )}
           </Card>
 
+          <Link href="/empresa/servicios" className="mt-4 block">
+            <Card className="flex items-center gap-3.5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-mx-red-600/[0.09] text-mx-red-600">
+                <Sparkles className="h-5 w-5" strokeWidth={2.1} />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-navy-900">Cotizaciones</p>
+                <p className="text-xs text-navy-800/50">
+                  {company.offersServices
+                    ? "Ya ofrecés servicios puntuales — editar"
+                    : "Ofrecé servicios puntuales a clientes (electricista, plomero, etc.)"}
+                </p>
+              </div>
+              <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
+            </Card>
+          </Link>
+
           <Card className="mt-4 p-5">
             <h2 className="text-sm font-bold text-navy-900">Buscar personal</h2>
             <p className="mt-1 text-xs text-navy-800/50">

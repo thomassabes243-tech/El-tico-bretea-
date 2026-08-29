@@ -62,6 +62,30 @@ export const AVAILABILITY_OPTIONS = [
   { value: "SIN_ESPECIFICAR", label: "Sin especificar" },
 ] as const;
 
+// Cotizaciones: categorías de servicio puntual, independientes de
+// LABOR_CATEGORIES (esas son de la bolsa de empleo, estas de servicios).
+export const SERVICE_CATEGORIES = [
+  { value: "ELECTRICISTAS", label: "Electricistas", emoji: "⚡" },
+  { value: "PLOMEROS", label: "Plomeros", emoji: "🔧" },
+  { value: "ALBANILES", label: "Albañiles", emoji: "🧱" },
+  { value: "PINTORES", label: "Pintores", emoji: "🎨" },
+  { value: "JARDINEROS", label: "Jardineros", emoji: "🌳" },
+  { value: "LIMPIEZA", label: "Limpieza", emoji: "🧹" },
+  { value: "AIRE_ACONDICIONADO", label: "Aire acondicionado", emoji: "❄️" },
+  { value: "MECANICOS", label: "Mecánicos", emoji: "🚗" },
+  { value: "CARPINTEROS", label: "Carpinteros", emoji: "🪚" },
+  { value: "TECNICOS_CELULARES", label: "Técnicos de celulares", emoji: "📱" },
+  { value: "TECNICOS_COMPUTADORAS", label: "Técnicos de computadoras", emoji: "💻" },
+  { value: "MUDANZAS", label: "Mudanzas", emoji: "🚚" },
+  { value: "REPARACIONES", label: "Reparaciones", emoji: "👨‍🔧" },
+  { value: "BELLEZA", label: "Belleza", emoji: "💇" },
+  { value: "CUIDADO_MASCOTAS", label: "Cuidado de mascotas", emoji: "🐕" },
+  { value: "CUIDADO_NINOS", label: "Cuidado de niños", emoji: "👶" },
+  { value: "CLASES", label: "Clases", emoji: "📚" },
+  { value: "FOTOGRAFIA", label: "Fotografía", emoji: "📸" },
+  { value: "EVENTOS", label: "Eventos", emoji: "🎉" },
+] as const;
+
 export const CONTACT_EMAIL = "contacto@mexicosinhambre.com";
 
 // Monetización: "Destacar oferta" (Etapa 2) -- pago único de la empresa vía

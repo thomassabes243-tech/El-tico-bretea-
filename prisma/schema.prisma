@@ -223,10 +223,69 @@ model CompanyProfile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  savedWorkers SavedWorker[]
-  jobPostings  JobPosting[]
+  // Cotizaciones (Sección "servicios puntuales"): reusa este mismo perfil y
+  // verificación de empleador -- no es una cuenta ni un tipo de usuario
+  // distinto. offersServices activa el modo; los campos de más abajo solo
+  // importan si está en true. serviceLatitude/Longitude se capturan una
+  // sola vez con el mismo GPS del navegador que ya usan las funciones de
+  // seguridad, para poder calcular distancia real más adelante sin
+  // depender de ningún servicio de mapas pago.
+  offersServices     Boolean            @default(false)
+  serviceCategories  ServiceCategory[]
+  serviceZoneLabel   String?
+  serviceDescription String?
+  serviceLatitude    Float?
+  serviceLongitude   Float?
+
+  savedWorkers    SavedWorker[]
+  jobPostings     JobPosting[]
+  portfolioPhotos PortfolioPhoto[]
 
   @@map("company_profiles")
+}
+
+// ---------------------------------------------------------------------------
+// Cotizaciones: categorías de servicio puntual, independientes de las
+// categorías laborales de la bolsa de empleo (LaborCategory) -- no se
+// mezclan, son dos mercados distintos (relación de servicio vs. de empleo).
+// ---------------------------------------------------------------------------
+
+enum ServiceCategory {
+  ELECTRICISTAS
+  PLOMEROS
+  ALBANILES
+  PINTORES
+  JARDINEROS
+  LIMPIEZA
+  AIRE_ACONDICIONADO
+  MECANICOS
+  CARPINTEROS
+  TECNICOS_CELULARES
+  TECNICOS_COMPUTADORAS
+  MUDANZAS
+  REPARACIONES
+  BELLEZA
+  CUIDADO_MASCOTAS
+  CUIDADO_NINOS
+  CLASES
+  FOTOGRAFIA
+  EVENTOS
+}
+
+// Fotos de trabajos realizados, para el perfil de profesional/empresa
+// contratista. Varias por perfil (a diferencia del logo, que es una sola) --
+// por eso es su propia tabla y no un campo más en CompanyProfile.
+model PortfolioPhoto {
+  id         String         @id @default(cuid())
+  companyId  String
+  company    CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  storageKey String
+  mimeType   String
+  sizeBytes  Int
+  createdAt  DateTime       @default(now())
+
+  @@index([companyId])
+  @@map("portfolio_photos")
 }
 
 model SavedWorker {

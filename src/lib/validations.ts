@@ -14,6 +14,28 @@ const laborCategoryValues = [
   "SIN_ESPECIFICAR",
 ] as const;
 
+const serviceCategoryValues = [
+  "ELECTRICISTAS",
+  "PLOMEROS",
+  "ALBANILES",
+  "PINTORES",
+  "JARDINEROS",
+  "LIMPIEZA",
+  "AIRE_ACONDICIONADO",
+  "MECANICOS",
+  "CARPINTEROS",
+  "TECNICOS_CELULARES",
+  "TECNICOS_COMPUTADORAS",
+  "MUDANZAS",
+  "REPARACIONES",
+  "BELLEZA",
+  "CUIDADO_MASCOTAS",
+  "CUIDADO_NINOS",
+  "CLASES",
+  "FOTOGRAFIA",
+  "EVENTOS",
+] as const;
+
 const jobTypeValues = [
   "TIEMPO_COMPLETO",
   "MEDIO_TIEMPO",
@@ -242,3 +264,26 @@ export const scamAlertFlagSchema = z.object({
 });
 
 export type ScamAlertFlagInput = z.infer<typeof scamAlertFlagSchema>;
+
+// Cotizaciones: perfil de servicios de la empresa (opcional, sobre el mismo
+// CompanyProfile -- ver Sección "Cotizaciones" del schema).
+export const serviceProfileSchema = z
+  .object({
+    offersServices: z.boolean(),
+    serviceCategories: z.array(z.enum(serviceCategoryValues)).max(serviceCategoryValues.length),
+    serviceZoneLabel: z.string().trim().max(120).optional().or(z.literal("")),
+    serviceDescription: z.string().trim().max(600).optional().or(z.literal("")),
+  })
+  .refine((data) => !data.offersServices || data.serviceCategories.length > 0, {
+    message: "Elegí al menos un servicio",
+    path: ["serviceCategories"],
+  });
+
+export type ServiceProfileInput = z.infer<typeof serviceProfileSchema>;
+
+export const serviceLocationSchema = z.object({
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+});
+
+export type ServiceLocationInput = z.infer<typeof serviceLocationSchema>;

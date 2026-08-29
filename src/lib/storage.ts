@@ -218,6 +218,31 @@ export async function deleteProfilePhoto(kind: "worker" | "company", ownerId: st
   await deleteObject(profilePhotoKey(kind, ownerId));
 }
 
+// Fotos de portafolio (Cotizaciones): públicas y de largo plazo, pero a
+// diferencia del logo/foto de perfil, varias por dueño -- clave con UUID
+// random en vez de una clave estable por perfil.
+const PORTFOLIO_PHOTO_QUALITY = 78;
+
+export async function savePortfolioPhoto(buffer: Buffer) {
+  const compressed = await sharp(buffer)
+    .rotate()
+    .resize({ width: MAX_DIMENSION, height: MAX_DIMENSION, fit: "inside", withoutEnlargement: true })
+    .jpeg({ quality: PORTFOLIO_PHOTO_QUALITY, mozjpeg: true })
+    .toBuffer({ resolveWithObject: true });
+
+  const key = `portfolio-${randomUUID()}.jpg`;
+  await writeObject(key, compressed.data, "image/jpeg");
+  return { key, mimeType: "image/jpeg", sizeBytes: compressed.data.byteLength };
+}
+
+export async function readPortfolioPhoto(key: string) {
+  return readObject(key);
+}
+
+export async function deletePortfolioPhoto(key: string) {
+  await deleteObject(key);
+}
+
 /**
  * Borra del almacenamiento y de la base de datos los archivos de chat
  * vencidos. Se llama de forma perezosa desde las rutas de chat, y también
