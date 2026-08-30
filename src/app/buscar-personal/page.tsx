@@ -5,6 +5,7 @@ import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
+import { PremiumBadge } from "@/components/brand/PremiumBadge";
 import { Button } from "@/components/ui/Button";
 import { LABOR_CATEGORIES } from "@/lib/constants";
 import { MapPin, Briefcase, Lock } from "lucide-react";
@@ -82,11 +83,19 @@ export default async function BuscarPersonalPage({
                 </Card>
               )}
               {workers.map((w) => (
-                <Card key={w.id} className="flex items-center gap-3.5 p-4">
+                <Card
+                  key={w.id}
+                  className={
+                    w.isPremium
+                      ? "flex items-center gap-3.5 border-peso-600/25 bg-peso-100/25 p-4"
+                      : "flex items-center gap-3.5 p-4"
+                  }
+                >
                   <CategoryIcon category={w.laborCategory} size="md" />
                   <div className="min-w-0 flex-1">
                     <p className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
                       <span className="truncate">{w.fullName}</span>
+                      {w.isPremium && <PremiumBadge />}
                     </p>
                     <p className="truncate text-xs text-navy-800/60">{w.profession}</p>
                     <div className="mt-1 flex items-center gap-3 text-[11px] text-navy-800/50">

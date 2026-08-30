@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { AvatarImage } from "@/components/brand/AvatarImage";
 import { ReportButton } from "@/components/forms/ReportButton";
+import { PremiumBadge } from "@/components/brand/PremiumBadge";
 import { SERVICE_CATEGORIES } from "@/lib/constants";
 import { getServiceRatings } from "@/lib/service-ratings";
 import { ShieldCheck, MapPin, ChevronRight, Wrench, Star, Phone, FileText, Briefcase } from "lucide-react";
@@ -62,6 +63,9 @@ export default async function EmpresaPublicPage({
               <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
                 {company.commercialName}
                 {company.isVerified && <ShieldCheck className="h-4 w-4 text-success-600" />}
+                {company.offersServices && company.professionalPlanActive && (
+                  <PremiumBadge label="Destacado" />
+                )}
               </h1>
               <p className="text-sm text-navy-800/60">{company.activity}</p>
             </div>

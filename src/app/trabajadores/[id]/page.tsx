@@ -8,6 +8,7 @@ import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { AvatarImage } from "@/components/brand/AvatarImage";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { SaveWorkerButton } from "@/components/forms/SaveWorkerButton";
+import { PremiumBadge } from "@/components/brand/PremiumBadge";
 import { toWhatsappHref } from "@/lib/whatsapp";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { MapPin, Briefcase, GraduationCap, Sparkles, Phone, Mail, Lock, History } from "lucide-react";
@@ -56,6 +57,7 @@ export default async function PublicWorkerProfilePage({
               <div>
                 <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
                   {worker.fullName}
+                  {worker.isPremium && <PremiumBadge />}
                 </h1>
                 <p className="text-sm text-navy-800/60">{worker.profession}</p>
               </div>

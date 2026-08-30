@@ -6,6 +6,7 @@ import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
+import { PremiumBadge } from "@/components/brand/PremiumBadge";
 import { recommendWorkersForJob } from "@/lib/recommendations";
 import { JobPostingStatusToggle } from "@/components/forms/JobPostingStatusToggle";
 import { ApplicationStatusSelect } from "@/components/forms/ApplicationStatusSelect";
@@ -85,7 +86,10 @@ export default async function AplicantesPage({
             <Card key={app.id} className="p-4">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="text-sm font-bold text-navy-900">{app.worker.fullName}</p>
+                  <p className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
+                    {app.worker.fullName}
+                    {app.worker.isPremium && <PremiumBadge />}
+                  </p>
                   <span className="text-[11px] text-navy-800/45">
                     {app.createdAt.toLocaleDateString("es-MX")}
                   </span>
@@ -125,7 +129,8 @@ export default async function AplicantesPage({
                     <CategoryIcon category={w.laborCategory} size="sm" />
                     <div className="min-w-0 flex-1">
                       <p className="flex items-center gap-1.5 truncate text-sm font-semibold text-navy-900">
-                        {w.fullName}
+                        <span className="truncate">{w.fullName}</span>
+                        {w.isPremium && <PremiumBadge />}
                       </p>
                       <p className="truncate text-xs text-navy-800/50">
                         {w.profession} · {w.residence}

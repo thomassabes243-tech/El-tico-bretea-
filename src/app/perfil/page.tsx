@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { AvatarImage } from "@/components/brand/AvatarImage";
+import { PremiumBadge } from "@/components/brand/PremiumBadge";
 import { recommendJobsForWorker } from "@/lib/recommendations";
 import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
@@ -57,7 +58,10 @@ export default async function PerfilPage() {
                   }
                 />
                 <div>
-                  <h1 className="text-lg font-extrabold text-navy-900">{worker.fullName}</h1>
+                  <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
+                    {worker.fullName}
+                    {worker.isPremium && <PremiumBadge />}
+                  </h1>
                   <p className="text-sm text-navy-800/60">{worker.profession}</p>
                 </div>
               </div>
@@ -126,19 +130,31 @@ export default async function PerfilPage() {
           </Link>
 
           <Link href="/premium" className="mt-3 block">
-            <Card className="flex items-center gap-3 p-4">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-mx-red-600/[0.09] text-mx-red-600">
+            <Card
+              className={
+                worker.isPremium
+                  ? "flex items-center gap-3 border-peso-600/25 bg-peso-100/30 p-4"
+                  : "flex items-center gap-3 overflow-hidden border-peso-600/20 bg-gradient-to-r from-peso-700 to-peso-600 p-4 text-white"
+              }
+            >
+              <div
+                className={
+                  worker.isPremium
+                    ? "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-peso-600/15 text-peso-600"
+                    : "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white"
+                }
+              >
                 <Sparkles className="h-4.5 w-4.5" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-bold text-navy-900">
+                <p className={worker.isPremium ? "text-sm font-bold text-navy-900" : "text-sm font-bold"}>
                   {worker.isPremium ? "Ya sos Premium" : "El Mexa Chamba Premium"}
                 </p>
-                <p className="text-xs text-navy-800/50">
+                <p className={worker.isPremium ? "text-xs text-navy-800/50" : "text-xs text-white/80"}>
                   {worker.isPremium ? "Gestioná tu suscripción" : "Perfil destacado, sin anuncios y más"}
                 </p>
               </div>
-              <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
+              <ChevronRight className={worker.isPremium ? "h-4.5 w-4.5 text-navy-800/30" : "h-4.5 w-4.5 text-white/70"} />
             </Card>
           </Link>
 
@@ -323,6 +339,9 @@ export default async function PerfilPage() {
                   <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
                     {company.commercialName}
                     {company.isVerified && <ShieldCheck className="h-4 w-4 text-success-600" />}
+                    {company.offersServices && company.professionalPlanActive && (
+                      <PremiumBadge label="Destacado" />
+                    )}
                   </h1>
                   <p className="text-sm text-navy-800/60">{company.activity}</p>
                 </div>
@@ -391,7 +410,9 @@ export default async function PerfilPage() {
                 <p className="text-sm font-bold text-navy-900">Cotizaciones</p>
                 <p className="text-xs text-navy-800/50">
                   {company.offersServices
-                    ? "Ya ofrecés servicios puntuales — editar"
+                    ? company.professionalPlanActive
+                      ? "Ya ofrecés servicios puntuales — editar"
+                      : "Ya ofrecés servicios puntuales — destacate con el Plan Profesional"
                     : "Ofrecé servicios puntuales a clientes (electricista, plomero, etc.)"}
                 </p>
               </div>

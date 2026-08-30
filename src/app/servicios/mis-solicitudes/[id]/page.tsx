@@ -9,6 +9,7 @@ import { RateQuoteForm } from "@/components/forms/RateQuoteForm";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { SERVICE_CATEGORIES, PROJECT_MAX_QUOTES } from "@/lib/constants";
 import { DistanceBadge } from "@/components/servicios/DistanceBadge";
+import { PremiumBadge } from "@/components/brand/PremiumBadge";
 import { getServiceRatings } from "@/lib/service-ratings";
 import { MapPin, ShieldCheck, Inbox, ClipboardList, Star } from "lucide-react";
 
@@ -97,7 +98,10 @@ export default async function SolicitudDetallePage({
             const rating = ratings.get(quote.companyId);
 
             return (
-              <Card key={quote.id} className="p-4">
+              <Card
+                key={quote.id}
+                className={quote.company.professionalPlanActive ? "border-peso-600/25 bg-peso-100/20 p-4" : "p-4"}
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="flex items-center gap-1 text-sm font-bold text-navy-900">
@@ -105,6 +109,7 @@ export default async function SolicitudDetallePage({
                       {quote.company.isVerified && (
                         <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-success-600" aria-label="Empresa verificada" />
                       )}
+                      {quote.company.professionalPlanActive && <PremiumBadge label="Destacado" />}
                     </p>
                     <p className="flex items-center gap-1 text-[11px] text-navy-800/45">
                       {quote.company.isVerified ? "Verificado" : "Verificación pendiente"}

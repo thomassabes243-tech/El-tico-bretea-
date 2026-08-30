@@ -34,7 +34,7 @@ export default async function NuevaVacantePage() {
           <Briefcase className="h-4 w-4 shrink-0 text-navy-800/50" />
           <p className="text-xs text-navy-800/60">
             <strong className="text-navy-900">{activeCount}/{FREE_ACTIVE_JOBS_LIMIT}</strong> vacantes activas del
-            plan gratis.
+            plan gratis. Con el <strong className="text-navy-900">Plan Empleador</strong> (${formatPesos(settings.employerPlanPricePesos)} MXN/mes) no hay límite.
           </p>
         </Card>
       )}

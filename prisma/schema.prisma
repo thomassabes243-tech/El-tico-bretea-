@@ -764,7 +764,11 @@ model ScamAlertFlag {
 // interfaz por ahora, ver PREMIUM_ENABLED en /premium), con precio propio.
 model AppSettings {
   id                    String   @id @default("singleton")
-  premiumPricePesos     Int      @default(1500)
+  // Decisión explícita del dueño: los 3 planes quedan al mismo precio,
+  // $120 MXN/mes (antes Premium estaba en $1500 y Empleador en $250) --
+  // ver migración `plan_precios_unificados_120` para el ajuste del valor
+  // ya guardado en producción.
+  premiumPricePesos     Int      @default(120)
   professionalPricePesos Int     @default(120)
 
   // IDs de los planes de suscripción creados una sola vez contra la API de
@@ -777,7 +781,7 @@ model AppSettings {
   paypalEmployerPlanId     String?
 
   // Plan Empleador (más vacantes activas a la vez) -- ver CompanyProfile.
-  employerPlanPricePesos Int @default(250)
+  employerPlanPricePesos Int @default(120)
 
   updatedAt DateTime @updatedAt
 

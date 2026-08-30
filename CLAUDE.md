@@ -81,19 +81,26 @@ entorno. La única forma confiable de saberlo es abrir
 `/admin/configuracion` logueado como admin — esa pantalla muestra en vivo,
 para cada plan, "✅ Creado" o "⚠️ Falta crear".
 
-| Plan | Precio de diseño (default en el código) | Para quién | Campo de precio | Campo de ID |
+| Plan | Precio (default en el código) | Para quién | Campo de precio | Campo de ID |
 |---|---|---|---|---|
-| Premium trabajador | $1500 MXN/mes | Trabajadores (perfil destacado, insignia en CV, sin anuncios) | `premiumPricePesos` | `paypalPremiumPlanId` |
+| Premium trabajador | $120 MXN/mes | Trabajadores (perfil destacado, insignia, sin anuncios) | `premiumPricePesos` | `paypalPremiumPlanId` |
 | Plan Profesional (Cotizaciones) | $120 MXN/mes | Empresas/profesionales que ofrecen servicios en Cotizaciones (mejor posición en la bandeja de solicitudes) | `professionalPricePesos` | `paypalProfessionalPlanId` |
-| Plan Empleador | $250 MXN/mes | Empresas que publican vacantes (sin límite de vacantes activas simultáneas) | `employerPlanPricePesos` | `paypalEmployerPlanId` |
+| Plan Empleador | $120 MXN/mes | Empresas que publican vacantes (sin límite de vacantes activas simultáneas) | `employerPlanPricePesos` | `paypalEmployerPlanId` |
 
-✅ **Confirmado por el dueño**: Premium trabajador se queda en $1500 (el
-$1500 que mencionó en un momento era de otra app, no un pedido de bajarlo
-acá) — Plan Profesional confirmado en $120. Hubo un intento de poner
-"todo a $120" (incluyendo Premium) que se implementó y se revirtió en la
-misma sesión, antes de llegar a producción — no quedó nada de eso en el
-código ni en la base. Igual sigue sin poder confirmarse desde acá si cada
-plan ya existe en PayPal (ver arriba, solo se ve en `/admin/configuracion`).
+✅ **Confirmado por el dueño (esta vez sí, a propósito, no un error como la
+vez pasada)**: los 3 planes quedan al mismo precio, **$120 MXN/mes**.
+Premium trabajador bajó de $1500 y Plan Empleador bajó de $250; Plan
+Profesional no cambió (ya estaba en $120). Aplicado con la migración de
+datos `20260830060000_plan_precios_unificados_120` (además de bajar los
+`@default` del schema para instalaciones nuevas) — actualiza la fila
+singleton ya existente en producción (que un `@default` de schema no
+toca) y pone en `NULL` los IDs de plan de PayPal de Premium y Empleador
+(Profesional no cambió de precio, su ID se dejó intacto) para que
+`/admin/configuracion` los marque "⚠️ Falta crear". **Pendiente que el
+dueño entre a `/admin/configuracion` y apriete "Crear/actualizar planes de
+PayPal"** una vez que este cambio esté desplegado — esa API llama a PayPal
+con las credenciales reales de producción, que no existen en este entorno,
+así que ese último paso no se pudo hacer desde acá.
 
 ## Bugs conocidos
 
@@ -432,3 +439,69 @@ Nada se reporta como "confirmado" sin probarlo contra la URL real
 (`https://mexico-sin-hambre-el-tico-bretea.vercel.app`, con las
 herramientas de Vercel conectadas) y citar exactamente qué se vio ahí.
 Verificación solo local o en preview no cuenta como confirmado.
+
+## Visibilidad de Premium / "Destacado" en toda la app
+
+Pedido explícito del dueño: que las insignias de Premium (trabajador) y de
+"perfil destacado" (Plan Profesional de Cotizaciones) se vean en más
+lugares de la app, no solo en las pantallas dedicadas (`/premium`,
+`/empresa/servicios`) — la idea es que a alguien se le ocurra pagar
+mientras usa la app normalmente, viendo que otros ya lo hicieron.
+
+`src/components/brand/PremiumBadge.tsx` (nuevo): pill con ícono `Sparkles`
+y fondo degradado `peso-700→peso-500`, con un prop `label` (default
+"Premium", se le pasa "Destacado" para Cotizaciones) — mismo look en toda
+la app para que se reconozca de un vistazo. No decide nada (ni orden ni
+acceso), solo hace visible un estado que ya existía en la base
+(`WorkerProfile.isPremium`, `CompanyProfile.professionalPlanActive`).
+
+Dónde se agregó la insignia junto al nombre:
+- `/perfil` (trabajador viendo su propio perfil) y `/perfil` (empresa/
+  profesional viendo el suyo, junto al ✓ de verificado).
+- `/trabajadores/[id]` (perfil público que ve un empleador).
+- `/buscar-personal` (lista de trabajadores que ve un empleador) — además
+  la tarjeta completa del trabajador Premium queda con un tinte dorado
+  sutil (`border-peso-600/25 bg-peso-100/25`) para que resalte entre las
+  gratis sin gritar.
+- `/vacantes/[id]/aplicantes` (lista de aplicantes de una vacante, y la
+  lista de "Trabajadores recomendados" de la misma pantalla).
+- `/empresas/[id]` (perfil público de la empresa/profesional que ve un
+  cliente de Cotizaciones), con label "Destacado".
+- `/servicios/mis-solicitudes/[id]` (cliente comparando cotizaciones de
+  varios profesionales para la misma solicitud) — mismo tratamiento que
+  `/buscar-personal`: tarjeta con tinte dorado + insignia "Destacado" para
+  el profesional con el Plan Profesional activo.
+
+Además de la insignia, se le dio más peso visual a los propios avisos de
+venta (sin agregar pantallas nuevas):
+- `/perfil` (trabajador): la tarjeta que antes llevaba a `/premium` ahora
+  usa el mismo degradado dorado que la pantalla `/premium` cuando la
+  persona TODAVÍA no es Premium (para que se note más en la lista de
+  tarjetas); si ya es Premium, se queda con un tinte dorado suave en vez
+  del degradado (para no gritar "comprame" a alguien que ya pagó).
+- `/perfil` (empresa/profesional): el texto de la tarjeta "Cotizaciones"
+  ahora menciona el Plan Profesional cuando la persona ya ofrece servicios
+  pero todavía no lo activó.
+- `/empresa/vacantes/nueva`: el contador "X/Y vacantes activas del plan
+  gratis" (que antes no decía nada del Plan Empleador hasta que la persona
+  llegaba al límite y quedaba bloqueada) ahora menciona el precio y "no
+  hay límite" en la misma tarjeta, antes de llegar al límite.
+
+Verificado con Playwright contra un build de producción local: se creó una
+cuenta de trabajador de prueba, se le puso `isPremium = true` directo en
+la base, y se confirmó visualmente la insignia en `/perfil` y en
+`/trabajadores/[id]`, además de las dos variantes (con/sin Premium) de la
+tarjeta de `/perfil`. Cuenta de prueba borrada al terminar.
+
+## Decisión de precios: los 3 planes a $120 MXN/mes (30 ago 2026)
+
+Ver tabla y detalle completo en "Planes de pago" arriba. Resumen para no
+volver a preguntarlo: fue un pedido explícito y a propósito del dueño (a
+diferencia del intento anterior de "todo a $120" que se revirtió en la
+misma sesión sin llegar a producción) — Premium trabajador y Plan
+Empleador bajan a $120, Plan Profesional se queda igual. Aplicado vía
+migración de datos (no alcanza con cambiar el `@default` del schema
+porque la fila de `AppSettings` ya existe en producción). Falta que el
+dueño apriete "Crear/actualizar planes de PayPal" en `/admin/configuracion`
+una vez desplegado esto — ese paso pega contra la cuenta real de PayPal,
+imposible de hacer desde este entorno.
