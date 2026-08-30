@@ -781,3 +781,55 @@ Verificado con Playwright contra un build de producción local tras el
 fix: `/vacantes/seed_ejemplo_job_hoteles-turismo_01` y
 `/empresas/seed_ejemplo_company_hoteles-turismo` ya no muestran ninguna
 descripción de empresa, y siguen sin ningún rastro de Costa Rica.
+
+### CAUSA REAL de fondo: esta base de datos está compartida con la otra rama/producto (30 ago 2026)
+
+El dueño insistió en que seguía viendo contexto de Costa Rica después del
+fix de arriba, y después reportó explícitamente "hiciste intercambio, x
+ejemplo publicaste perfil de costa rica en la app de México y al revés en
+la otra". Investigando el historial de deploys de este mismo proyecto de
+Vercel (`prj_bj8CEpgSaX8oaoCIeYNLlVCZaXr7`) aparecieron deploys de
+`claude/el-tico-bretea-hxg8aq` — que es "El Tico Bretea", el producto de
+Costa Rica, un proyecto DISTINTO a este (ver regla de no tocar/mergear esa
+rama, arriba). Otra sesión de Claude, trabajando en esa rama, había
+cargado 270 vacantes de relleno con ciudades y salarios de Costa Rica
+(colones, símbolo ₡) bajo una única cuenta placeholder (`legalId =
+'DEMO_RELLENO'`, email `publicaciones.ejemplo@eltico.cr`).
+
+Confirmado con evidencia directa, no solo indicios: se hizo fetch de una
+de mis propias vacantes mexicanas (`seed_ejemplo_job_construccion_01`) a
+través de la URL de deploy de la OTRA rama, y se mostró ahí con su propia
+marca ("El Tico Bretea"), `lang="es-CR"` y un símbolo ₡ pegado adelante de
+mi precio en pesos. Es decir: **las dos apps (México y Costa Rica), que
+deberían ser productos completamente independientes, leen y escriben
+sobre la misma base física de Neon** — no es un bug de contenido de
+ninguna de las dos ramas, es que comparten datos a nivel de
+infraestructura. El propio comentario de una migración de esa rama dice
+que la base "se movió a su propia base dedicada" — la evidencia de fetch
+cruzado muestra que eso no es efectivo (al menos no en el momento de esta
+investigación).
+
+**Esto no se resuelve editando código ni datos de un solo lado** — la
+solución real es que alguien con acceso a los dashboards de Vercel/Neon
+cree una base de datos separada para uno de los dos proyectos y actualice
+sus variables `DATABASE_URL`/`DIRECT_URL` (acción fuera del alcance de
+esta sesión, sin acceso a esos dashboards).
+
+**Parche inmediato aplicado, a pedido explícito del dueño** ("Podés
+hacerlo, vos, rápido"): migración
+`prisma/migrations/20260830110000_borrar_relleno_costa_rica_otra_rama/migration.sql`
+— `DELETE FROM "users" WHERE "email" = 'publicaciones.ejemplo@eltico.cr'`,
+que en cascada borra el `company_profile` y las 270 `job_postings` de esa
+cuenta (mismo mecanismo `onDelete: Cascade` ya usado para `legalId =
+'EJEMPLO'`). No toca ninguna de las 300 vacantes de este branch ni ningún
+otro dato. Este parche saca el síntoma de encima pero NO resuelve la
+causa: si en el futuro esa otra rama vuelve a cargar contenido en la base
+compartida, la mezcla reaparece — sigue pendiente la separación real de
+las bases.
+
+Verificado contra producción real tras aplicar: `/buscar/construccion`
+(0 coincidencias de "Ayudante de construcción", el patrón de título que
+usaba la cuenta `DEMO_RELLENO`) y ningún rastro de "San José", "Escazú",
+"₡" ni "Costa Rica" en toda la página — solo quedan las 30 vacantes
+propias de esta rama en esa categoría. `get_runtime_errors` sin errores
+nuevos tras el deploy.
