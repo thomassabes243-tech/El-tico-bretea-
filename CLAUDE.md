@@ -325,6 +325,37 @@ sin función real hubiera violado su propia regla ("si no tiene una
 función clara, eliminalo") — pendiente si en algún momento se quiere
 construir notificaciones de verdad.
 
+### Pasada 3: calcar el estilo visual de un archivo HTML de Stitch (Google)
+
+El dueño mandó un archivo `.html` exportado de Stitch (herramienta de IA de
+Google para mockups de UI) con la MISMA estructura de 8 secciones de la
+pasada 2 (sin foto, sin Comunidad) — pidió "esto tal cual está". Se
+recalcó el estilo visual exacto de ese archivo sobre el código real
+(colores/tamaños ya existentes de la app, sin agregar una paleta nueva —
+el navy/rojo del archivo ya eran casi idénticos a `navy-900`/`mx-red-600`):
+
+- `SmartSearchBar`: buscador más alto (`h-14`), con ícono de lupa y de
+  filtros DENTRO del mismo input (antes eran dos pills separadas debajo).
+  El link "Buscar con IA" quedó como texto chico al lado del hint
+  ("Ej. ayudante, mesero..."), no como pill — sigue funcionando igual.
+- Las 2 tarjetas de acción (`Necesito un servicio` / `Quiero trabajar`)
+  ahora son más altas (`h-40`), con el mismo ícono propio en dos tamaños:
+  chico arriba y gigante desvanecido de fondo (en vez de un ícono chico
+  en un círculo) — título en mayúsculas, flecha abajo a la derecha.
+- Tarjetas de "Chambas para ti" simplificadas: se sacó el ícono de
+  categoría a la izquierda (el archivo de Stitch no lo tenía), la
+  insignia Nueva/Destacada pasó a la esquina superior derecha junto al
+  título. Salario y verificado se mantienen (son datos reales cuando
+  existen, no estaban en el mockup pero tampoco lo contradicen).
+- Tarjeta de Seguridad: cambió de rojo a un tono neutro (fondo
+  `sand-50`, círculo del ícono en navy tenue) con el botón "Configurar
+  protección" en estilo outline (blanco con borde) en vez de sólido rojo
+  — así no compite visualmente con las 2 tarjetas de acción de arriba.
+
+No se tocó la tipografía global (el archivo de Stitch usaba Montserrat +
+Inter; la app usa Plus Jakarta Sans en todo el resto de las pantallas —
+cambiar la fuente global está fuera del alcance de "solo Inicio").
+
 ### IA integrada (3 funciones reales, no solo "poner IA" de adorno)
 
 Las 3 funciones que pidió el dueño explícitamente, todas usando la API de
