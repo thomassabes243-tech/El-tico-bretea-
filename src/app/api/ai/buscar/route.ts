@@ -4,7 +4,7 @@ import { aiSearchToQuery, AiNotConfiguredError } from "@/lib/ai";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 // Requiere sesión (no anónimo) para no dejar que cualquiera sin cuenta
-// consuma el presupuesto de la API de Anthropic -- misma lógica de costo
+// consuma el presupuesto de la API de Gemini -- misma lógica de costo
 // real que las otras funciones de IA de esta ruta.
 export async function POST(request: Request) {
   const session = await auth();

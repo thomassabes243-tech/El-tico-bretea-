@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { PremiumBadge } from "@/components/brand/PremiumBadge";
+import { PremiumCategoryBanner } from "@/components/brand/PremiumCategoryBanner";
 import { Button } from "@/components/ui/Button";
 import { LABOR_CATEGORIES } from "@/lib/constants";
 import { MapPin, Briefcase, Lock } from "lucide-react";
@@ -20,6 +21,20 @@ export default async function BuscarPersonalPage({
   const { categoria, ubicacion } = await searchParams;
 
   const isCompany = session?.user?.role === "COMPANY";
+  const selectedCategory = categoria ? LABOR_CATEGORIES.find((c) => c.value === categoria) : undefined;
+
+  // Premium destacado por categoría: mientras una empresa explora
+  // trabajadores DENTRO de una categoría puntual, se le recuerda que su
+  // propio perfil profesional (Cotizaciones) también puede destacarse --
+  // nunca a quien ya tiene el Plan Profesional activo.
+  let showCompanyPremiumBanner = false;
+  if (isCompany && selectedCategory) {
+    const company = await prisma.companyProfile.findUnique({
+      where: { userId: session!.user.id },
+      select: { offersServices: true, professionalPlanActive: true },
+    });
+    showCompanyPremiumBanner = Boolean(company?.offersServices && !company.professionalPlanActive);
+  }
 
   const workers = isCompany
     ? await prisma.workerProfile.findMany({
@@ -75,6 +90,10 @@ export default async function BuscarPersonalPage({
               />
               <Button type="submit">Filtrar</Button>
             </form>
+
+            {showCompanyPremiumBanner && selectedCategory && (
+              <PremiumCategoryBanner variant="company" categoryLabel={selectedCategory.label} />
+            )}
 
             <div className="mt-5 flex flex-col gap-3">
               {workers.length === 0 && (

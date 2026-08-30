@@ -12,7 +12,7 @@ import Link from "next/link";
 // en palabras clave más efectivas antes de buscar (útil para frases largas
 // tipo "busco trabajo de ayudante de cocina cerca de Guadalajara, tiempo
 // completo"). Si la IA no está configurada en el servidor (falta
-// ANTHROPIC_API_KEY), cae de nuevo a la búsqueda de texto normal en vez de
+// GEMINI_API_KEY), cae de nuevo a la búsqueda de texto normal en vez de
 // dejar al usuario sin nada.
 export function SmartSearchBar() {
   const router = useRouter();

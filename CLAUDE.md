@@ -271,15 +271,23 @@ vuelva a mandar en el chat.
   unit en la cuenta de AdSense primero).
 - Credenciales de PayPal (`NEXT_PUBLIC_PAYPAL_CLIENT_ID`,
   `PAYPAL_CLIENT_SECRET`) — estado no confirmado desde acá.
-- `ANTHROPIC_API_KEY` — las 3 funciones de IA (buscador inteligente en el
-  Home, "Mejorar mi CV con IA", "Analizar esta oferta") están implementadas
-  y funcionando en el código (`src/lib/ai.ts`, `/api/ai/*`), pero sin esta
-  clave devuelven un error claro ("la función de IA no está configurada")
-  en vez de responder. Hay que crear una cuenta en console.anthropic.com,
-  generar una API key ahí y cargarla en Vercel — **tiene costo real por
-  cada uso**, a la cuenta de Anthropic del dueño del producto (no a esta
-  sesión de Claude Code). Mientras tanto, el buscador con IA cae solo a la
-  búsqueda de texto normal (nunca deja a alguien sin resultado).
+- ~~`ANTHROPIC_API_KEY`~~ — ya no hace falta, ver "Cambio de proveedor" en
+  "IA integrada" más abajo: las 3 funciones de IA (buscador inteligente en
+  el Home, "Mejorar mi CV con IA", "Analizar esta oferta") ahora usan
+  Gemini, la misma `GEMINI_API_KEY` de abajo.
+- `GEMINI_API_KEY` — confirmado por el dueño que ya está cargada en Vercel
+  (la usa desde antes "Importar oferta", panel admin). Cubre las 4
+  funciones de IA de la app (esas 3 + Importar oferta) — no hace falta una
+  clave separada. **Tiene costo real por cada uso**, a la cuenta de Google
+  del dueño del producto (no a esta sesión de Claude Code). Sin acceso
+  desde acá a la clave real ni a las variables de entorno de Vercel, así
+  que no se pudo confirmar en este entorno que el nombre esté escrito
+  exactamente así en el panel de Vercel — si el error de "no configurada"
+  sigue apareciendo en producción después de este cambio, lo primero a
+  revisar es que el nombre de la variable en Vercel sea `GEMINI_API_KEY`
+  (no `GOOGLE_API_KEY` ni similar) y que esté tildada para el entorno de
+  Production. Mientras tanto, el buscador con IA cae solo a la búsqueda de
+  texto normal (nunca deja a alguien sin resultado).
 
 ## Rediseño del Home
 
@@ -412,9 +420,8 @@ fotos, ninguna se ve "rota" ni sin foto.
 
 ### IA integrada (3 funciones reales, no solo "poner IA" de adorno)
 
-Las 3 funciones que pidió el dueño explícitamente, todas usando la API de
-Claude (Anthropic) vía `src/lib/ai.ts` (fetch directo, sin SDK nuevo, mismo
-estilo que `paypal.ts`/`email.ts`):
+Las 3 funciones que pidió el dueño explícitamente, vía `src/lib/ai.ts`
+(fetch directo, sin SDK nuevo, mismo estilo que `paypal.ts`/`email.ts`):
 
 1. **Buscador inteligente** (Home) — descripto arriba.
 2. **"Mejorar mi CV con IA"** (`/cv`, `ImproveCvButton`) — sugerencias de
@@ -429,9 +436,46 @@ estilo que `paypal.ts`/`email.ts`):
 Las 3 rutas (`/api/ai/buscar`, `/api/ai/mejorar-cv`, `/api/ai/analizar-oferta`)
 requieren sesión iniciada y tienen rate-limit propio (10-20 usos/hora por
 usuario) para no dejar que el costo de la API se dispare por abuso. Sin
-`ANTHROPIC_API_KEY` configurada, cada una devuelve un 503 con mensaje claro
-en vez de fallar de forma críptica — probado así en este entorno (no hay
-forma de probar una respuesta real de IA desde acá sin esa clave).
+`GEMINI_API_KEY` configurada, cada una devuelve un 503 con mensaje claro en
+vez de fallar de forma críptica.
+
+**Cambio de proveedor (30 ago 2026): de Anthropic a Gemini.** Estas 3
+funciones se construyeron originalmente contra la API de Claude
+(`ANTHROPIC_API_KEY`) — nunca llegó a configurarse esa clave en Vercel, así
+que el botón daba el error genérico "la función de IA no está configurada".
+El dueño confirmó que ya había configurado una clave de **Gemini**
+(`GEMINI_API_KEY`) para uso de IA en el proyecto — la misma variable que ya
+usa, desde antes, la función separada "Importar oferta desde Facebook/
+WhatsApp" del panel admin (`src/lib/ai-import.ts`, `/admin/importar-oferta`),
+que sí ya llama a Gemini correctamente. `src/lib/ai.ts` se reescribió para
+usar ese mismo patrón (`gemini-2.5-flash`, endpoint
+`generativelanguage.googleapis.com`) en vez de Anthropic — mismas 3
+funciones exportadas (`aiSearchToQuery`, `aiImproveCv`,
+`aiAnalyzeJobPosting`), así que las 3 rutas que las consumen no necesitaron
+ningún cambio. **No hacía falta una segunda clave**: con `GEMINI_API_KEY`
+ya cargada en Vercel para el import de ofertas, alcanza para las 4
+funciones de IA de la app.
+
+Diagnóstico de la causa real (no era un mensaje mal armado, apuntaba al
+proveedor equivocado de punta a punta): el código viejo llamaba a
+`api.anthropic.com` con el header `x-api-key` y chequeaba
+`process.env.ANTHROPIC_API_KEY` — un proveedor y una variable de entorno
+completamente distintos a Gemini, nunca configurados. El error decía
+"Anthropic" porque el código realmente intentaba usar Anthropic, no porque
+el texto estuviera mal escrito.
+
+Probado en este entorno (sin acceso a la clave real de producción, que
+vive solo en Vercel): con `GEMINI_API_KEY` sin configurar, `isAiConfigured()`
+devuelve `false` y las 3 rutas devuelven 503 mencionando `GEMINI_API_KEY`
+(antes mencionaban `ANTHROPIC_API_KEY`). Con una clave de prueba inválida
+configurada localmente, las 3 rutas (`/api/ai/buscar`, `/api/ai/mejorar-cv`,
+`/api/ai/analizar-oferta`) devuelven 502 con el error real y textual de
+Gemini ("API key not valid") en vez del 503 de "no configurada" — confirma
+que las 3 ya leen `GEMINI_API_KEY` y llaman de verdad al endpoint real de
+Gemini (`generativelanguage.googleapis.com`, alcanzable desde acá) con el
+formato de request correcto. Falta la prueba final con una clave real
+(genera contenido real en vez de solo confirmar la conexión) — eso solo se
+puede hacer en producción, con la clave que ya cargó el dueño en Vercel.
 
 ## Regla de verificación en producción
 
@@ -492,6 +536,46 @@ cuenta de trabajador de prueba, se le puso `isPremium = true` directo en
 la base, y se confirmó visualmente la insignia en `/perfil` y en
 `/trabajadores/[id]`, además de las dos variantes (con/sin Premium) de la
 tarjeta de `/perfil`. Cuenta de prueba borrada al terminar.
+
+### Premium destacado por categoría (30 ago 2026)
+
+Pedido explícito del dueño: mientras alguien explora una categoría puntual
+(ej. `/buscar/construccion`), mostrarle ahí mismo —no solo en su propio
+perfil— la opción de pagar para destacarse en ese rubro. Aplica a
+trabajador y a empresa/profesional de Cotizaciones por igual.
+
+`src/components/brand/PremiumCategoryBanner.tsx` (nuevo): misma tarjeta
+degradada dorada que ya se usa para el aviso de Premium en `/perfil`, con
+dos variantes (`variant="worker"` / `"company"`) y el nombre de la
+categoría interpolado en el texto — funciona igual para cualquier
+categoría, no hay nada hardcodeado a una sola.
+
+- `/buscar/[categoria]` (trabajador explorando vacantes por rubro,
+  `LaborCategory`): si quien mira está logueado como WORKER y todavía no
+  es Premium, ve "Destacá tu perfil en {categoría}" → `/premium`. Si ya es
+  Premium, no se le muestra nada (no gritar "comprame" a quien ya pagó).
+- `/buscar-personal?categoria=...` (empresa explorando trabajadores por
+  rubro): si quien mira está logueado como COMPANY, ya ofrece servicios en
+  Cotizaciones pero todavía no tiene el Plan Profesional activo, ve
+  "Destacá tu perfil profesional" → `/empresa/servicios`, mientras hay un
+  filtro de categoría activo (sin filtro, "todas las categorías", no
+  aplica el mismo contexto puntual).
+
+Nota: `/buscar/[categoria]` usa `LaborCategory` (rubros de vacantes:
+Construcción, Profesionales, etc.) y `/buscar-personal` filtra por ese
+mismo enum — son categorías DE EMPLEO, distintas del `ServiceCategory` de
+Cotizaciones (electricistas, plomeros, etc., sin una pantalla pública hoy
+para explorarlas por categoría). Por eso el banner de empresa promociona
+el Plan Profesional en general (no un "destacado en esta categoría de
+Cotizaciones" literal, que no existe todavía como concepto navegable).
+
+Probado con Playwright contra un build de producción local: trabajador de
+prueba sin Premium ve el banner en `/buscar/construccion` Y en
+`/buscar/profesionales` (confirma que funciona en cualquier categoría, no
+solo una); el mismo trabajador ya marcado `isPremium = true` no lo ve;
+empresa de prueba con `offersServices = true` y `professionalPlanActive =
+false` ve el banner de empresa en `/buscar-personal?categoria=CONSTRUCCION`.
+Cuentas de prueba borradas al terminar.
 
 ## Decisión de precios: los 3 planes a $120 MXN/mes (30 ago 2026)
 

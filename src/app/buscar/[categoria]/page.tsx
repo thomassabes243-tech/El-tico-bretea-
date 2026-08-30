@@ -6,12 +6,15 @@ import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
+import { PremiumCategoryBanner } from "@/components/brand/PremiumCategoryBanner";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import { findJobPostingsFeaturedFirst, isFeatured } from "@/lib/job-postings";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { SalarySemaforo } from "@/components/vacantes/SalarySemaforo";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { AdSenseSlot } from "@/components/ads/AdSenseSlot";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import type { LaborCategory } from "@prisma/client";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
@@ -27,11 +30,31 @@ export default async function BuscarCategoriaPage({
   const category = LABOR_CATEGORIES.find((c) => c.value.toLowerCase() === categoria);
   if (!category) notFound();
 
-  const [jobPostings, adEligible, ads] = await Promise.all([
+  const [jobPostings, adEligible, ads, session] = await Promise.all([
     findJobPostingsFeaturedFirst({ laborCategory: category.value as LaborCategory, isActive: true }, 30),
     getAdEligibility(),
     getActiveAds(),
+    auth(),
   ]);
+
+  // Premium destacado por categoría: invitación contextualizada a la
+  // categoría que se está explorando, para trabajador o empresa según el
+  // rol de quien está logueado -- nunca se le muestra a alguien que ya es
+  // Premium/Destacado (no gritar "comprame" a quien ya pagó).
+  let premiumBannerVariant: "worker" | "company" | null = null;
+  if (session?.user?.role === "WORKER") {
+    const worker = await prisma.workerProfile.findUnique({
+      where: { userId: session.user.id },
+      select: { isPremium: true },
+    });
+    if (worker && !worker.isPremium) premiumBannerVariant = "worker";
+  } else if (session?.user?.role === "COMPANY") {
+    const company = await prisma.companyProfile.findUnique({
+      where: { userId: session.user.id },
+      select: { offersServices: true, professionalPlanActive: true },
+    });
+    if (company?.offersServices && !company.professionalPlanActive) premiumBannerVariant = "company";
+  }
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
@@ -45,6 +68,10 @@ export default async function BuscarCategoriaPage({
           <CategoryIcon category={category.value} size="lg" />
           <h1 className="text-xl font-extrabold tracking-tight text-navy-900">{category.label}</h1>
         </div>
+
+        {premiumBannerVariant && (
+          <PremiumCategoryBanner variant={premiumBannerVariant} categoryLabel={category.label} />
+        )}
 
         <div className="mt-6 flex flex-col gap-3">
           {jobPostings.length === 0 && (
