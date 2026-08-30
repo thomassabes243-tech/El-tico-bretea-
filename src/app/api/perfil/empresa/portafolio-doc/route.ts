@@ -36,6 +36,16 @@ export async function POST(request: Request) {
 
   const buffer = Buffer.from(await file.arrayBuffer());
 
+  // file.type es un Content-Type que declara el propio navegador del
+  // cliente, no algo que el servidor verifique -- cualquiera puede subir un
+  // archivo arbitrario con ese header falseado. A diferencia de las fotos
+  // (que sharp recomprime y por lo tanto valida como imagen real), este PDF
+  // se guarda tal cual, así que hace falta este chequeo de la firma real del
+  // archivo (%PDF-) antes de aceptarlo.
+  if (buffer.subarray(0, 5).toString("latin1") !== "%PDF-") {
+    return NextResponse.json({ error: "El archivo no es un PDF válido" }, { status: 400 });
+  }
+
   let key: string;
   try {
     key = await savePortfolioDoc(company.id, buffer);
