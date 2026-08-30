@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { companyRegistrationSchema } from "@/lib/validations";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
@@ -37,27 +38,38 @@ export async function POST(request: Request) {
 
   const passwordHash = await bcrypt.hash(data.password, 10);
 
-  const user = await prisma.user.create({
-    data: {
-      email,
-      passwordHash,
-      role: "COMPANY",
-      deviceFingerprint: data.deviceFingerprint || null,
-      companyProfile: {
-        create: {
-          commercialName: textOrDefault(data.commercialName),
-          legalId: textOrDefault(data.legalId),
-          responsibleName: textOrDefault(data.responsibleName),
-          contactPhone: data.contactPhone || null,
-          contactEmail: data.contactEmail || email,
-          location: textOrDefault(data.location),
-          activity: textOrDefault(data.activity),
-          description: data.description || null,
+  // Mismo motivo que en /api/registro/trabajador: el findUnique de arriba
+  // no cierra la condición de carrera de un doble envío casi simultáneo del
+  // mismo correo -- sin este catch, el segundo create() tira un P2002 sin
+  // manejar (500 crudo) en vez del 409 esperado.
+  try {
+    const user = await prisma.user.create({
+      data: {
+        email,
+        passwordHash,
+        role: "COMPANY",
+        deviceFingerprint: data.deviceFingerprint || null,
+        companyProfile: {
+          create: {
+            commercialName: textOrDefault(data.commercialName),
+            legalId: textOrDefault(data.legalId),
+            responsibleName: textOrDefault(data.responsibleName),
+            contactPhone: data.contactPhone || null,
+            contactEmail: data.contactEmail || email,
+            location: textOrDefault(data.location),
+            activity: textOrDefault(data.activity),
+            description: data.description || null,
+          },
         },
       },
-    },
-    select: { id: true, email: true },
-  });
+      select: { id: true, email: true },
+    });
 
-  return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });
+    return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+      return NextResponse.json({ error: "Ya existe una cuenta con ese correo" }, { status: 409 });
+    }
+    throw err;
+  }
 }

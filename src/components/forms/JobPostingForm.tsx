@@ -186,12 +186,18 @@ export function JobPostingForm() {
               <ChevronLeft className="h-4 w-4" /> Atrás
             </Button>
           )}
+          {/* key distinto: sin esto React reusa el mismo <button> y solo le
+              cambia type de "button" a "submit" al llegar al último paso --
+              si ese cambio ocurre mientras el click que lo disparó (goNext
+              es async) todavía se está resolviendo, ESE MISMO click termina
+              publicando la vacante sin que "Publicar vacante" se haya
+              tocado nunca (mismo bug confirmado en WorkerRegistrationForm). */}
           {!isLastStep ? (
-            <Button type="button" onClick={goNext} fullWidth>
+            <Button key="continue" type="button" onClick={goNext} fullWidth>
               Siguiente <ChevronRight className="h-4 w-4" />
             </Button>
           ) : (
-            <Button type="submit" fullWidth disabled={isSubmitting}>
+            <Button key="submit" type="submit" fullWidth disabled={isSubmitting}>
               {isSubmitting ? "Publicando..." : "Publicar vacante"} <CheckCircle2 className="h-4 w-4" />
             </Button>
           )}

@@ -325,12 +325,22 @@ export function WorkerRegistrationForm() {
               <ChevronLeft className="h-4 w-4" /> Atrás
             </Button>
           )}
+          {/* key distinto en cada rama: sin esto React reusa el mismo nodo
+              <button> y solo le cambia el atributo type de "button" a
+              "submit" al llegar al último paso -- si ese cambio de type
+              ocurre mientras el navegador todavía está resolviendo el click
+              que lo disparó (goNext es async), ESE MISMO click termina
+              enviando el formulario de una, salteando el paso de
+              Referencias por completo (bug real, confirmado con Playwright:
+              crear la cuenta sin que el botón "Crear mi cuenta" se haya
+              tocado nunca). Con key distinto, React desmonta y crea un
+              <button> nuevo en vez de mutar el que ya existía. */}
           {!isLastStep ? (
-            <Button type="button" onClick={goNext} fullWidth>
+            <Button key="continue" type="button" onClick={goNext} fullWidth>
               Continuar <ChevronRight className="h-4 w-4" />
             </Button>
           ) : (
-            <Button type="submit" fullWidth disabled={isSubmitting}>
+            <Button key="submit" type="submit" fullWidth disabled={isSubmitting}>
               {isSubmitting ? "Creando cuenta..." : "Crear mi cuenta"} <CheckCircle2 className="h-4 w-4" />
             </Button>
           )}

@@ -106,6 +106,59 @@ plan ya existe en PayPal (ver arriba, solo se ve en `/admin/configuracion`).
 | Neon: "Can't reach database server" intermitente | ⚠️ Mitigado dos veces (`0d20ad8`, `b5e729b`) — reapareció una vez después del primer intento. Vigilar si vuelve a pasar después de `connection_limit=5`; si sigue, el próximo paso es revisar el límite de conexiones del plan de Neon en su propio dashboard (sin acceso a eso desde acá). |
 | Cotizaciones: el perfil público (`/empresas/[id]`) no mostraba nada del perfil de servicios (ni categoría, ni descripción, ni fotos, ni calificación, ni teléfono) aunque el profesional ya lo hubiera completado — de ahí que "no se viera bien ninguno de los dos lados" | ✅ Resuelto (`dbc2b27`) — agrega la sección "Cotizaciones" completa a esa pantalla, más años de experiencia y PDF de portafolio como campos nuevos |
 | "Ofrecer mis servicios" (Cotizaciones): al terminar y enviar el formulario de perfil de servicios, la app volvía a pedir el correo electrónico y luego tiraba "Ya existe una cuenta con ese correo" como si fuera un error bloqueante | ✅ Resuelto — ver detalle abajo |
+| **CRÍTICO** — Registro de trabajador (wizard de 6 pasos): el click en "Continuar" del penúltimo paso (Disponibilidad → Referencias) a veces enviaba el formulario de una, saltando el último paso, SIN que "Crear mi cuenta" se haya tocado nunca — de ahí el reporte de "loop" y de login inconsistente con la misma contraseña | ✅ Resuelto — ver detalle abajo |
+
+### Detalle: registro se auto-enviaba al pasar del penúltimo al último paso (WorkerRegistrationForm / JobPostingForm)
+
+Causa real, confirmada reproduciendo con Playwright (con logging temporal
+adentro del propio componente, no solo mirando la pantalla): el botón
+"Continuar"/"Siguiente" (`type="button"`) y el botón final "Crear mi
+cuenta"/"Publicar vacante" (`type="submit"`) se renderizaban con un
+`if/else` en la MISMA posición del árbol de React, sin ningún `key`
+distinto entre ambos. Sin `key`, React no los trata como elementos
+distintos — al llegar al último paso, en vez de desmontar el botón viejo y
+montar uno nuevo, React **reutiliza el mismo nodo `<button>` del DOM y le
+cambia el atributo `type` de "button" a "submit" en el lugar**.
+
+El problema: `goNext` (el handler de "Continuar") es `async` — valida el
+paso con `await trigger(...)` antes de avanzar el estado. Si esa validación
+resuelve muy rápido (como pasa acá, son campos opcionales sin validación
+real), el cambio de `type` a "submit" en el DOM podía terminar de aplicarse
+mientras el navegador **todavía estaba procesando ese mismo click** —
+resultado: el click en "Continuar" del penúltimo paso terminaba
+disparando el envío del formulario completo, saltando por completo la
+pantalla de "Referencias" y sin que el usuario haya tocado "Crear mi
+cuenta" en ningún momento. Confirmado con Playwright: clicks 1 a 4 del
+wizard avanzaban de paso normalmente; el click 5 (Disponibilidad →
+Referencias) disparaba, en la misma interacción, `goNext` Y `onSubmit`.
+
+Esto explica el reporte completo: la cuenta se crea (o falla con "ya
+existe" si ya se había intentado antes) de forma inesperada para quien
+usa la app, en un momento en el que todavía cree estar completando el
+formulario — de ahí la sensación de comportamiento errático/loop, y la
+confusión sobre qué contraseña quedó guardada si hubo más de un intento.
+
+Arreglado con 3 cambios:
+1. `WorkerRegistrationForm.tsx` y `JobPostingForm.tsx`: `key="continue"` /
+   `key="submit"` distintos en cada rama del `if/else` del botón final —
+   fuerza a React a desmontar y crear un `<button>` nuevo en vez de mutar
+   el existente, eliminando la condición de carrera de raíz.
+2. `/api/registro/trabajador` y `/api/registro/empresa`: el
+   `findUnique` + `create` para chequear "correo ya existe" tenía la misma
+   familia de condición de carrera que ya se había arreglado antes en
+   `findOrCreateServiceProfile` (Cotizaciones) — dos registros casi
+   simultáneos con el mismo correo (ej. doble-tap) podían hacer que el
+   segundo `create()` tirara un P2002 sin capturar (500 crudo, mensaje
+   "no se pudo completar el registro") en vez de un 409 claro. Ahora
+   capturado explícitamente y devuelve "Ya existe una cuenta con ese
+   correo" siempre, venga de donde venga.
+
+Probado de punta a punta con Playwright: registro completo (los 6 pasos,
+sin saltar ninguno) → llega a "Referencias" de verdad → clic explícito en
+"Crear mi cuenta" → `/perfil` → cierre de sesión → login de nuevo con el
+mismo correo y contraseña → entra sin error. Además, dos registros
+concurrentes con el mismo correo (simulando un doble-tap real) ahora
+devuelven 201 + 409 limpios, nunca un 500.
 
 ### Detalle: bug de "vuelve a pedir el correo" / "perfil ya existente" en Cotizaciones
 

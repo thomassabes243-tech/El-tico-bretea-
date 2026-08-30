@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { workerRegistrationSchema } from "@/lib/validations";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
@@ -37,51 +38,65 @@ export async function POST(request: Request) {
 
   const passwordHash = await bcrypt.hash(data.password, 10);
 
-  const user = await prisma.user.create({
-    data: {
-      email,
-      passwordHash,
-      role: "WORKER",
-      deviceFingerprint: data.deviceFingerprint || null,
-      workerProfile: {
-        create: {
-          fullName: textOrDefault(data.fullName),
-          age: numberOrDefault(data.age),
-          residence: textOrDefault(data.residence),
-          phone: data.phone || null,
-          whatsapp: data.whatsapp || null,
-          email,
-          profession: textOrDefault(data.profession),
-          laborCategory: enumOrDefault(data.laborCategory),
-          yearsExperience: numberOrDefault(data.yearsExperience),
-          workExperience: data.workExperience || null,
-          companiesWorkedAt: data.companiesWorkedAt || null,
-          previousPositions: data.previousPositions || null,
-          education: data.education || null,
-          degrees: data.degrees || null,
-          courses: data.courses || null,
-          certifications: data.certifications || null,
-          skills: data.skills || null,
-          languages: data.languages || null,
-          availability: enumOrDefault(data.availability),
-          willingToRelocate: data.willingToRelocate,
-          jobTypeSought: enumOrDefault(data.jobTypeSought),
-          salaryExpectation: data.salaryExpectation || null,
-          references: {
-            create: (data.references ?? [])
-              .filter((r) => r.name && r.company)
-              .map((r) => ({
-                name: r.name,
-                company: r.company,
-                phone: r.phone || null,
-                email: r.email || null,
-              })),
+  // El findUnique de arriba no impide una condición de carrera real (dos
+  // envíos casi simultáneos del mismo correo, ej. doble-tap en el botón
+  // "Crear mi cuenta" en un celular): ambos pueden pasar ese chequeo antes
+  // de que el otro haya terminado de crear el User. Sin este catch, el
+  // segundo create() tira un P2002 sin manejar -- 500 crudo en vez del 409
+  // esperado, y en el cliente aparecía como "no se pudo completar el
+  // registro" en lugar de "ya existe una cuenta con ese correo".
+  try {
+    const user = await prisma.user.create({
+      data: {
+        email,
+        passwordHash,
+        role: "WORKER",
+        deviceFingerprint: data.deviceFingerprint || null,
+        workerProfile: {
+          create: {
+            fullName: textOrDefault(data.fullName),
+            age: numberOrDefault(data.age),
+            residence: textOrDefault(data.residence),
+            phone: data.phone || null,
+            whatsapp: data.whatsapp || null,
+            email,
+            profession: textOrDefault(data.profession),
+            laborCategory: enumOrDefault(data.laborCategory),
+            yearsExperience: numberOrDefault(data.yearsExperience),
+            workExperience: data.workExperience || null,
+            companiesWorkedAt: data.companiesWorkedAt || null,
+            previousPositions: data.previousPositions || null,
+            education: data.education || null,
+            degrees: data.degrees || null,
+            courses: data.courses || null,
+            certifications: data.certifications || null,
+            skills: data.skills || null,
+            languages: data.languages || null,
+            availability: enumOrDefault(data.availability),
+            willingToRelocate: data.willingToRelocate,
+            jobTypeSought: enumOrDefault(data.jobTypeSought),
+            salaryExpectation: data.salaryExpectation || null,
+            references: {
+              create: (data.references ?? [])
+                .filter((r) => r.name && r.company)
+                .map((r) => ({
+                  name: r.name,
+                  company: r.company,
+                  phone: r.phone || null,
+                  email: r.email || null,
+                })),
+            },
           },
         },
       },
-    },
-    select: { id: true, email: true },
-  });
+      select: { id: true, email: true },
+    });
 
-  return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });
+    return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+      return NextResponse.json({ error: "Ya existe una cuenta con ese correo" }, { status: 409 });
+    }
+    throw err;
+  }
 }
