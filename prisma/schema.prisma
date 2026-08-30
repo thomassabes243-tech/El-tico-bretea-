@@ -248,6 +248,11 @@ model CompanyProfile {
   activity        String
   logoUrl         String?
   description     String?
+  // Perfil de confianza (Cotizaciones/vacantes): dato que la propia empresa
+  // proporciona, nunca verificado de forma independiente (no hay integración
+  // con ningún servicio de comprobación de dominio) -- se muestra como
+  // "proporcionado por la empresa", nunca como "verificado".
+  website         String?
 
   isVerified   Boolean   @default(false)
   verifiedAt   DateTime?
