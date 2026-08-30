@@ -1,0 +1,18 @@
+-- Esta base de datos resultó estar compartida con la rama
+-- claude/el-tico-bretea-hxg8aq ("El Tico Bretea", producto de Costa Rica,
+-- un proyecto DISTINTO a este). Otra sesión de Claude trabajando en esa
+-- rama cargó 270 vacantes de ejemplo con ciudades y salarios de Costa
+-- Rica (commit db7981c en esa rama), bajo una única cuenta "empresa"
+-- placeholder: email 'publicaciones.ejemplo@eltico.cr', legalId
+-- 'DEMO_RELLENO'. Al compartir base, esas 270 filas quedaron visibles
+-- también en esta app (México) -- confirmado con fetch directo a
+-- producción cruzando ambas URLs.
+--
+-- Parche inmediato mientras se separan las bases de datos de los dos
+-- proyectos (acción de infraestructura fuera del alcance de esta rama):
+-- se borra esa única cuenta placeholder, lo que en cascada borra su
+-- company_profile y sus 270 job_postings (ambas relaciones son
+-- onDelete: Cascade). No toca ninguna de las 300 vacantes de este
+-- branch (legalId='EJEMPLO', cuentas ejemplo.*@mexicosinhambre.com) ni
+-- ningún otro dato.
+DELETE FROM "users" WHERE "email" = 'publicaciones.ejemplo@eltico.cr';
