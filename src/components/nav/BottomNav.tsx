@@ -36,15 +36,22 @@ export function BottomNav() {
             <Link
               key={href}
               href={href}
-              className="flex flex-1 flex-col items-center gap-1 py-2.5 text-xs font-medium"
+              className="flex flex-1 flex-col items-center gap-1 py-2.5 text-xs font-medium transition-transform active:scale-90"
             >
-              <Icon
-                strokeWidth={isActive ? 2.4 : 2}
+              <span
                 className={clsx(
-                  "h-5.5 w-5.5 transition-colors",
-                  isActive ? "text-mx-red-600" : "text-navy-800/50"
+                  "flex h-7 w-11 items-center justify-center rounded-full transition-colors",
+                  isActive && "bg-mx-red-600/10"
                 )}
-              />
+              >
+                <Icon
+                  strokeWidth={isActive ? 2.4 : 2}
+                  className={clsx(
+                    "h-5.5 w-5.5 transition-colors",
+                    isActive ? "text-mx-red-600" : "text-navy-800/50"
+                  )}
+                />
+              </span>
               <span className={clsx(isActive ? "text-navy-900" : "text-navy-800/50")}>
                 {label}
               </span>

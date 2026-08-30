@@ -18,6 +18,18 @@ export async function isUserBlockedFromRoom(chatRoomId: string, userId: string) 
   return Boolean(block);
 }
 
+// Cantidad real de personas distintas que ya participaron en la comunidad --
+// para mostrar en el Home ("+N personas") solo con datos reales, nunca un
+// número inventado.
+export async function getCommunityMemberCount(chatRoomId: string): Promise<number> {
+  const distinctAuthors = await prisma.chatMessage.findMany({
+    where: { chatRoomId },
+    select: { authorId: true },
+    distinct: ["authorId"],
+  });
+  return distinctAuthors.length;
+}
+
 export function displayNameFor(user: {
   email: string;
   role: string;

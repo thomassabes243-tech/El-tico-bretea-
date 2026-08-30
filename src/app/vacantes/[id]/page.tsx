@@ -10,6 +10,7 @@ import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { ApplyButton } from "@/components/forms/ApplyButton";
 import { ShareJobButton } from "@/components/forms/ShareJobButton";
 import { ReportButton } from "@/components/forms/ReportButton";
+import { AnalyzeJobButton } from "@/components/forms/AnalyzeJobButton";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { toWhatsappHref } from "@/lib/whatsapp";
 import { getSiteUrl } from "@/lib/site";
@@ -193,6 +194,12 @@ export default async function VacanteDetailPage({
                 </div>
               )}
             </div>
+          </Card>
+        )}
+
+        {session?.user && (
+          <Card className="mt-4 p-4">
+            <AnalyzeJobButton jobPostingId={jobPosting.id} />
           </Card>
         )}
 

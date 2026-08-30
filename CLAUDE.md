@@ -211,6 +211,74 @@ vuelva a mandar en el chat.
   unit en la cuenta de AdSense primero).
 - Credenciales de PayPal (`NEXT_PUBLIC_PAYPAL_CLIENT_ID`,
   `PAYPAL_CLIENT_SECRET`) — estado no confirmado desde acá.
+- `ANTHROPIC_API_KEY` — las 3 funciones de IA (buscador inteligente en el
+  Home, "Mejorar mi CV con IA", "Analizar esta oferta") están implementadas
+  y funcionando en el código (`src/lib/ai.ts`, `/api/ai/*`), pero sin esta
+  clave devuelven un error claro ("la función de IA no está configurada")
+  en vez de responder. Hay que crear una cuenta en console.anthropic.com,
+  generar una API key ahí y cargarla en Vercel — **tiene costo real por
+  cada uso**, a la cuenta de Anthropic del dueño del producto (no a esta
+  sesión de Claude Code). Mientras tanto, el buscador con IA cae solo a la
+  búsqueda de texto normal (nunca deja a alguien sin resultado).
+
+## Rediseño del Home (pedido "sistema real, no genérico", ver commit del
+rediseño de home)
+
+Reescrito con estas decisiones concretas (ninguna es un ajuste cosmético
+suelto, todas responden a puntos explícitos del pedido):
+
+- Cero emojis en toda la pantalla de Inicio (categorías, tarjetas) — antes
+  las categorías mostraban un emoji cuando existía uno en `CATEGORY_EMOJI`
+  y el ícono Lucide solo como fallback; ahora siempre es el ícono Lucide,
+  consistente con el resto de la app.
+- 4 íconos compuestos propios (no sueltos de una librería):
+  `SafetyBadgeIcon` (escudo + pin de ubicación + arcos de señal, para
+  "Compartí tu ubicación"), `ServiceRequestIcon`/`ServiceOfferIcon`
+  (Cotizaciones, reemplazan llave inglesa/maletín genéricos), `CommunityIcon`
+  (tres personas conectadas, reemplaza el globo de chat genérico) — los 4
+  en `src/components/brand/`.
+- Buscador: `SmartSearchBar` (nuevo) — el ícono de lupa + Enter siguen
+  siendo la búsqueda de texto libre de siempre; se agregó un botón
+  "Buscar con IA" aparte que manda la frase a `/api/ai/buscar` para
+  convertirla en palabras clave más efectivas antes de buscar (útil para
+  frases largas en lenguaje natural). Si la IA falla o no está configurada,
+  cae a la búsqueda normal con el texto tal cual — nunca deja a la persona
+  sin resultado. También se agregó un botón "Filtros" a `/buscar`.
+  "Comunidad Mexa" ahora muestra "+N personas" con el conteo REAL de
+  autores distintos que ya escribieron en el chat (nunca un número
+  inventado) — `getCommunityMemberCount` en `chat-rooms.ts`.
+- Tarjetas de "Nuevos Trabajos": ahora con ícono de categoría, insignia
+  "Nueva" (creada hace menos de 3 días, si no está Destacada) y salario si
+  la vacante lo cargó — antes solo mostraban título/empresa/ubicación/tipo
+  de jornada.
+- Empty state de "Trabajos Destacados" reescrito ("Todavía no hay...
+  Estamos buscando nuevas oportunidades para vos" + botón "Explorar
+  trabajos") en vez del texto genérico anterior.
+- Bottom nav: fondo tipo píldora detrás del ícono activo + `active:scale-90`
+  al tocar (antes solo cambiaba de color, sin ninguna microinteracción).
+
+### IA integrada (3 funciones reales, no solo "poner IA" de adorno)
+
+Las 3 funciones que pidió el dueño explícitamente, todas usando la API de
+Claude (Anthropic) vía `src/lib/ai.ts` (fetch directo, sin SDK nuevo, mismo
+estilo que `paypal.ts`/`email.ts`):
+
+1. **Buscador inteligente** (Home) — descripto arriba.
+2. **"Mejorar mi CV con IA"** (`/cv`, `ImproveCvButton`) — sugerencias de
+   redacción sobre el perfil ya cargado, en viñetas. Nunca sobreescribe el
+   perfil solo; el trabajador copia lo que le sirva a mano.
+3. **"Analizar esta oferta"** (`/vacantes/[id]`, `AnalyzeJobButton`) —
+   señales que conviene revisar antes de acudir (salario fuera de lo
+   típico, poca información del empleador, pagos por adelantado, etc.).
+   **Nunca afirma que una oferta es una estafa** — el prompt lo prohíbe
+   explícitamente y la UI agrega la aclaración abajo de la respuesta.
+
+Las 3 rutas (`/api/ai/buscar`, `/api/ai/mejorar-cv`, `/api/ai/analizar-oferta`)
+requieren sesión iniciada y tienen rate-limit propio (10-20 usos/hora por
+usuario) para no dejar que el costo de la API se dispare por abuso. Sin
+`ANTHROPIC_API_KEY` configurada, cada una devuelve un 503 con mensaje claro
+en vez de fallar de forma críptica — probado así en este entorno (no hay
+forma de probar una respuesta real de IA desde acá sin esa clave).
 
 ## Regla de verificación en producción
 

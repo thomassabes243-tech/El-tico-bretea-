@@ -1,14 +1,19 @@
 import Link from "next/link";
-import { Search, Users, MessagesSquare, ShieldCheck, ShieldAlert, HeartHandshake, Star, Sparkles, Briefcase, MapPin, ChevronRight, Wrench } from "lucide-react";
+import { Users, ShieldCheck, HeartHandshake, Star, Sparkles, MapPin, ChevronRight, Coins, Clock, Briefcase } from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { CATEGORY_ICON_MAP } from "@/components/brand/CategoryIcon";
+import { CATEGORY_ICON_MAP, CategoryIcon } from "@/components/brand/CategoryIcon";
 import { HeroImage } from "@/components/brand/HeroImage";
-import { LABOR_CATEGORIES, JOB_TYPES, CATEGORY_EMOJI } from "@/lib/constants";
+import { SafetyBadgeIcon } from "@/components/brand/SafetyBadgeIcon";
+import { ServiceRequestIcon, ServiceOfferIcon } from "@/components/brand/ServiceIcons";
+import { CommunityIcon } from "@/components/brand/CommunityIcon";
+import { SmartSearchBar } from "@/components/forms/SmartSearchBar";
+import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import { findJobPostingsFeaturedFirst, isFeatured } from "@/lib/job-postings";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
+import { getCommunityChatRoom, getCommunityMemberCount } from "@/lib/chat-rooms";
 import { AdSlot } from "@/components/ads/AdSlot";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
@@ -21,11 +26,14 @@ export default async function Home({
   searchParams: Promise<{ "cuenta-eliminada"?: string }>;
 }) {
   const { "cuenta-eliminada": cuentaEliminada } = await searchParams;
-  const [nuevosTrabajos, adEligible, ads] = await Promise.all([
+  const [nuevosTrabajos, adEligible, ads, communityRoom] = await Promise.all([
     findJobPostingsFeaturedFirst({ isActive: true }, 5),
     getAdEligibility(),
     getActiveAds(),
+    getCommunityChatRoom(),
   ]);
+  const communityMemberCount = await getCommunityMemberCount(communityRoom.id);
+  const now = Date.now();
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
@@ -63,15 +71,18 @@ export default async function Home({
             arriba de todo porque es lo que más cuesta encontrar y lo más
             importante para alguien que desconfía de una oferta. */}
         <Link href="/seguridad" className="mt-4 block">
-          <Card className="flex items-center gap-3.5 border-mx-red-600/20 bg-mx-red-100/50 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-mx-red-600 text-white">
-              <ShieldAlert className="h-5 w-5" strokeWidth={2.2} />
+          <Card className="flex items-center gap-3.5 border-mx-red-600/20 bg-mx-red-100/50 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99]">
+            <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-mx-red-600 text-white shadow-sm shadow-mx-red-600/30">
+              <SafetyBadgeIcon className="h-7 w-7" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-bold text-navy-900">Compartí tu ubicación antes de ir</p>
+              <span className="inline-block rounded-full bg-mx-red-600/15 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-mx-red-700">
+                Protección activa
+              </span>
+              <p className="mt-1 text-sm font-bold text-navy-900">Compartí tu ubicación antes de ir</p>
               <p className="text-xs leading-snug text-navy-800/60">
-                GPS en vivo, botón de pánico y contactos de confianza — activalo si vas a un
-                trabajo nuevo y no confiás del todo.
+                GPS en vivo, botón de emergencia y contactos de confianza — una herramienta más
+                de protección, no una garantía de seguridad.
               </p>
             </div>
             <ChevronRight className="h-4.5 w-4.5 shrink-0 text-navy-800/30" />
@@ -83,39 +94,30 @@ export default async function Home({
             antes esto era una sola tarjeta ambigua más abajo en la página. */}
         <div className="mt-4 grid grid-cols-2 gap-2.5">
           <Link href="/servicios/nueva" className="block">
-            <Card className="flex h-full flex-col items-start gap-2 p-3.5 transition-all hover:-translate-y-0.5 hover:shadow-md">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-peso-600/[0.09] text-peso-600">
-                <Wrench className="h-4.5 w-4.5" strokeWidth={2.1} />
+            <Card className="flex h-full flex-col items-start gap-2 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-peso-600/[0.1] text-peso-600">
+                <ServiceRequestIcon className="h-6 w-6" />
               </div>
-              <p className="text-xs font-bold leading-snug text-navy-900">Pedir un servicio</p>
+              <p className="text-sm font-bold leading-snug text-navy-900">Pedir un servicio</p>
               <p className="text-[11px] leading-snug text-navy-800/50">
-                Electricista, plomero, niñera y más
+                Encontrá a alguien para hacer el trabajo
               </p>
             </Card>
           </Link>
           <Link href="/empresa/servicios" className="block">
-            <Card className="flex h-full flex-col items-start gap-2 p-3.5 transition-all hover:-translate-y-0.5 hover:shadow-md">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-mx-red-600/[0.09] text-mx-red-600">
-                <Briefcase className="h-4.5 w-4.5" strokeWidth={2.1} />
+            <Card className="flex h-full flex-col items-start gap-2 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-mx-red-600/[0.1] text-mx-red-600">
+                <ServiceOfferIcon className="h-6 w-6" />
               </div>
-              <p className="text-xs font-bold leading-snug text-navy-900">Ofrecer mis servicios</p>
-              <p className="text-[11px] leading-snug text-navy-800/50">Creá tu perfil profesional</p>
+              <p className="text-sm font-bold leading-snug text-navy-900">Ofrecer mis servicios</p>
+              <p className="text-[11px] leading-snug text-navy-800/50">Creá tu perfil y conseguí clientes</p>
             </Card>
           </Link>
         </div>
 
-        {/* Buscador */}
-        <form action="/buscar/resultados" method="GET" className="mt-4">
-          <div className="flex items-center gap-2 rounded-2xl border border-sand-200 bg-white px-4 py-3.5 shadow-lg shadow-navy-900/[0.08]">
-            <Search className="h-4.5 w-4.5 shrink-0 text-navy-800/40" />
-            <input
-              type="text"
-              name="q"
-              placeholder="Buscar trabajos, empresas o palabras clave..."
-              className="w-full bg-transparent text-sm text-navy-900 placeholder:text-navy-800/40 outline-none"
-            />
-          </div>
-        </form>
+        {/* Buscador -- texto libre de siempre + variante con IA (ver
+            SmartSearchBar) que reescribe frases largas en palabras clave. */}
+        <SmartSearchBar />
 
         {/* Categorías */}
         <div className="scrollbar-none -mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1">
@@ -126,19 +128,14 @@ export default async function Home({
             Todos
           </Link>
           {LABOR_CATEGORIES.filter((c) => c.value !== "SIN_ESPECIFICAR").map((cat) => {
-            const emoji = CATEGORY_EMOJI[cat.value];
             const Icon = CATEGORY_ICON_MAP[cat.value] ?? CATEGORY_ICON_MAP.PROFESIONALES;
             return (
               <Link
                 key={cat.value}
                 href={`/buscar/${cat.value.toLowerCase()}`}
-                className="flex shrink-0 items-center gap-1.5 rounded-full border border-sand-200 bg-white px-3.5 py-2 text-xs font-semibold text-navy-800/70"
+                className="flex shrink-0 items-center gap-1.5 rounded-full border border-sand-200 bg-white px-3.5 py-2 text-xs font-semibold text-navy-800/70 transition-all active:scale-95"
               >
-                {emoji ? (
-                  <span className="text-sm leading-none">{emoji}</span>
-                ) : (
-                  <Icon className="h-3.5 w-3.5 text-peso-600" strokeWidth={2.1} />
-                )}
+                <Icon className="h-3.5 w-3.5 text-peso-600" strokeWidth={2.1} />
                 {cat.label}
               </Link>
             );
@@ -153,16 +150,16 @@ export default async function Home({
               Ver todos
             </Link>
           </div>
-          <Card className="mt-3 flex flex-col items-center gap-2.5 p-8 text-center">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-navy-900/[0.06] text-navy-800/40">
-              <Star className="h-5 w-5" />
+          <Card className="mt-3 flex flex-col items-center gap-2.5 border-navy-900/10 bg-gradient-to-b from-navy-900/[0.03] to-transparent p-8 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-navy-900/[0.07] text-navy-800">
+              <Star className="h-5.5 w-5.5" strokeWidth={2.1} />
             </div>
-            <p className="text-sm font-bold text-navy-900">Aún no hay trabajos destacados</p>
+            <p className="text-sm font-bold text-navy-900">Todavía no hay trabajos destacados</p>
             <p className="text-xs leading-relaxed text-navy-800/50">
-              El equipo de El Mexa Chamba está destacando las mejores oportunidades para ti.
+              Estamos buscando nuevas oportunidades para vos.
             </p>
             <Button href="/buscar" variant="secondary" size="sm" className="mt-1">
-              Buscar trabajos
+              Explorar trabajos
             </Button>
           </Card>
         </section>
@@ -191,39 +188,55 @@ export default async function Home({
             </Card>
           ) : (
             <div className="mt-3 flex flex-col gap-2.5">
-              {nuevosTrabajos.map((job) => (
-                <Link key={job.id} href={`/vacantes/${job.id}`}>
-                  <Card className="p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <p className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
-                          {job.title}
-                          {isFeatured(job.featuredUntil) && (
-                            <span className="inline-flex items-center gap-0.5 rounded-full bg-peso-100 px-1.5 py-0.5 text-[10px] font-bold text-peso-700">
-                              <Sparkles className="h-2.5 w-2.5" /> Destacada
+              {nuevosTrabajos.map((job) => {
+                const isNew = now - job.createdAt.getTime() < 3 * 24 * 60 * 60 * 1000;
+                return (
+                  <Link key={job.id} href={`/vacantes/${job.id}`}>
+                    <Card className="flex gap-3 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99]">
+                      <CategoryIcon category={job.laborCategory} size="sm" />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="flex flex-wrap items-center gap-1.5 text-sm font-bold text-navy-900">
+                              {job.title}
+                              {isFeatured(job.featuredUntil) && (
+                                <span className="inline-flex items-center gap-0.5 rounded-full bg-peso-100 px-1.5 py-0.5 text-[10px] font-bold text-peso-700">
+                                  <Sparkles className="h-2.5 w-2.5" /> Destacada
+                                </span>
+                              )}
+                              {!isFeatured(job.featuredUntil) && isNew && (
+                                <span className="inline-flex items-center rounded-full bg-success-600/10 px-1.5 py-0.5 text-[10px] font-bold text-success-600">
+                                  Nueva
+                                </span>
+                              )}
+                            </p>
+                            <p className="flex items-center gap-1 text-xs text-navy-800/50">
+                              {job.company.commercialName}
+                              {job.company.isVerified && (
+                                <ShieldCheck className="h-3 w-3 shrink-0 text-success-600" aria-label="Empresa verificada" />
+                              )}
+                            </p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
+                        </div>
+                        <div className="mt-2.5 flex flex-wrap gap-2 text-[11px] font-medium text-navy-800/60">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
+                            <MapPin className="h-3 w-3" /> {job.location}
+                          </span>
+                          <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
+                            <Clock className="h-3 w-3" /> {labelFor(JOB_TYPES, job.contractType)}
+                          </span>
+                          {job.salary && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-mx-red-100 px-2 py-0.5 text-mx-red-700">
+                              <Coins className="h-3 w-3" /> {job.salary}
                             </span>
                           )}
-                        </p>
-                        <p className="flex items-center gap-1 text-xs text-navy-800/50">
-                          {job.company.commercialName}
-                          {job.company.isVerified && (
-                            <ShieldCheck className="h-3 w-3 shrink-0 text-success-600" aria-label="Empresa verificada" />
-                          )}
-                        </p>
+                        </div>
                       </div>
-                      <ChevronRight className="h-4 w-4 shrink-0 text-navy-800/30" />
-                    </div>
-                    <div className="mt-2.5 flex flex-wrap gap-2 text-[11px] font-medium text-navy-800/60">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
-                        <MapPin className="h-3 w-3" /> {job.location}
-                      </span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2 py-0.5">
-                        {labelFor(JOB_TYPES, job.contractType)}
-                      </span>
-                    </div>
-                  </Card>
-                </Link>
-              ))}
+                    </Card>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </section>
@@ -231,13 +244,20 @@ export default async function Home({
         {/* Comunidad */}
         <section className="mt-7">
           <Link href="/comunidad" className="block">
-            <Card className="flex items-center gap-3.5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-mx-red-600/[0.09] text-mx-red-600">
-                <MessagesSquare className="h-5 w-5" strokeWidth={2.1} />
+            <Card className="flex items-center gap-3.5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99]">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-mx-red-600/[0.09] text-mx-red-600">
+                <CommunityIcon className="h-7 w-7" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-bold text-navy-900">Comunidad Mexa</p>
-                <p className="text-xs text-navy-800/50">Conectá con personas, compartí tips y crecé profesionalmente</p>
+                <p className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
+                  Comunidad Mexa
+                  {communityMemberCount > 0 && (
+                    <span className="rounded-full bg-sand-100 px-2 py-0.5 text-[10px] font-bold text-navy-800/60">
+                      +{communityMemberCount} personas
+                    </span>
+                  )}
+                </p>
+                <p className="text-xs text-navy-800/50">Conectá con personas, compartí experiencias y crecé profesionalmente</p>
               </div>
               <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
             </Card>

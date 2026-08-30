@@ -8,6 +8,7 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { CriminalRecordSection } from "@/components/forms/CriminalRecordSection";
+import { ImproveCvButton } from "@/components/forms/ImproveCvButton";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -45,6 +46,8 @@ export default async function CvPage() {
         <p className="mt-1 text-sm text-navy-800/60">
           Vista previa de tu currículum, generado a partir de tu perfil.
         </p>
+
+        <ImproveCvButton />
 
         <Card className="mt-5 flex flex-col gap-5 p-6">
           <div>
