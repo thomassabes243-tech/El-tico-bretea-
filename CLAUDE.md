@@ -617,3 +617,70 @@ porque la fila de `AppSettings` ya existe en producción). Falta que el
 dueño apriete "Crear/actualizar planes de PayPal" en `/admin/configuracion`
 una vez desplegado esto — ese paso pega contra la cuenta real de PayPal,
 imposible de hacer desde este entorno.
+
+## Vacantes de ejemplo (contenido de relleno, 30 ago 2026)
+
+Pedido explícito del dueño: 100 vacantes genéricas (10 por cada una de las
+10 categorías reales de `LaborCategory`) para que la app no se vea vacía a
+los primeros usuarios. **Antes de cargar nada se le avisó de un problema
+real**, confirmado con él antes de escribir una sola fila: las ubicaciones
+que dio (San José, Heredia, Alajuela, etc.) son de Costa Rica, pero esta
+rama es "El Mexa Chamba" — el producto de **México** (moneda MXN, todo el
+branding ya armado para México desde el principio de este proyecto). El
+dueño confirmó usar ciudades mexicanas en su lugar. También dio títulos
+para solo 3 categorías (Construcción, Hoteles y turismo, Profesionales);
+confirmó que armara yo las otras 7 (Restaurantes, Limpieza, Transporte,
+Seguridad, Oficinas y administración, Ventas y comercio, Tecnología) con
+el mismo criterio.
+
+Aplicado como migración de datos —
+`prisma/migrations/20260830070000_vacantes_ejemplo_relleno/migration.sql`
+— no como fila del seed normal (`prisma/seed.ts`), porque ese script corre
+en cada build de Vercel y volvería a intentar insertar en cada deploy; una
+migración se aplica una sola vez y queda registrada.
+
+**Cómo identificarlas y borrarlas en bloque más adelante** (cuando
+empiecen a entrar ofertas reales de empresas de verdad — el dueño pidió
+específicamente que quedaran marcadas para esto, sin agregar ninguna
+columna nueva al esquema):
+- Las 10 empresas reservadas que "publican" estas vacantes tienen
+  `legalId = 'EJEMPLO'` y su correo sigue el patrón
+  `ejemplo.<categoria>@mexicosinhambre.com` (mismo patrón ya usado por
+  `IMPORT_SOURCE_EMAIL` en `src/lib/ai-import.ts` para las ofertas
+  importadas de Facebook/WhatsApp — no es un mecanismo nuevo).
+- Borrar esas 10 cuentas borra en cascada sus `company_profiles` y las 100
+  `job_postings` con ellas (las relaciones ya son `onDelete: Cascade`, sin
+  necesidad de ninguna migración nueva):
+  ```sql
+  DELETE FROM "users" WHERE "email" LIKE 'ejemplo.%@mexicosinhambre.com';
+  ```
+  Probado tal cual en este entorno antes de aplicar la migración final:
+  borra las 10 empresas y las 100 vacantes de un solo golpe, sin dejar
+  nada huérfano.
+- Nombre de cada empresa genérico según el rubro (ej. "Contratista de
+  Construcción", "Restaurante Local", "Empresa de Tecnología") — nunca un
+  nombre real. `isVerified = false` en las 10 (correcto: no son empresas
+  verificadas de verdad).
+
+Salarios dentro del rango típico real de `src/lib/salary-guide.ts` (mismo
+rango que usa el semáforo de seguridad), con una pequeña variación por
+puesto dentro de cada categoría para que no se vean todas idénticas — el
+semáforo sale verde ("dentro de lo típico") en las 100. Ubicación y tipo
+de contrato repartidos variado entre ~18 ciudades mexicanas y los 5 tipos
+de contrato existentes. `createdAt` repartido en las últimas ~6 semanas
+(no todas con la fecha de hoy) para que no aparezcan las 100 con la
+insignia "Nueva" al mismo tiempo.
+
+Verificado con Playwright contra un build de producción local: se aplicó
+la migración contra la base de datos local, se confirmaron 10 empresas +
+100 vacantes (10 exactas por categoría), se revisó visualmente
+`/buscar/construccion` y `/buscar/tecnologia` (semáforo verde, ciudades y
+tipos de contrato variados) y el detalle de una vacante individual
+(`/vacantes/seed_ejemplo_job_construccion_01`, sin errores). Se probó
+además el borrado en bloque documentado arriba antes de dejar la
+migración aplicada para producción.
+
+**No se pudo verificar en producción real desde este entorno** (no hay
+acceso a la base de datos de producción) — hace falta que el dueño
+confirme, después del próximo deploy, que las 100 vacantes aparecen en
+`https://mexico-sin-hambre-el-tico-bretea.vercel.app`.
