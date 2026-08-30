@@ -274,41 +274,56 @@ vuelva a mandar en el chat.
   sesión de Claude Code). Mientras tanto, el buscador con IA cae solo a la
   búsqueda de texto normal (nunca deja a alguien sin resultado).
 
-## Rediseño del Home (pedido "sistema real, no genérico", ver commit del
-rediseño de home)
+## Rediseño del Home
 
-Reescrito con estas decisiones concretas (ninguna es un ajuste cosmético
-suelto, todas responden a puntos explícitos del pedido):
+Dos pasadas. La primera (íconos propios + IA) sigue vigente en su mayor
+parte; la segunda (estructura estricta de 8 secciones, la más reciente)
+**reemplazó partes de la primera** — anotado abajo qué quedó y qué se sacó.
 
-- Cero emojis en toda la pantalla de Inicio (categorías, tarjetas) — antes
-  las categorías mostraban un emoji cuando existía uno en `CATEGORY_EMOJI`
-  y el ícono Lucide solo como fallback; ahora siempre es el ícono Lucide,
-  consistente con el resto de la app.
-- 4 íconos compuestos propios (no sueltos de una librería):
-  `SafetyBadgeIcon` (escudo + pin de ubicación + arcos de señal, para
-  "Compartí tu ubicación"), `ServiceRequestIcon`/`ServiceOfferIcon`
-  (Cotizaciones, reemplazan llave inglesa/maletín genéricos), `CommunityIcon`
-  (tres personas conectadas, reemplaza el globo de chat genérico) — los 4
-  en `src/components/brand/`.
-- Buscador: `SmartSearchBar` (nuevo) — el ícono de lupa + Enter siguen
-  siendo la búsqueda de texto libre de siempre; se agregó un botón
-  "Buscar con IA" aparte que manda la frase a `/api/ai/buscar` para
-  convertirla en palabras clave más efectivas antes de buscar (útil para
-  frases largas en lenguaje natural). Si la IA falla o no está configurada,
-  cae a la búsqueda normal con el texto tal cual — nunca deja a la persona
-  sin resultado. También se agregó un botón "Filtros" a `/buscar`.
-  "Comunidad Mexa" ahora muestra "+N personas" con el conteo REAL de
-  autores distintos que ya escribieron en el chat (nunca un número
-  inventado) — `getCommunityMemberCount` en `chat-rooms.ts`.
-- Tarjetas de "Nuevos Trabajos": ahora con ícono de categoría, insignia
-  "Nueva" (creada hace menos de 3 días, si no está Destacada) y salario si
-  la vacante lo cargó — antes solo mostraban título/empresa/ubicación/tipo
-  de jornada.
-- Empty state de "Trabajos Destacados" reescrito ("Todavía no hay...
-  Estamos buscando nuevas oportunidades para vos" + botón "Explorar
-  trabajos") en vez del texto genérico anterior.
-- Bottom nav: fondo tipo píldora detrás del ícono activo + `active:scale-90`
-  al tocar (antes solo cambiaba de color, sin ninguna microinteracción).
+### Pasada 2 (la vigente): estructura fija de 8 secciones, sin foto de fondo
+
+A pedido explícito y muy detallado del dueño ("NO agregues secciones
+adicionales", "menos elementos pero mejor diseñados"), el Home quedó
+reducido a EXACTAMENTE: Header (TopBar, sin tocar) → Título ("¿Qué
+necesitás hacer hoy?", texto plano, sin tarjeta) → Buscador → Necesito un
+servicio / Quiero trabajar → Categorías ("Explorar por oficio") → Chambas
+para ti → Seguridad (compacto) → BottomNav.
+
+**Se sacó del Home** (confirmado explícitamente con el dueño antes de
+borrar, ver pregunta de esta sesión):
+- El hero con foto (`HeroImage`, `/assets/images/hero-worker.jpg`) — la
+  foto y el componente siguen en el repo sin usar, no se borraron, por si
+  se quieren reusar en otra pantalla más adelante.
+- La tarjeta "Comunidad Mexa" (con `CommunityIcon` y el contador real de
+  personas) — Comunidad sigue accesible desde el menú inferior, no se
+  perdió la función, solo la promoción en el Home.
+- Anuncios (AdSense + house ads, `AdSlot`), tarjeta de donación, pie con
+  links a Privacidad/Términos/Contacto — **sin otro lugar hoy donde
+  vivan**; si hace falta recuperar el acceso a Privacidad/Términos o a
+  donar, hay que agregarlo en algún otro lado (ej. `/perfil`), no está en
+  ningún otro lugar de la app todavía.
+- El botón "Buscar personal" que vivía en el hero — sigue accesible desde
+  `/perfil` (cuentas COMPANY) y `/empresa/guardados`, no se perdió.
+- "Trabajos Destacados" y "Nuevos Trabajos" como DOS secciones separadas
+  — ahora es una sola sección "Chambas para ti" (destacadas primero,
+  mismo query `findJobPostingsFeaturedFirst` de siempre) con un solo
+  empty state si no hay ninguna.
+
+**Se mantuvo tal cual** (parte de la pasada 1, sigue vigente): cero
+emojis, íconos propios `SafetyBadgeIcon`/`ServiceRequestIcon`/
+`ServiceOfferIcon` en `src/components/brand/`, `SmartSearchBar` con el
+botón "Buscar con IA", ícono de categoría + insignia "Nueva" + salario en
+las tarjetas de trabajo, bottom nav con píldora activa. `CommunityIcon`
+quedó sin uso en el Home (solo se usaba en la tarjeta que se sacó) pero
+sigue en el repo.
+
+El header (`TopBar`) NO se tocó a propósito — es un componente compartido
+por toda la app, y el pedido era "trabajá únicamente en la pantalla de
+Inicio". El dueño pidió notificaciones + avatar ahí; no existe ningún
+sistema de notificaciones en la app hoy, así que agregar una campanita
+sin función real hubiera violado su propia regla ("si no tiene una
+función clara, eliminalo") — pendiente si en algún momento se quiere
+construir notificaciones de verdad.
 
 ### IA integrada (3 funciones reales, no solo "poner IA" de adorno)
 
