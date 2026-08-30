@@ -123,8 +123,7 @@ escribía ahí su propio correo (el de la cuenta con la que ya estaba
 logueada), `/api/registro/empresa` respondía "Ya existe una cuenta con ese
 correo" — el error que el dueño reportó como "perfil ya existente".
 
-Arreglado con tres cambios (commit del fix — completar hash cuando se
-pushee):
+Arreglado con tres cambios (commit `0f0ffae`):
 1. `src/lib/company-profile.ts`: `findOrCreateServiceProfile` ahora usa
    `prisma.companyProfile.upsert()` en vez de `findUnique` + `create` —
    elimina la condición de carrera de raíz (el choque de `userId` único se
