@@ -137,7 +137,7 @@ export function JobPostingForm() {
               <TextInput id="quantity" type="number" min={1} max={999} {...register("quantity")} />
             </FieldWrapper>
             <FieldWrapper label="Salario" htmlFor="salary" error={errors.salary?.message}>
-              <TextInput id="salary" placeholder="Ej. $350,000 - $400,000" {...register("salary")} />
+              <TextInput id="salary" placeholder="Ej. $8,000 - $12,000 MXN al mes" {...register("salary")} />
             </FieldWrapper>
           </div>
           <FieldWrapper label="Horario" htmlFor="schedule" error={errors.schedule?.message}>

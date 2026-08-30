@@ -164,7 +164,7 @@ export function ImportarOfertaForm() {
         </FieldWrapper>
         <div className="grid grid-cols-2 gap-3">
           <FieldWrapper label="Ubicación" htmlFor="location" error={errors.location?.message}>
-            <TextInput id="location" placeholder="Ej. Liberia, Guanacaste" {...register("location")} />
+            <TextInput id="location" placeholder="Ej. Guadalajara, Jalisco" {...register("location")} />
           </FieldWrapper>
           <FieldWrapper label="Tipo de contrato" htmlFor="contractType" error={errors.contractType?.message}>
             <Select id="contractType" {...register("contractType")}>

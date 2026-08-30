@@ -189,7 +189,7 @@ export function EditWorkerProfileForm({
           Disponible para trasladarme de lugar de trabajo
         </label>
         <FieldWrapper label="Expectativa salarial" htmlFor="salaryExpectation" error={errors.salaryExpectation?.message}>
-          <TextInput id="salaryExpectation" placeholder="Ej. $350,000 mensuales" {...register("salaryExpectation")} />
+          <TextInput id="salaryExpectation" placeholder="Ej. $8,000 mensuales" {...register("salaryExpectation")} />
         </FieldWrapper>
       </Card>
 

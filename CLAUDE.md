@@ -700,3 +700,47 @@ acceso a la base de datos de producción) — hace falta que el dueño
 confirme, después del próximo deploy, que las 300 vacantes (30 por
 categoría) aparecen en
 `https://mexico-sin-hambre-el-tico-bretea.vercel.app`.
+
+### Bug: placeholders de formulario con escala de Costa Rica (30 ago 2026)
+
+El dueño reportó "salario tico" y ubicaciones de Costa Rica mezclados en
+la versión de México. Causa real (no eran las 300 vacantes de ejemplo,
+que ya usaban MXN y ciudades mexicanas, verificado dos veces): 4
+placeholders de ejemplo en formularios reales, nunca actualizados cuando
+la app se adaptó de Costa Rica a México:
+
+- `JobPostingForm.tsx`, `EditJobPostingForm.tsx` (salario de vacante):
+  `"$350,000 - $400,000"` — escala de colones, imposible en pesos
+  mexicanos para estos rubros (el máximo real de `salary-guide.ts` es
+  $30,000/mes). Corregido a `"$8,000 - $12,000 MXN al mes"`.
+- `WorkerRegistrationForm.tsx`, `EditWorkerProfileForm.tsx` (expectativa
+  salarial del trabajador): mismo `"$350,000 mensuales"` → `"$8,000
+  mensuales"`.
+- `ImportarOfertaForm.tsx` (panel admin, ubicación): `"Ej. Liberia,
+  Guanacaste"` → `"Ej. Guadalajara, Jalisco"`.
+
+Además, migración de datos —
+`prisma/migrations/20260830090000_fix_datos_costa_rica_leftover/migration.sql`
+— para lo que ya hubiera quedado guardado en la base con esos valores
+viejos (no se pudo confirmar exactamente qué fila desde acá, sin acceso a
+producción, así que la migración busca por patrón en vez de por ID):
+- Ubicaciones que mencionan San José, Heredia, Alajuela, Cartago,
+  Guanacaste, Puntarenas, Limón o "Costa Rica" (en `job_postings`,
+  `company_profiles.location`, `worker_profiles.residence`) → ciudad
+  mexicana equivalente.
+- Salarios con escala de cientos de miles sin "MXN" → se limpian a NULL
+  (no se inventa un monto real que no sabemos cuál era).
+- Se borra la publicación de prueba visible ("Vacante de prueba para
+  verificar el flujo de destacar oferta") para que ningún usuario real la
+  vea y note que no es genuina.
+
+Probado en este entorno: se insertó una fila sintética con exactamente
+ese patrón (ubicación "Heredia, Costa Rica", salario "$350,000 -
+$400,000"), se corrió la migración, y quedó en "Guadalajara, Jalisco" /
+salario en NULL — sin tocar ninguna de las 300 vacantes de ejemplo reales
+(siguen en 300, ninguna con salario NULL). Las 5 filas de "Vacante de
+prueba" que quedaron de pruebas anteriores de este entorno también se
+borraron. **No se pudo confirmar contra la base de producción real** cuál
+era el registro exacto que vio el dueño — la migración corrige por
+patrón, así que corrige cualquier fila real que calce, pero no hay forma
+de listar desde acá qué filas de producción existían antes del fix.
