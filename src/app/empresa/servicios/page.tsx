@@ -26,9 +26,15 @@ export default async function ServiciosPage() {
     }),
     getAppSettings(),
   ]);
-  // Solo puede faltar acá para una cuenta COMPANY sin perfil de empresa
-  // todavía -- una cuenta WORKER siempre sale con uno recién creado arriba.
-  if (!company) redirect("/registro/empresa");
+  // Nunca mandar a una cuenta ya logueada al formulario de ALTA de empresa
+  // (pide correo/contraseña de nuevo, sin chequeo de sesión, y si escribe su
+  // propio correo la API le responde "Ya existe una cuenta con ese correo"
+  // -- bug reportado por el dueño). Para COMPANY, esto solo puede faltar si
+  // el perfil de empresa nunca se creó (caso excepcional, sí corresponde
+  // completarlo ahí); para WORKER, findOrCreateServiceProfile ya debería
+  // haber creado uno -- si aun así falta (ej. WorkerProfile incompleto),
+  // que vuelva a su perfil en vez de un alta de cuenta nueva.
+  if (!company) redirect(session.user.role === "WORKER" ? "/perfil" : "/registro/empresa");
 
   return (
     <AuthShell

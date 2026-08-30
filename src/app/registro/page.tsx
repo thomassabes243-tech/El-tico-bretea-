@@ -1,9 +1,14 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { HardHat, Building2, ArrowRight } from "lucide-react";
+import { auth } from "@/lib/auth";
 import { AuthShell } from "@/components/layout/AuthShell";
 import { Card } from "@/components/ui/Card";
 
-export default function RegistroPage() {
+export default async function RegistroPage() {
+  const session = await auth();
+  if (session?.user) redirect("/perfil");
+
   return (
     <AuthShell
       title="Creá tu cuenta"

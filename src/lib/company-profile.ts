@@ -22,8 +22,17 @@ export async function findOrCreateServiceProfile(userId: string, role: string | 
   const worker = await prisma.workerProfile.findUnique({ where: { userId } });
   if (!worker) return null;
 
-  return prisma.companyProfile.create({
-    data: {
+  // upsert (no find-then-create): dos visitas casi simultáneas a
+  // /empresa/servicios (doble tap, refresh del formulario) podían disparar
+  // dos create() en paralelo -- el segundo chocaba contra el índice único
+  // de userId (P2002) sin capturar, tiraba la página entera y el usuario
+  // terminaba en el fallback viejo de /registro/empresa (bug reportado:
+  // "vuelve a pedir el correo" + "perfil ya existente"). upsert resuelve
+  // el choque de forma atómica en la propia base.
+  return prisma.companyProfile.upsert({
+    where: { userId },
+    update: {},
+    create: {
       userId,
       commercialName: worker.fullName,
       legalId: "",

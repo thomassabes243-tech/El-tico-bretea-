@@ -105,6 +105,48 @@ plan ya existe en PayPal (ver arriba, solo se ve en `/admin/configuracion`).
 | `/cotizaciones` servía redirect cacheado a cualquiera (bug de caché estático) | ✅ Resuelto (`53bba64`, en el commit de fase 1 del rediseño) |
 | Neon: "Can't reach database server" intermitente | ⚠️ Mitigado dos veces (`0d20ad8`, `b5e729b`) — reapareció una vez después del primer intento. Vigilar si vuelve a pasar después de `connection_limit=5`; si sigue, el próximo paso es revisar el límite de conexiones del plan de Neon en su propio dashboard (sin acceso a eso desde acá). |
 | Cotizaciones: el perfil público (`/empresas/[id]`) no mostraba nada del perfil de servicios (ni categoría, ni descripción, ni fotos, ni calificación, ni teléfono) aunque el profesional ya lo hubiera completado — de ahí que "no se viera bien ninguno de los dos lados" | ✅ Resuelto (`dbc2b27`) — agrega la sección "Cotizaciones" completa a esa pantalla, más años de experiencia y PDF de portafolio como campos nuevos |
+| "Ofrecer mis servicios" (Cotizaciones): al terminar y enviar el formulario de perfil de servicios, la app volvía a pedir el correo electrónico y luego tiraba "Ya existe una cuenta con ese correo" como si fuera un error bloqueante | ✅ Resuelto — ver detalle abajo |
+
+### Detalle: bug de "vuelve a pedir el correo" / "perfil ya existente" en Cotizaciones
+
+Causa real: `/empresa/servicios/page.tsx` tenía un `redirect("/registro/empresa")`
+como fallback para cuando `company` salía `null` — pensado desde antes de que
+WORKER pudiera ofrecer servicios, para el caso (excepcional) de una cuenta
+COMPANY sin perfil de empresa. Al abrir esto también a WORKER, cualquier caso
+en el que `findOrCreateServiceProfile` no lograra crear el perfil (ej. una
+condición de carrera con dos visitas casi simultáneas a la página, que hacía
+chocar dos `create()` contra el índice único de `userId`) mandaba a un
+usuario YA LOGUEADO a `/registro/empresa` — una pantalla de ALTA DE CUENTA
+NUEVA (pide correo y contraseña) que además **no tenía ningún chequeo de
+sesión**: se mostraba igual a cualquiera, logueado o no. Si la persona
+escribía ahí su propio correo (el de la cuenta con la que ya estaba
+logueada), `/api/registro/empresa` respondía "Ya existe una cuenta con ese
+correo" — el error que el dueño reportó como "perfil ya existente".
+
+Arreglado con tres cambios (commit del fix — completar hash cuando se
+pushee):
+1. `src/lib/company-profile.ts`: `findOrCreateServiceProfile` ahora usa
+   `prisma.companyProfile.upsert()` en vez de `findUnique` + `create` —
+   elimina la condición de carrera de raíz (el choque de `userId` único se
+   resuelve de forma atómica en la propia base, nunca llega a lanzar error).
+2. `src/app/empresa/servicios/page.tsx`: si `company` sigue sin existir
+   después de `findOrCreateServiceProfile`, una cuenta WORKER ahora va a
+   `/perfil` (nunca a `/registro/empresa`) — solo una cuenta COMPANY
+   (caso legítimo y excepcional) sigue yendo a completar su alta de empresa.
+3. `src/app/registro/page.tsx`, `src/app/registro/empresa/page.tsx` y
+   `src/app/registro/trabajador/page.tsx`: las tres pantallas de alta de
+   cuenta ahora chequean sesión con `auth()` y redirigen a `/perfil` si ya
+   hay una — así, ningún bug futuro en otra redirección puede volver a
+   mandar a alguien ya logueado a un formulario que le pida el correo de
+   nuevo, sea cual sea la ruta por la que llegue ahí.
+
+Probado de punta a punta con Playwright: cuenta WORKER nueva → completa
+registro (wizard de 6 pasos) → entra a "Ofrecer mis servicios" desde Inicio
+→ llena y guarda el perfil de servicios → sigue en `/empresa/servicios` en
+modo edición (sin pedir correo, sin error de duplicado) → recarga la
+página y los datos guardados siguen ahí. Además, visitar `/registro`,
+`/registro/empresa` y `/registro/trabajador` directamente con una sesión
+ya iniciada ahora redirige a `/perfil` en los tres casos.
 
 ## Cotizaciones — "Ofrecer mis servicios" ya no es exclusivo de COMPANY
 
