@@ -12,7 +12,7 @@
 // RESEND_API_KEY. Tiene costo real por cada llamada (cobra la cuenta de
 // Google del dueño del producto, no la de esta sesión).
 
-const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_MODEL = "gemini-3.6-flash";
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 export class AiNotConfiguredError extends Error {

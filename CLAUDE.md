@@ -448,7 +448,7 @@ El dueño confirmó que ya había configurado una clave de **Gemini**
 usa, desde antes, la función separada "Importar oferta desde Facebook/
 WhatsApp" del panel admin (`src/lib/ai-import.ts`, `/admin/importar-oferta`),
 que sí ya llama a Gemini correctamente. `src/lib/ai.ts` se reescribió para
-usar ese mismo patrón (`gemini-2.5-flash`, endpoint
+usar ese mismo patrón (`gemini-3.6-flash`, endpoint
 `generativelanguage.googleapis.com`) en vez de Anthropic — mismas 3
 funciones exportadas (`aiSearchToQuery`, `aiImproveCv`,
 `aiAnalyzeJobPosting`), así que las 3 rutas que las consumen no necesitaron
@@ -476,6 +476,34 @@ Gemini (`generativelanguage.googleapis.com`, alcanzable desde acá) con el
 formato de request correcto. Falta la prueba final con una clave real
 (genera contenido real en vez de solo confirmar la conexión) — eso solo se
 puede hacer en producción, con la clave que ya cargó el dueño en Vercel.
+
+**Modelo desactualizado (30 ago 2026, mismo día): `gemini-2.5-flash` ya no
+existe.** Con la clave real ya cargada, el dueño probó "Mejorar mi CV con
+IA" y Gemini respondió 404: *"This model models/gemini-2.5-flash is no
+longer available to new users"*. `gemini-2.5-flash` se da de baja
+definitivamente el 16-20 oct 2026, pero ya dejó de estar disponible para
+cuentas/API keys nuevas antes de esa fecha (la clave del dueño es nueva).
+El mensaje de error de Gemini sugería `models/gemini-3.6-flash` — se
+verificó por separado (no se asumió que el nombre sugerido fuera correcto
+tal cual) contra varias fuentes independientes (no se pudo acceder a
+`ai.google.dev` directamente, bloqueado por la política de red de este
+entorno — verificado por búsqueda web) que confirman `gemini-3.6-flash`
+como ID real y vigente (GA desde el 21 jul 2026). También existe
+`gemini-3.7-flash` (GA desde el 13 ago 2026, más nuevo, mismo precio,
+pensado sobre todo para código/agentes) — se optó por `gemini-3.6-flash`
+por ser la opción más probada para el tipo de tareas de esta app (texto
+conversacional en español, no código).
+
+Se corrigieron **2 archivos** que tenían el modelo viejo hardcodeado (se
+revisó todo el repo para confirmar que no quedara ninguno más):
+`src/lib/ai.ts` (las 3 funciones de trabajador) y `src/lib/ai-import.ts`
+("Importar oferta", panel admin) — este segundo también estaba afectado
+por el mismo problema aunque el dueño no lo haya reportado todavía.
+
+Sin una clave real de Gemini en este entorno, no se pudo confirmar que
+`gemini-3.6-flash` genere contenido real (mismo límite que el cambio de
+proveedor de más arriba) — la única forma real de confirmarlo es que el
+dueño vuelva a probar "Mejorar mi CV con IA" en producción.
 
 ## Regla de verificación en producción
 

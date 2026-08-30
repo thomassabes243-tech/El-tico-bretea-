@@ -6,7 +6,7 @@ import { LABOR_CATEGORIES } from "@/lib/constants";
 // Importar oferta desde texto/imagen de Facebook o WhatsApp (panel admin,
 // solo lectura para el resto de la app): la clave de Gemini vive
 // únicamente acá, del lado del servidor -- nunca se manda al navegador.
-const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_MODEL = "gemini-3.6-flash";
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 export type ExtractedJobFields = {
