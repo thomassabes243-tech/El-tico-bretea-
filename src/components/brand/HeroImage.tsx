@@ -8,11 +8,21 @@ import clsx from "clsx";
  * motivo, cae a un fondo sólido en vez de mostrar el ícono de imagen rota
  * del navegador -- el degradado y el texto de arriba siguen viéndose bien.
  */
-export function HeroImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
+export function HeroImage({
+  src,
+  alt,
+  className,
+  fallbackClassName = "bg-navy-900",
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+  fallbackClassName?: string;
+}) {
   const [failed, setFailed] = useState(false);
 
   if (failed) {
-    return <div className={clsx("bg-navy-900", className)} />;
+    return <div className={clsx(fallbackClassName, className)} />;
   }
 
   return (

@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { CATEGORY_ICON_MAP } from "@/components/brand/CategoryIcon";
 import { SafetyBadgeIcon } from "@/components/brand/SafetyBadgeIcon";
+import { HeroImage } from "@/components/brand/HeroImage";
 import { ServiceRequestIcon, ServiceOfferIcon } from "@/components/brand/ServiceIcons";
 import { SmartSearchBar } from "@/components/forms/SmartSearchBar";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
@@ -49,11 +50,18 @@ export default async function Home({
         </div>
 
         {/* 4. Pedir un servicio / Ofrecer mis servicios -- las dos acciones
-            centrales, mismo peso visual, una en rojo y otra en navy. Ícono
-            propio grande y desvanecido de fondo (mismo ícono, dos tamaños)
-            en vez de una ilustración nueva. */}
+            centrales, mismo peso visual, una en rojo y otra en navy. Foto
+            real de fondo (oscurecida) + el mismo ícono propio de siempre,
+            en dos tamaños, sin sacar nada de lo que ya había. */}
         <div className="mt-5 grid grid-cols-2 gap-3">
           <Link href="/servicios/nueva" className="group relative flex h-40 flex-col justify-between overflow-hidden rounded-xl bg-mx-red-600 p-4 text-white shadow-sm transition-all active:scale-[0.98]">
+            <HeroImage
+              src="/assets/images/servicio-electricista.jpg"
+              alt=""
+              fallbackClassName="bg-mx-red-600"
+              className="absolute inset-0 h-full w-full brightness-[0.45] transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-mx-red-600/30 mix-blend-multiply" />
             <ServiceRequestIcon className="pointer-events-none absolute -bottom-4 -right-4 h-28 w-28 text-white opacity-10 transition-transform group-hover:scale-110" />
             <ServiceRequestIcon className="relative h-7 w-7" />
             <div className="relative">
@@ -65,6 +73,13 @@ export default async function Home({
             <ChevronRight className="relative ml-auto h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
           <Link href="/empresa/servicios" className="group relative flex h-40 flex-col justify-between overflow-hidden rounded-xl bg-navy-900 p-4 text-white shadow-sm transition-all active:scale-[0.98]">
+            <HeroImage
+              src="/assets/images/quiero-trabajar.jpg"
+              alt=""
+              fallbackClassName="bg-navy-900"
+              className="absolute inset-0 h-full w-full brightness-[0.45] transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-navy-900/30 mix-blend-multiply" />
             <ServiceOfferIcon className="pointer-events-none absolute -bottom-4 -right-4 h-28 w-28 text-white opacity-10 transition-transform group-hover:scale-110" />
             <ServiceOfferIcon className="relative h-7 w-7" />
             <div className="relative">
@@ -180,9 +195,16 @@ export default async function Home({
         {/* 7. Seguridad -- compacto a propósito: nunca "trabajo seguro" ni
             "empresa segura", solo una herramienta adicional de protección.
             Tono neutro (no rojo) para que no compita con las 2 acciones
-            centrales de arriba. */}
-        <Card className="mt-6 flex flex-col gap-4 bg-sand-50 p-4">
-          <div className="flex items-center gap-3.5">
+            centrales de arriba. Foto real de fondo, muy tenue (mismo estilo
+            de foto que el resto), para no perder el tono neutro ya decidido. */}
+        <Card className="relative mt-6 flex flex-col gap-4 overflow-hidden bg-sand-50 p-4">
+          <HeroImage
+            src="/assets/images/seguridad-calle.jpg"
+            alt=""
+            fallbackClassName="bg-sand-50"
+            className="absolute inset-0 h-full w-full opacity-15"
+          />
+          <div className="relative flex items-center gap-3.5">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-navy-900/10 text-navy-900">
               <SafetyBadgeIcon className="h-6 w-6" />
             </div>
@@ -195,7 +217,7 @@ export default async function Home({
           </div>
           <Link
             href="/seguridad"
-            className="block rounded-lg border border-sand-200 bg-white py-2.5 text-center text-xs font-bold text-navy-900 transition-transform active:scale-[0.98]"
+            className="relative block rounded-lg border border-sand-200 bg-white py-2.5 text-center text-xs font-bold text-navy-900 transition-transform active:scale-[0.98]"
           >
             Configurar protección
           </Link>

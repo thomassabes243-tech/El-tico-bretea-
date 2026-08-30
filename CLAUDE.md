@@ -356,6 +356,53 @@ No se tocó la tipografía global (el archivo de Stitch usaba Montserrat +
 Inter; la app usa Plus Jakarta Sans en todo el resto de las pantallas —
 cambiar la fuente global está fuera del alcance de "solo Inicio").
 
+### Pasada 3-pro: fotos reales en las 2 tarjetas de acción + Seguridad
+
+El dueño mandó un tercer archivo de Stitch ("inicio_pro") con la MISMA
+estructura de 8 secciones, pero con fotos reales de fondo (oscurecidas)
+en las 2 tarjetas de acción y en la tarjeta de Seguridad. Antes de tocar
+nada se le preguntó explícitamente (pidió que se le preguntara si había
+duda) y confirmó dos cosas: (1) usar el archivo completo como referencia
+de estilo, (2) **revertir expresamente su propia regla anterior de "NO
+imágenes"** solo para estas 3 áreas — "Sí, quiero fotos reales ahí",
+aceptando que tomara más tiempo conseguirlas con licencia.
+
+- **"Necesito un servicio"**: foto de un electricista (Adobe Stock,
+  asset `301634773`, licenciada), recortada 900×1125 (4:5) centrada en
+  el sujeto → `public/assets/images/servicio-electricista.jpg`.
+- **"Quiero trabajar"**: se reusó `hero-worker.jpg` (la foto que ya
+  estaba en el repo sin usar desde que se sacó del hero en la pasada 2),
+  recortada igual a 900×1125 → `public/assets/images/quiero-trabajar.jpg`.
+  El archivo original `hero-worker.jpg` se dejó intacto por si hace
+  falta en otro lado.
+- **Seguridad**: foto de una persona caminando de espaldas por una calle
+  arbolada al atardecer — sin rostro identificable a propósito (Adobe
+  Stock, asset `225277315`, licenciada), recortada 1200×~545 (banner
+  ancho) → `public/assets/images/seguridad-calle.jpg`.
+
+Tratamiento visual (igual al de "inicio_pro", `object-cover
+brightness-[0.4]` sobre la foto): en las 2 tarjetas de acción la foto
+ocupa toda la tarjeta, oscurecida (`brightness-[0.45]`) + un velo del
+color de marca encima (`bg-mx-red-600/30` o `bg-navy-900/30` con
+`mix-blend-multiply`) para que seguidan siendo roja/navy y no compitan
+entre sí — el ícono propio (chico arriba + gigante desvanecido de fondo),
+el texto y la flecha se mantuvieron sin ningún cambio ("sin quitar
+nada"), solo se agregó la foto detrás. En Seguridad se mantuvo el tono
+neutro `sand-50` ya decidido en la pasada 2 (para no competir con las 2
+tarjetas de arriba) — la foto se agregó ahí pero muy tenue (`opacity-15`)
+en vez de al frente como en el archivo de Stitch, para no perder ese tono
+neutro que fue una decisión explícita anterior.
+
+`src/components/brand/HeroImage.tsx` (el componente de foto de fondo con
+fallback a color sólido si la imagen no carga, ya existía desde el hero
+de la pasada 1) se generalizó con una prop `fallbackClassName` (antes el
+fallback era siempre `bg-navy-900` fijo) para poder reusarlo en la
+tarjeta roja y en la de Seguridad sin que el fallback se vea navy ahí.
+
+Verificado visualmente con Playwright (capturas de las 3 tarjetas) contra
+un build de producción local: texto e ícono se leen bien sobre las 3
+fotos, ninguna se ve "rota" ni sin foto.
+
 ### IA integrada (3 funciones reales, no solo "poner IA" de adorno)
 
 Las 3 funciones que pidió el dueño explícitamente, todas usando la API de
