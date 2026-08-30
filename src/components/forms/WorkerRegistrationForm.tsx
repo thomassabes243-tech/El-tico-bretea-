@@ -14,6 +14,7 @@ import {
 import { LABOR_CATEGORIES, JOB_TYPES, AVAILABILITY_OPTIONS } from "@/lib/constants";
 import { FieldWrapper, TextInput, Textarea, Select } from "@/components/forms/FormField";
 import { OptionalFormNotice } from "@/components/forms/OptionalFormNotice";
+import { WhyWeAskEmailScreen } from "@/components/forms/WhyWeAskEmailScreen";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { getDeviceFingerprint } from "@/lib/device-fingerprint";
@@ -29,6 +30,7 @@ const STEPS: { title: string; fields: (keyof WorkerRegistrationFormValues)[] }[]
 
 export function WorkerRegistrationForm() {
   const router = useRouter();
+  const [showEmailIntro, setShowEmailIntro] = useState(true);
   const [step, setStep] = useState(0);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -93,6 +95,10 @@ export function WorkerRegistrationForm() {
       setIsSubmitting(false);
     }
   };
+
+  if (showEmailIntro) {
+    return <WhyWeAskEmailScreen onContinue={() => setShowEmailIntro(false)} />;
+  }
 
   return (
     <form

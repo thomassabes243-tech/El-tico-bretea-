@@ -9,11 +9,13 @@ import { CheckCircle2 } from "lucide-react";
 import { companyRegistrationSchema, type CompanyRegistrationInput } from "@/lib/validations";
 import { FieldWrapper, TextInput, Textarea } from "@/components/forms/FormField";
 import { OptionalFormNotice } from "@/components/forms/OptionalFormNotice";
+import { WhyWeAskEmailScreen } from "@/components/forms/WhyWeAskEmailScreen";
 import { Button } from "@/components/ui/Button";
 import { getDeviceFingerprint } from "@/lib/device-fingerprint";
 
 export function CompanyRegistrationForm() {
   const router = useRouter();
+  const [showEmailIntro, setShowEmailIntro] = useState(true);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,6 +60,10 @@ export function CompanyRegistrationForm() {
       setIsSubmitting(false);
     }
   };
+
+  if (showEmailIntro) {
+    return <WhyWeAskEmailScreen onContinue={() => setShowEmailIntro(false)} />;
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
