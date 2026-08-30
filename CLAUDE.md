@@ -744,3 +744,40 @@ borraron. **No se pudo confirmar contra la base de producción real** cuál
 era el registro exacto que vio el dueño — la migración corrige por
 patrón, así que corrige cualquier fila real que calce, pero no hay forma
 de listar desde acá qué filas de producción existían antes del fix.
+
+### Reporte del dueño: "contexto de Costa Rica" en las vacantes de ejemplo (30 ago 2026)
+
+El dueño reportó ver "ticas"/colones/marca "El Tico Bretea" en las
+publicaciones de ejemplo, y pidió que el marcador interno (`legalId`)
+nunca fuera visible. Se verificó punto por punto **contra producción
+real** (fetch directo a `/vacantes/seed_ejemplo_job_hoteles-turismo_01` y
+a `/empresas/seed_ejemplo_company_hoteles-turismo`, más grep de todo el
+código fuente por "Tico Bretea"/"colones"/"₡"/"costa rica"):
+
+- **No se encontró ningún rastro real de Costa Rica** en el contenido de
+  las 300 vacantes ni de las 10 empresas de ejemplo — ubicaciones,
+  salarios y marca ("El Mexa Chamba") salen correctos en el fetch real a
+  producción. Los únicos "falsos positivos" al buscar la cadena "tico"
+  son palabras españolas normales que la contienen (turístico,
+  logística, electrodomésticos), no el gentilicio. Esto ya se había
+  verificado y corregido en la sesión anterior (bug real distinto: un
+  placeholder de formulario con escala de colones, ver sección de arriba
+  "Bug: placeholders de formulario con escala de Costa Rica").
+- **Sí se encontró y confirmó un problema real de otro tipo**: el campo
+  `description` de las 10 empresas reservadas decía literalmente "Cuenta
+  de ejemplo usada para publicar vacantes de relleno mientras la app suma
+  empresas reales" — y ESE campo sí se muestra públicamente en
+  `/empresas/[id]` (alcanzable con un clic desde cualquier vacante de
+  ejemplo, ya que el nombre de la empresa linkea ahí). Corregido con
+  `prisma/migrations/20260830100000_ocultar_descripcion_empresas_ejemplo/migration.sql`
+  (pone `description = NULL` en las 10 empresas con `legalId = 'EJEMPLO'`
+  — el campo es opcional, sin descripción no se muestra nada ahí).
+- El marcador `legalId = 'EJEMPLO'` en sí nunca se renderiza en ninguna
+  pantalla pública (confirmado con grep en `src/app/empresas`,
+  `src/app/vacantes`, `src/app/buscar`, `src/app/page.tsx`) — solo se usa
+  en consultas internas / paneles admin, tal como se diseñó.
+
+Verificado con Playwright contra un build de producción local tras el
+fix: `/vacantes/seed_ejemplo_job_hoteles-turismo_01` y
+`/empresas/seed_ejemplo_company_hoteles-turismo` ya no muestran ninguna
+descripción de empresa, y siguen sin ningún rastro de Costa Rica.
