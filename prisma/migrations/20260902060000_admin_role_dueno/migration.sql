@@ -1,0 +1,11 @@
+-- El dueño del producto (thomassabes243@gmail.com) reportó no poder entrar
+-- a /admin/configuracion: su cuenta principal tiene un rol normal
+-- (WORKER o COMPANY), no ADMIN, así que requireAdmin() lo redirige a
+-- /perfil. Pedido explícito: darle rol ADMIN a esa cuenta.
+--
+-- No se pudo confirmar de antemano cuál era el rol actual (este entorno no
+-- tiene forma de leer la base de datos directamente, solo de escribir
+-- migraciones) -- este UPDATE no depende de saberlo, solo cambia lo que
+-- haga falta para esa fila puntual. Si la cuenta no existiera con ese
+-- correo exacto, este UPDATE no afecta ninguna fila (no es un error).
+UPDATE "users" SET "role" = 'ADMIN' WHERE "email" = 'thomassabes243@gmail.com';
