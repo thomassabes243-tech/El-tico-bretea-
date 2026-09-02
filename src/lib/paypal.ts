@@ -26,7 +26,15 @@ async function getAccessToken(): Promise<string> {
     },
     body: "grant_type=client_credentials",
   });
-  if (!res.ok) throw new Error("No se pudo autenticar con PayPal");
+  if (!res.ok) {
+    // PayPal devuelve el motivo real acá (ej. "invalid_client" cuando las
+    // credenciales no corresponden al entorno configurado en PAYPAL_ENV) --
+    // antes se descartaba y siempre se veía el mismo mensaje genérico, sin
+    // forma de saber si era credencial mala, entorno equivocado, etc.
+    const errBody = await res.json().catch(() => ({}) as { error?: string; error_description?: string });
+    const detail = errBody.error_description || errBody.error || `HTTP ${res.status}`;
+    throw new Error(`No se pudo autenticar con PayPal: ${detail} (entorno: ${process.env.PAYPAL_ENV === "live" ? "live" : "sandbox"})`);
+  }
   const data = (await res.json()) as { access_token: string };
   return data.access_token;
 }
