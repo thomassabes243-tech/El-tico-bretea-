@@ -82,6 +82,14 @@
 
 ## Base de datos compartida con El Tico Bretea (2 sep 2026)
 
+> ⚠️ **CORREGIDO EL 3 SEP 2026 — LEER PRIMERO "Las bases YA están separadas"
+> MÁS ABAJO.** Todo lo que esta sección dice sobre que las dos apps
+> "comparten la misma base física de Neon" **es falso desde que el dueño
+> separó las bases**. Lo que sigue siendo cierto (y es la causa real de la
+> mezcla de datos) es la primera parte: los dos proyectos de Vercel están
+> conectados al mismo repo y cada uno construye cualquier rama. El resto de
+> esta sección se deja como historial, no como diagnóstico vigente.
+
 **Causa real, confirmada con evidencia directa** (no domain issue, ver
 más abajo): los dos proyectos de Vercel — `mexico-sin-hambre`
 (`prj_bj8CEpgSaX8oaoCIeYNLlVCZaXr7`, este) y `el-tico-bretea-gp9g`
@@ -1057,20 +1065,30 @@ arriba) sigue completamente activo, no es un incidente cerrado:
   identificada por formato de `id` tipo UUID (8-4-4-4-12 hex) — un patrón
   que esta app nunca genera (México y Costa Rica usan `@default(cuid())`
   en sus dos `schema.prisma`, confirmado comparándolos completos).
-- **2ª ola, minutos después** (migración
-  `20260903180000_borrar_contaminacion_cr_ids_uuid_ola2`): con la primera
-  ola ya limpia y confirmada contra producción, `/buscar/construccion` y
-  `/buscar/seguridad` aparecieron 100% (30/30) ocupadas por vacantes de
-  Costa Rica bajo 7 empresas nuevas ("Edificaciones San Rafael", "Obras y
-  Acabados Ticos", "Constructora Volcán Verde", "Grupo Constructor Alfa",
-  "Grupo de Seguridad Escudo", "Protección Total S.A.", "Seguridad
-  Vigilantes CR"), y `/buscar/ventas_comercio` con el mismo patrón
-  ("Distribuidora Nacional CR", "Tienda El Buen Precio", "Comercial San
-  José") — de nuevo, todos con `id` formato UUID. Se revisaron las 10
-  categorías una por una contra producción real tras cada ola; las otras 7
-  (tecnologia, restaurantes, limpieza, transporte, profesionales,
-  oficinas_administracion, hoteles_turismo) se mantuvieron limpias en
-  todo momento.
+- **"2ª ola" (migración
+  `20260903180000_borrar_contaminacion_cr_ids_uuid_ola2`) — el diagnóstico
+  de "una ola nueva" ESTUVO MAL, ver corrección abajo.** Lo que se observó
+  fue real: a las 18:16 UTC `/buscar/construccion` y `/buscar/seguridad`
+  aparecían 100% (30/30) ocupadas por vacantes de Costa Rica bajo 7
+  empresas ("Edificaciones San Rafael", "Obras y Acabados Ticos",
+  "Constructora Volcán Verde", "Grupo Constructor Alfa", "Grupo de
+  Seguridad Escudo", "Protección Total S.A.", "Seguridad Vigilantes CR"),
+  y `/buscar/ventas_comercio` igual ("Distribuidora Nacional CR", "Tienda
+  El Buen Precio", "Comercial San José"), todas con `id` formato UUID. Lo
+  mal interpretado fue la conclusión: **no hubo ninguna inserción nueva en
+  esa ventana** — no hubo ningún build de la rama de Costa Rica dentro de
+  este proyecto entre las 18:12 (cuando corrió la primera limpieza) y las
+  18:16, así que nada pudo haber vuelto a insertar esas 90 filas. La
+  explicación que sí encaja con toda la evidencia es que la primera
+  migración ya las había borrado a las 18:12 y la página de las 18:16
+  sirvió datos del Data Cache de Next (el CDN dio `x-vercel-cache: MISS`,
+  pero las consultas de vacantes pasan por el Data Cache, el mismo que
+  causó el bug de `reviveJobPostingDates`). Es decir: la segunda migración
+  fue casi con seguridad un no-op en la base de México — y, peor, es la que
+  terminó corriendo contra la base de Costa Rica (ver abajo). Las otras 7
+  categorías (tecnologia, restaurantes, limpieza, transporte, profesionales,
+  oficinas_administracion, hoteles_turismo) estuvieron limpias en todo
+  momento.
 - Se encontraron también, en `hoteles_turismo`, 2 vacantes reales con `id`
   formato `cuid` normal (`Guia`/`Student` de una empresa "Me podés
   recojer") — **no se borraron**: sin ubicación, sin descripción y sin
@@ -1088,15 +1106,86 @@ aplicó sin error, `get_runtime_errors` limpio, y fetch directo a las 10
 categorías (`/buscar/<categoria>`) confirmando 0 ids formato UUID y 0
 menciones de ciudades/marca de Costa Rica en cada una.
 
-**Esto sigue siendo un parche, no la solución de fondo** (ya advertido en
-la sección de arriba) — la reaparición en una segunda ola, minutos después
-de la primera limpieza, es la prueba más directa hasta ahora de que
-mientras las dos apps compartan la misma base física de Neon, cualquier
-deploy nuevo de la otra rama puede volver a mezclar datos. Vale la pena
-que el dueño sepa que ya existe un intento de solución de fondo, de una
-sesión anterior a esta (commits `6b6b9f1`/`0081865`/`883e137` en el
-historial de deploys): un script (`scripts/` — no confirmado el nombre
-exacto desde esta sesión) pensado para correr en un runner de GitHub
-Actions y migrar las filas `appId='CR'` a una base de Neon dedicada nueva,
-más un workflow para dispararlo — no se pudo confirmar desde esta sesión
-si ese workflow llegó a ejecutarse o si la base nueva ya existe.
+## Las bases YA están separadas — la causa real es que los 2 proyectos construyen las 2 ramas (3 sep 2026)
+
+El dueño corrigió el diagnóstico ("ayer separé eso") y **tenía razón**. Lo
+que sigue está confirmado leyendo los logs de build de los dos proyectos,
+no inferido:
+
+- **Las dos bases de Neon son distintas.** El Mexa Chamba (México) migra
+  contra `ep-fancy-sky-avquigt1...us-east-1`; El Tico Bretea (Costa Rica)
+  migra contra `ep-young-sunset-ac2hz3ar-pooler...sa-east-1`. Son endpoints
+  y hasta regiones distintas. **Toda la sección "Base de datos compartida"
+  de más arriba quedó desactualizada en ese punto.**
+
+- **La causa real de la mezcla es otra, y separar las bases no la
+  arregla**: los dos proyectos de Vercel están conectados al mismo repo de
+  GitHub y cada uno construye CUALQUIER rama que se pushee. Como las
+  variables de entorno son por proyecto, cuando un proyecto construye la
+  rama del otro, corre las migraciones del OTRO producto contra SU PROPIA
+  base. Prueba directa, con horario:
+  - `3 sep 04:25:28` — el proyecto **mexico-sin-hambre** clonó la rama
+    `claude/el-tico-bretea-hxg8aq` (commit `7c708c2`, "Cargar 400
+    publicaciones de relleno con empresas ficticias") y corrió
+    `prisma migrate deploy` contra `ep-fancy-sky-avquigt1` = **la base de
+    México**. Ahí es donde entraron las 33 empresas ficticias y las
+    vacantes de Costa Rica que se vieron en `/buscar/construccion`,
+    `/buscar/seguridad` y `/buscar/ventas_comercio`. No hizo falta ninguna
+    base compartida.
+  - `3 sep 18:26:31` — el espejo del mismo problema: el proyecto
+    **el-tico-bretea-gp9g** clonó ESTA rama (commit `3ca97b2`) y aplicó
+    **nuestra** migración `20260903180000_borrar_contaminacion_cr_ids_uuid_ola2`
+    contra `ep-young-sunset-ac2hz3ar` = **la base de Costa Rica**.
+  - De paso, esos builds cruzados también tocan el historial de
+    migraciones ajeno (`Migration 20260825024539_single_community_chat_room
+    marked as rolled back` aparece en los logs de ambos lados).
+
+- **Daño colateral que causamos nosotros, hay que decirlo**: como esas dos
+  migraciones de limpieza borran por patrón (`id` formato UUID) y se
+  aplicaron también en la base de Costa Rica, se llevaron puestas las 400
+  publicaciones de relleno con 33 empresas ficticias que esa app había
+  cargado ese mismo día. Verificado por fetch a su producción:
+  `/buscar/construccion` de El Tico Bretea muestra 30 vacantes, todas de su
+  propia empresa de ejemplo ("Contratista de Construcción"), con el
+  contador "30 bretes disponibles" — o sea, sin rastro de la tanda de
+  relleno. Sus datos reales y sus vacantes de ejemplo (ids `cuid`) NO se
+  tocaron: el borrado solo alcanzaba ids formato UUID. Es contenido
+  sintético, se puede volver a cargar desde esa rama.
+
+**Protección aplicada de este lado** (`scripts/build-migrate.mjs`): antes de
+migrar o sembrar, el script compara una huella (sha256 recortado del
+identificador del endpoint de Neon; se guarda la huella, no el host, porque
+el repo es público) contra la base a la que apunta. Si no es la de México,
+imprime un aviso claro y sale con código 0 **sin migrar ni sembrar** — el
+build sigue, pero no toca datos ajenos. Las bases locales
+(`localhost`/`127.0.0.1`) quedan exentas para no romper `npm run build` en
+desarrollo, y `ALLOW_ANY_DB=1` la desactiva a mano. El seed dejó de ser un
+paso suelto del script `build` de `package.json` y ahora corre adentro de
+`build-migrate.mjs`, para que quede detrás de la misma guarda (antes,
+aunque no migrara, el seed igual escribía sus cuentas demo en la base
+ajena). Probado en los dos caminos: con `DIRECT_URL` apuntando al endpoint
+de Costa Rica sale limpio sin conectarse, y contra la base local migra y
+siembra normal.
+
+**Lo que esta guarda NO puede hacer, y sigue pendiente del lado del dueño**:
+proteger la base de México de la rama de Costa Rica. Esa rama tiene su
+propia copia del script, sin la guarda — cualquier migración de datos nueva
+que ellos agreguen va a volver a correr contra la base de México en el
+próximo deploy cruzado. Se arregla de una de estas dos formas:
+1. **(Recomendada, la arregla de raíz para los dos lados)** En cada proyecto
+   de Vercel: Settings → Git → **Ignored Build Step**, con un comando que
+   solo deje construir su propia rama, p. ej. en mexico-sin-hambre:
+   `bash -c '[ "$VERCEL_GIT_COMMIT_REF" = "claude/app-second-version-h8ujrh" ]'`
+   y en el-tico-bretea-gp9g el equivalente con `claude/el-tico-bretea-hxg8aq`.
+   Es configuración del proyecto (no del repo), así que aplica sin importar
+   qué rama se esté construyendo. Requiere el dashboard de Vercel, que esta
+   sesión no tiene.
+2. Agregar la misma guarda a `scripts/build-migrate.mjs` de la rama de Costa
+   Rica (con la huella de su propia base) — lo puede hacer la sesión que
+   trabaja en esa rama.
+
+Nota de historial: en una sesión anterior se había empezado otra vía de
+solución (commits `6b6b9f1`/`0081865`/`883e137`): un script + workflow de
+GitHub Actions para migrar las filas `appId='CR'` a una base dedicada. Eso
+apuntaba al problema equivocado (las bases ya se separaron por otro lado) —
+la pieza que faltaba era la de los builds cruzados, no la de los datos.
