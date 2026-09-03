@@ -37,9 +37,18 @@
 - **Rama activa**: `claude/app-second-version-h8ujrh` — este es "El Mexa
   Chamba" (México). La rama `claude/el-tico-bretea-hxg8aq` es un producto
   DISTINTO (Costa Rica, "El Tico Bretea" original) — **no tocar ni mergear**,
-  decisión explícita del dueño del producto.
+  decisión explícita del dueño del producto. **Comparten la misma base de
+  Neon** (ver sección "Base de datos compartida" más abajo) — leer eso
+  antes de agregar un modelo nuevo al schema o tocar `AppSettings`/`ChatRoom`.
 
 ### Decisiones ya tomadas — no reabrir sin motivo nuevo
+
+- **Todo modelo con datos propios de una app debe tener `appId AppTenant
+  @default(MX)`** (ver sección de abajo) y estar agregado a
+  `TENANT_SCOPED_MODELS` en `src/lib/tenant-scope.ts` — si no, sus consultas
+  quedan sin proteger silenciosamente contra la mezcla con Costa Rica.
+  `AppSettings` y `ChatRoom` NUNCA deben volver a usar un `id`/`slug` fijo
+  como único global (ver por qué en esa sección) — siempre por `appId`.
 
 - `connection_limit=5` en la URL de conexión a Neon (`src/lib/prisma.ts`),
   además de `connect_timeout=20` y `pool_timeout=30`. Motivo: sin esto,
@@ -70,6 +79,97 @@
   PayPal solo, usando los precios ya guardados en esa misma pantalla. Si el
   dueño creó algo manualmente en paypal.com (ej. un "Payment Link"), es una
   función distinta de PayPal que esta app no usa ni conoce.
+
+## Base de datos compartida con El Tico Bretea (2 sep 2026)
+
+**Causa real, confirmada con evidencia directa** (no domain issue, ver
+más abajo): los dos proyectos de Vercel — `mexico-sin-hambre`
+(`prj_bj8CEpgSaX8oaoCIeYNLlVCZaXr7`, este) y `el-tico-bretea-gp9g`
+(`prj_mVVttYO0oOUk8qODooD8sgrlpHSm`, Costa Rica) — están **ambos
+conectados al mismo repo de GitHub** (`thomassabes243-tech/El-tico-bretea-`)
+y cada uno construye deploys de **cualquier rama** que se pushee a ese
+repo, no solo la suya (confirmado: un push a esta rama dispara un deploy
+`target: null` dentro de `el-tico-bretea-gp9g` casi al mismo instante que
+el deploy de producción acá, y viceversa). Como las variables de entorno
+de Vercel son por proyecto (no por rama), ese deploy "equivocado" corre
+`prisma migrate deploy` usando el `DATABASE_URL` del proyecto que lo
+construyó sin querer — por eso las dos apps terminan escribiendo sobre la
+misma base física de Neon, aunque sus dominios estén bien separados (los
+dominios SÍ están correctos, confirmado por el dueño — no es ahí el bug).
+
+Esto ya causó incidentes reales: 270 vacantes de relleno de Costa Rica
+insertadas en esta base (borradas, ver sección de vacantes de ejemplo más
+abajo); dos colisiones de nombre de migración con contenido distinto
+entre ramas en `app_settings` y `chat_rooms` (P3018/P3009, commits
+`aacd326`/`c47f33a`, 26 ago); y se confirmó que **el schema de `ChatRoom`
+de las dos ramas sigue divergido hoy mismo** (esta usa `slug`, la de Costa
+Rica todavía usa `category` — su propia Comunidad tiró P2022 "column
+chat_rooms.category does not exist" el 27 de agosto). También se confirmó
+que `AppSettings` usaba literalmente el mismo `id="singleton"` hardcodeado
+en ambos schemas — las dos apps leían/escribían la MISMA fila física.
+
+**La separación real de las bases (proyecto de Neon distinto por proyecto
+de Vercel) sigue pendiente** — requiere crear una base nueva en el
+dashboard de Neon y cambiar `DATABASE_URL`/`DIRECT_URL` en Vercel, dos
+acciones que este entorno no puede hacer (sin acceso a ninguno de los dos
+dashboards). Mientras tanto, se aplicó un **parche de contención**
+(migración `20260902090000_appid_tenant_scope`, decisión explícita del
+dueño: "Implementá appId como parche ahora" sabiendo que no reemplaza la
+separación real):
+
+- Enum `AppTenant { MX CR }` + columna `appId AppTenant @default(MX)` en
+  24 modelos (todo lo que se consulta directo desde una ruta: User,
+  WorkerProfile, CompanyProfile, JobPosting, JobApplication, ChatRoom,
+  ChatMessage, ChatFile, Moderator, Report, ScamAlert +
+  Confirmation/Flag, PushSubscription, TrustedContact, LocationShare,
+  PanicAlert, ServiceRequest/Quote/Review, SavedWorker, FeaturedPurchase,
+  Donation, Advertisement, SafeMeetingPoint, AppSettings). Deliberadamente
+  SIN appId: `PasswordResetCode`, `WorkerReference`, `PortfolioPhoto`,
+  `ChatRoomBlock`, `ModeratorAssignment` (siempre se acceden con el id del
+  padre ya en mano, heredan la protección) y `RateLimitBucket` (contador
+  de throttling puro, sin implicancia de privacidad).
+- `src/lib/tenant-scope.ts`: extensión de Prisma (`$extends` con
+  `$allModels`/`$allOperations`) que inyecta `appId: CURRENT_APP`
+  automáticamente en el `where` de toda lectura/update/delete y en el
+  `data` de todo create/upsert de esos 24 modelos — para que sea
+  imposible que una consulta de este código devuelva o pise una fila de
+  Costa Rica, sin depender de que cada ruta nueva se acuerde de filtrar a
+  mano. `src/lib/tenant.ts` define `CURRENT_APP = "MX"` fijo (no hay
+  selección en runtime — cada rama de código corre como un tenant fijo).
+  `src/lib/prisma.ts` envuelve el cliente con esto siempre.
+- `ChatRoom.slug` dejó de ser único global — ahora `@@unique([slug,
+  appId])`, para que las dos apps puedan usar el mismo valor "general" sin
+  chocar.
+- `AppSettings` dejó de usar `id="singleton"` fijo — ahora tiene su propia
+  fila real por `appId` (`@unique`). La fila vieja compartida (id
+  `singleton`) se dejó intacta pero se le puso `appId='CR'` para que
+  `getAppSettings()` (que ahora busca por `appId`, no por `id`) cree una
+  fila nueva propia en el primer request post-deploy, en vez de seguir
+  leyendo/escribiendo la fila que también usa Costa Rica.
+
+**Límite importante, para no repetir el error de confiar ciegamente en
+el backfill**: la columna `appId` de las filas YA EXISTENTES se llenó con
+el default `'MX'` para absolutamente todo (Postgres aplica el default de
+un `ADD COLUMN` a las filas existentes) — no hay forma de auditar desde
+este entorno, sin acceso de lectura directo a producción, cuáles de esas
+filas son en realidad de Costa Rica. Si en el futuro aparece contenido
+mezclado que YA estaba en la base antes de este parche (no generado por
+un query nuevo), ese es el motivo: quedó taggeado `MX` por default sin
+poder verificarlo. Filas nuevas, de acá en adelante, sí quedan protegidas
+de verdad por el middleware.
+
+**Esto es un parche, no la solución de fondo**: no evita que la próxima
+migración de la otra rama vuelva a chocar de columna/tabla con esta (ya
+pasó dos veces) — eso solo lo arregla separar las bases físicas de
+verdad. Probado localmente de punta a punta antes de deployar: se levantó
+Postgres local (`pg_ctlcluster 16 main start`), se corrió la migración
+contra una copia con datos reales de sesiones anteriores, se insertó a
+mano un usuario con `appId='CR'` y se confirmó que `findUnique`,
+`findMany` y `count` de `prisma.user` lo excluyen automáticamente sin
+tocar ningún endpoint, que `getAppSettings()` crea una fila nueva propia
+(no la compartida), que `getCommunityChatRoom()` resuelve bien la sala
+existente, y que `npm run build` completo (typecheck + build-migrate +
+seed + next build, ~96 rutas) termina sin errores.
 
 ## Planes de pago (PayPal Subscriptions)
 

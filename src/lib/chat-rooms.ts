@@ -1,12 +1,15 @@
 import { prisma } from "@/lib/prisma";
+import { CURRENT_APP } from "@/lib/tenant";
 import type { Prisma } from "@prisma/client";
 
 // Un solo chat de comunidad para toda la app -- ya no dividido por gremio.
 // Se resuelve/crea por un slug fijo en vez de guardar el id en otro lado.
+// slug+appId (no slug solo) porque "general" ya no es único global -- ver
+// AppTenant en prisma/schema.prisma.
 export async function getCommunityChatRoom() {
   return prisma.chatRoom.upsert({
-    where: { slug: "general" },
-    create: { slug: "general", name: "Comunidad" },
+    where: { slug_appId: { slug: "general", appId: CURRENT_APP } },
+    create: { slug: "general", name: "Comunidad", appId: CURRENT_APP },
     update: {},
   });
 }

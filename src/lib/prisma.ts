@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { withTenantScope } from "@/lib/tenant-scope";
 
 // Neon (plan gratuito) suspende el cómputo tras un rato sin uso -- la
 // primera conexión después de eso tarda más en establecerse mientras Neon
@@ -34,15 +35,20 @@ function withPoolTuning(url: string | undefined): string | undefined {
   return `${url}${url.includes("?") ? "&" : "?"}${extra.join("&")}`;
 }
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
-
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+function createClient() {
+  const base = new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
     datasources: { db: { url: withPoolTuning(process.env.DATABASE_URL) } },
   });
+  // Ver src/lib/tenant-scope.ts -- filtra automáticamente por appId toda
+  // consulta de los modelos que hoy comparten base con la otra app.
+  return withTenantScope(base);
+}
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: ReturnType<typeof createClient> | undefined;
+};
+
+export const prisma = globalForPrisma.prisma ?? createClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;

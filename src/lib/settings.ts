@@ -1,11 +1,15 @@
 import { prisma } from "@/lib/prisma";
+import { CURRENT_APP } from "@/lib/tenant";
 
-const SETTINGS_ID = "singleton";
-
+// Antes se buscaba/creaba por un id fijo ("singleton") -- esa misma cadena
+// está hardcodeada igual en el schema de la otra app (El Tico Bretea),
+// así que las dos apps leían y escribían la MISMA fila física sin que
+// nadie lo supiera. Ahora se busca por appId: cada app tiene su propia
+// fila real, con su propio id autogenerado.
 export async function getAppSettings() {
-  const existing = await prisma.appSettings.findUnique({ where: { id: SETTINGS_ID } });
+  const existing = await prisma.appSettings.findUnique({ where: { appId: CURRENT_APP } });
   if (existing) return existing;
-  return prisma.appSettings.create({ data: { id: SETTINGS_ID } });
+  return prisma.appSettings.create({ data: { appId: CURRENT_APP } });
 }
 
 export async function updateAppSettings(data: {
@@ -41,8 +45,8 @@ export async function updateAppSettings(data: {
   }
 
   return prisma.appSettings.upsert({
-    where: { id: SETTINGS_ID },
-    create: { id: SETTINGS_ID, ...data },
+    where: { appId: CURRENT_APP },
+    create: { appId: CURRENT_APP, ...data },
     update: { ...data, ...resetPlans },
   });
 }

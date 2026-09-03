@@ -25,7 +25,28 @@ enum UserRole {
   ADMIN
 }
 
+// Discriminador de tenant: esta base de Postgres es compartida hoy entre
+// este producto (El Mexa Chamba / México) y otro producto distinto (El
+// Tico Bretea / Costa Rica, rama claude/el-tico-bretea-hxg8aq) -- dos
+// Prisma schemas independientes escribiendo sobre la misma base física de
+// Neon, sin que nadie lo haya decidido a propósito. Esto ya causó
+// contaminación de datos real entre las dos apps (ver CLAUDE.md).
+//
+// appId marca de qué app es cada fila, para que un middleware de Prisma
+// (ver src/lib/prisma.ts) filtre TODAS las consultas de esta app por
+// appId="MX" automáticamente -- así ninguna consulta de acá puede devolver
+// (ni pisar) una fila que le pertenece a Costa Rica, por más que la base
+// siga siendo la misma. Esto es un parche de contención, no la solución de
+// fondo: no evita que una migración de la otra rama vuelva a chocar de
+// columna con la nuestra (ya pasó dos veces) -- la separación real
+// requiere bases de datos de Neon distintas por proyecto de Vercel.
+enum AppTenant {
+  MX
+  CR
+}
+
 model User {
+  appId AppTenant @default(MX)
   id           String   @id @default(cuid())
   email        String   @unique
   passwordHash String
@@ -148,6 +169,7 @@ enum Availability {
 // ---------------------------------------------------------------------------
 
 model WorkerProfile {
+  appId AppTenant @default(MX)
   id     String @id @default(cuid())
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -235,6 +257,7 @@ model WorkerReference {
 // ---------------------------------------------------------------------------
 
 model CompanyProfile {
+  appId AppTenant @default(MX)
   id     String @id @default(cuid())
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -371,6 +394,7 @@ enum ServiceRequestStatus {
 }
 
 model ServiceRequest {
+  appId AppTenant @default(MX)
   id          String @id @default(cuid())
   requesterId String
   requester   User   @relation("ServiceRequestsMade", fields: [requesterId], references: [id], onDelete: Cascade)
@@ -411,6 +435,7 @@ enum ServiceQuoteStatus {
 }
 
 model ServiceQuote {
+  appId AppTenant @default(MX)
   id               String         @id @default(cuid())
   serviceRequestId String
   serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
@@ -439,6 +464,7 @@ model ServiceQuote {
 // denormalizado acá para poder calcular el promedio de todo un profesional
 // con una sola consulta agrupada, sin tener que pasar por ServiceQuote.
 model ServiceReview {
+  appId AppTenant @default(MX)
   id             String       @id @default(cuid())
   serviceQuoteId String       @unique
   serviceQuote   ServiceQuote @relation(fields: [serviceQuoteId], references: [id], onDelete: Cascade)
@@ -457,6 +483,7 @@ model ServiceReview {
 }
 
 model SavedWorker {
+  appId AppTenant @default(MX)
   id        String   @id @default(cuid())
   companyId String
   company   CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
@@ -473,6 +500,7 @@ model SavedWorker {
 // ---------------------------------------------------------------------------
 
 model JobPosting {
+  appId AppTenant @default(MX)
   id     String         @id @default(cuid())
   companyId String
   company   CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
@@ -524,6 +552,7 @@ enum ApplicationStatus {
 }
 
 model JobApplication {
+  appId AppTenant @default(MX)
   id           String         @id @default(cuid())
   jobPostingId String
   jobPosting   JobPosting     @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
@@ -547,15 +576,21 @@ model JobApplication {
 // slug fijo "general" para poder resolverlo sin depender de un id guardado
 // en ningún otro lado.
 model ChatRoom {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
-  slug      String   @unique @default("general")
-  createdAt DateTime @default(now())
+  // slug ya no es único global -- "general" es un valor elegido a mano por
+  // el código, no un identificador real, y la otra app (Costa Rica) podría
+  // volver a usar el mismo valor algún día. Único junto con appId en vez de
+  // solo, para que cada app pueda tener su propia sala "general" sin chocar.
+  slug      String    @default("general")
+  appId     AppTenant @default(MX)
+  createdAt DateTime  @default(now())
 
   moderators ModeratorAssignment[]
   messages   ChatMessage[]
   blocks     ChatRoomBlock[]
 
+  @@unique([slug, appId])
   @@map("chat_rooms")
 }
 
@@ -565,6 +600,7 @@ enum ChatMessageType {
 }
 
 model ChatMessage {
+  appId AppTenant @default(MX)
   id         String   @id @default(cuid())
   chatRoomId String
   chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
@@ -586,6 +622,7 @@ model ChatMessage {
 }
 
 model ChatFile {
+  appId AppTenant @default(MX)
   id         String       @id @default(cuid())
   messageId  String?
   message    ChatMessage? @relation(fields: [messageId], references: [id], onDelete: Cascade)
@@ -620,6 +657,7 @@ model ChatRoomBlock {
 }
 
 model Moderator {
+  appId AppTenant @default(MX)
   id     String @id @default(cuid())
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -661,6 +699,7 @@ enum ReportSeverity {
 }
 
 model Report {
+  appId AppTenant @default(MX)
   id         String           @id @default(cuid())
   reporterId String
   reporter   User             @relation("ReportsFiled", fields: [reporterId], references: [id], onDelete: Cascade)
@@ -697,6 +736,7 @@ enum ScamAlertStatus {
 }
 
 model ScamAlert {
+  appId AppTenant @default(MX)
   id       String @id @default(cuid())
   authorId String
   author   User   @relation("ScamAlertsAuthored", fields: [authorId], references: [id], onDelete: Cascade)
@@ -724,6 +764,7 @@ model ScamAlert {
 // contador público de credibilidad pero no cambia `status` por sí solo:
 // el estado oficial (VERIFICADO/DESCARTADO) lo define un moderador.
 model ScamAlertConfirmation {
+  appId AppTenant @default(MX)
   id      String    @id @default(cuid())
   alertId String
   alert   ScamAlert @relation(fields: [alertId], references: [id], onDelete: Cascade)
@@ -740,6 +781,7 @@ model ScamAlertConfirmation {
 // un competidor) — separado del modelo Report genérico (tipado a User)
 // para no forzar una relación polimórfica ahí.
 model ScamAlertFlag {
+  appId AppTenant @default(MX)
   id         String    @id @default(cuid())
   alertId    String
   alert      ScamAlert @relation(fields: [alertId], references: [id], onDelete: Cascade)
@@ -763,7 +805,14 @@ model ScamAlertFlag {
 // pago para eso. Premium sigue siendo una membresía paga (desactivada de la
 // interfaz por ahora, ver PREMIUM_ENABLED en /premium), con precio propio.
 model AppSettings {
-  id                    String   @id @default("singleton")
+  // Antes: id fijo "singleton", igual en el schema de la otra app -- las
+  // dos apps leían y escribían la MISMA fila física (mismo id) en la base
+  // compartida. Ahora cada app tiene su propia fila real, encontrada por
+  // appId en vez de por un id hardcodeado (ver src/lib/settings.ts) -- así
+  // dejamos de tocar la fila de Costa Rica, sin necesidad de separar la
+  // base entera para arreglar esto puntual.
+  id                    String    @id @default(cuid())
+  appId                 AppTenant @unique @default(MX)
   // Decisión explícita del dueño: los 3 planes quedan al mismo precio,
   // $120 MXN/mes (antes Premium estaba en $1500 y Empleador en $250) --
   // ver migración `plan_precios_unificados_120` para el ajuste del valor
@@ -811,6 +860,7 @@ model RateLimitBucket {
 // ---------------------------------------------------------------------------
 
 model PushSubscription {
+  appId AppTenant @default(MX)
   id        String @id @default(cuid())
   companyId String
   company   CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
@@ -832,6 +882,7 @@ model PushSubscription {
 // ---------------------------------------------------------------------------
 
 model Advertisement {
+  appId AppTenant @default(MX)
   id          String   @id @default(cuid())
   title       String
   description String
@@ -853,6 +904,7 @@ model Advertisement {
 // ---------------------------------------------------------------------------
 
 model TrustedContact {
+  appId AppTenant @default(MX)
   id     String @id @default(cuid())
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -874,6 +926,7 @@ enum LocationShareStatus {
 }
 
 model LocationShare {
+  appId AppTenant @default(MX)
   id               String         @id @default(cuid())
   workerId         String
   worker           User           @relation("LocationSharesSent", fields: [workerId], references: [id], onDelete: Cascade)
@@ -911,6 +964,7 @@ enum PanicAlertStatus {
 }
 
 model PanicAlert {
+  appId AppTenant @default(MX)
   id               String          @id @default(cuid())
   workerId         String
   worker           User            @relation("PanicAlertsSent", fields: [workerId], references: [id], onDelete: Cascade)
@@ -950,6 +1004,7 @@ enum DonationStatus {
 }
 
 model Donation {
+  appId AppTenant @default(MX)
   id            String         @id @default(cuid())
   amountPesos   Int
   paypalOrderId String         @unique
@@ -976,6 +1031,7 @@ enum FeaturedPurchaseStatus {
 }
 
 model FeaturedPurchase {
+  appId AppTenant @default(MX)
   id            String                 @id @default(cuid())
   jobPostingId  String
   jobPosting    JobPosting             @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
@@ -995,6 +1051,7 @@ model FeaturedPurchase {
 // sugerir como punto de la primera entrevista en vez de una dirección
 // privada. No son ubicaciones de usuarios, es un catálogo curado.
 model SafeMeetingPoint {
+  appId AppTenant @default(MX)
   id      String  @id @default(cuid())
   name    String
   address String

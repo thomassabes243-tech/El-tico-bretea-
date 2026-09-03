@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { CURRENT_APP } from "../src/lib/tenant";
 
 const prisma = new PrismaClient();
 
@@ -19,8 +20,8 @@ const DEMO_ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || "admin12345";
 
 async function main() {
   const room = await prisma.chatRoom.upsert({
-    where: { slug: "general" },
-    create: { slug: "general", name: "Comunidad" },
+    where: { slug_appId: { slug: "general", appId: CURRENT_APP } },
+    create: { slug: "general", name: "Comunidad", appId: CURRENT_APP },
     update: {},
   });
   console.log("Sala de comunidad creada.");
