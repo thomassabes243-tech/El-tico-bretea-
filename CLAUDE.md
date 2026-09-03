@@ -331,13 +331,75 @@ entrar a `/empresa/servicios`, activar "Ofrecer servicios", elegir
 categoría, cargar teléfono/zona/años de experiencia/descripción, guardar,
 y el perfil público (`/empresas/[id]`) mostró todo correctamente.
 
+## Sistema de confianza de empleador (3 sep 2026)
+
+Retomado a pedido explícito del dueño ("Resolverme esos dos últimos" —
+PayPal ya lo había resuelto él mismo). Cubre buena parte del punto 5 del
+audit de seguridad que estaba pausado:
+
+- **`src/lib/employer-trust.ts`**: semáforo VERDE/AMARILLO/ROJO por
+  empleador, a partir de señales objetivas ya existentes en la base
+  (`isVerified`, antigüedad de la cuenta, `website`/`description`/
+  `contactPhone` proporcionados, reportes GRAVE y reportes con
+  `reasonCategory=PAGO_ADELANTADO` contra ese `userId`) — nunca una
+  verificación de identidad real ni un puntaje inventado.
+- **`src/lib/payment-scam-detector.ts`**: scan de palabras clave (depósito,
+  pago adelantado, kit de trabajo, etc.) sobre el texto de la propia
+  vacante — gratis e instantáneo, complementario a `AnalyzeJobButton` (IA,
+  bajo demanda), no lo reemplaza.
+- **`Report.reasonCategory`** (enum `ReportReasonCategory`, opcional): motivo
+  estructurado además del texto libre de siempre — hoy solo lo pide el
+  picker de `ReportButton` para `targetType=JOB_POSTING`.
+- **`LocationShare.label`** (opcional): motivo visible para el contacto,
+  usado por "Voy a esta entrevista" (`GoingToInterviewButton`, en
+  `/vacantes/[id]`) — reusa `/api/ubicacion/compartir` de la Sección 22
+  (contactos de confianza), no es un sistema aparte.
+- Componentes nuevos en `src/components/safety/`: `EmployerTrustProfile`
+  (semáforo + señales + riesgos), `PaymentWarningBanner`,
+  `AntesDeAcudirChecklist` (checklist estático) — wireados en
+  `/vacantes/[id]` y `/empresas/[id]`.
+- **`/empresas/[id]`**: reputación dividida en "Datos verificados"
+  (objetivo, `EmployerTrustProfile`) vs "Opiniones" (subjetivo,
+  `ServiceReview` individuales vía `getServiceReviews`, sin nombre del
+  cliente por privacidad).
+- **Permission priming** (`src/components/ui/PermissionPrimer.tsx`):
+  panel propio explicando el motivo ANTES del prompt nativo del navegador
+  — wireado en geolocalización (`SafetyActions`, `GoingToInterviewButton`),
+  notificaciones push (`PushNotificationToggle`) y cámara/galería
+  (`ProfilePhotoUpload`, compartido por trabajador y empresa). No se llegó
+  a cubrir cada input de foto individual (portafolio, chat) — quedó en el
+  componente compartido más usado, no en los 3 buckets al 100%.
+
+**Bug real encontrado y corregido en el camino** (no estaba en el plan):
+`reviveJobPostingDates` (`src/lib/job-postings.ts`) — el mismo problema que
+ya se había arreglado una vez para los campos Date de `JobPosting` (el Data
+Cache de Next serializa a JSON, así que en un cache HIT vuelven como string,
+no como `Date`) nunca se había extendido a `company` (anidado vía
+`include`), porque hasta ahora nada llamaba a un método de Date sobre
+`jobPosting.company`. `getEmployerTrustProfile` fue el primer código en
+hacerlo (`company.createdAt.getTime()`) y expuso un 500 real en
+`/vacantes/[id]` tras un cache hit. Corregido reviviendo también los 3
+campos Date de `company` en la misma función.
+
+Probado de punta a punta con Playwright contra un build de producción
+local: vacante con lenguaje de depósito → banner rojo + semáforo "Señales
+de riesgo importantes" con conteo real de reportes; vacante de una empresa
+verificada/antigua/completa → semáforo verde + checklist "Antes de
+acudir"; trabajador logueado → sección "Voy a esta entrevista" con el
+priming de ubicación antes del picker nativo; picker de motivo estructurado
+visible en `ReportButton` para vacantes; `/empresas/[id]` con "Datos
+verificados" y "Opiniones" (reseña de prueba) separados. Cuentas y datos de
+prueba borrados al terminar.
+
+**No implementado, fuera del alcance de esta sesión** (retomar si hace
+falta): flujo dedicado "Voy al trabajo" tal como se lo había descripto
+originalmente, confirmación de llegada + escalamiento automático, líneas
+089/800 5533 000, expediente de seguridad formal.
+
 ## Pausado a pedido explícito del dueño del producto
 
 No tocar esto hasta que él mismo diga que se retoma:
 
-- Resto del punto 5 del audit de seguridad: semáforo de empleador
-  tri-estado, flujo dedicado "Voy al trabajo", confirmación de llegada +
-  escalamiento, líneas 089/800 5533 000, expediente de seguridad.
 - `apple-touch-icon`.
 
 ## Pendiente: referencia visual de "otra página"

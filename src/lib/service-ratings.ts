@@ -21,3 +21,17 @@ export async function getServiceRatings(
   }
   return map;
 }
+
+// Opiniones individuales para el perfil público (/empresas/[id]) -- se
+// muestran sin el nombre del cliente (privacidad, mismo criterio que el
+// resto de la app: no exponer datos personales que no hagan falta) para
+// separar claramente "opiniones" (subjetivo) de "datos verificados"
+// (objetivo, ver src/lib/employer-trust.ts).
+export async function getServiceReviews(companyId: string, limit = 10) {
+  return prisma.serviceReview.findMany({
+    where: { companyId },
+    select: { id: true, rating: true, comment: true, createdAt: true },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+}

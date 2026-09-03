@@ -38,6 +38,9 @@ export default async function UbicacionCompartidaPage({
         <p className="mt-1 text-xs text-navy-800/50">
           Para: {share.trustedContact.name} · {share.status === "ACTIVA" ? "Activa" : "Finalizada"}
         </p>
+        {share.label && (
+          <p className="mt-1 text-xs font-semibold text-navy-800/60">Motivo: {share.label}</p>
+        )}
 
         {share.suspicious && (
           <div className="mt-3 flex items-start gap-2 rounded-xl border border-warning-600/25 bg-warning-600/10 p-3">

@@ -31,6 +31,7 @@ export async function POST(request: Request) {
       targetId: parsed.data.targetUserId,
       targetType: parsed.data.targetType,
       reason: parsed.data.reason,
+      reasonCategory: parsed.data.reasonCategory,
       severity: parsed.data.severity,
     },
   });

@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import type { Prisma, JobPosting } from "@prisma/client";
+import type { Prisma, JobPosting, CompanyProfile } from "@prisma/client";
 
 // Tag compartido para invalidar el Data Cache de Next cuando una vacante se
 // crea, edita, destaca o cierra -- ver revalidateTag("job-postings") en cada
@@ -18,13 +18,24 @@ const JOB_POSTINGS_REVALIDATE_SECONDS = 60;
 // cacheada, nunca adentro de ella -- adentro solo corrige el cache miss,
 // no los hits, que son la mayoría de las llamadas. new Date(x) funciona
 // igual si x ya es un Date, así que es seguro aplicarlo siempre.
-function reviveJobPostingDates<T extends JobPosting>(job: T): T {
+//
+// company también viene de un cache hit con sus propios campos Date como
+// string -- rompió de nuevo (esta vez "company.createdAt.getTime is not a
+// function" en getEmployerTrustProfile) porque la revivida de arriba nunca
+// bajaba al objeto anidado. Mismo arreglo, aplicado también a company.
+function reviveJobPostingDates<T extends JobPosting & { company: CompanyProfile }>(job: T): T {
   return {
     ...job,
     createdAt: new Date(job.createdAt),
     updatedAt: new Date(job.updatedAt),
     deadline: job.deadline ? new Date(job.deadline) : null,
     featuredUntil: job.featuredUntil ? new Date(job.featuredUntil) : null,
+    company: {
+      ...job.company,
+      createdAt: new Date(job.company.createdAt),
+      updatedAt: new Date(job.company.updatedAt),
+      verifiedAt: job.company.verifiedAt ? new Date(job.company.verifiedAt) : null,
+    },
   };
 }
 

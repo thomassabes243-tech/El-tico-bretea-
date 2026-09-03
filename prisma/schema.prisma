@@ -698,18 +698,35 @@ enum ReportSeverity {
   GRAVE
 }
 
+// Motivo estructurado opcional -- hoy solo lo pide el picker de reportes de
+// vacantes (ReportButton, targetType JOB_POSTING), para poder contar
+// reportes por tipo (ej. cuántos piden pago adelantado) sin depender de
+// parsear el texto libre de `reason`. Reportes de USER/COMPANY y los ya
+// existentes en la base siguen sin este campo (NULL) -- reason sigue siendo
+// el motivo real en todos los casos, esto es solo una categoría adicional.
+enum ReportReasonCategory {
+  PAGO_ADELANTADO
+  PIDE_DATOS_PERSONALES
+  UBICACION_IDENTIDAD_FALSA
+  SALARIO_ENGANOSO
+  ACOSO
+  SPAM
+  OTRO
+}
+
 model Report {
   appId AppTenant @default(MX)
-  id         String           @id @default(cuid())
-  reporterId String
-  reporter   User             @relation("ReportsFiled", fields: [reporterId], references: [id], onDelete: Cascade)
-  targetId   String?
-  target     User?            @relation("ReportsReceived", fields: [targetId], references: [id], onDelete: SetNull)
-  targetType ReportTargetType
-  reason     String
-  severity   ReportSeverity   @default(NORMAL)
-  createdAt  DateTime         @default(now())
-  resolved   Boolean          @default(false)
+  id             String                @id @default(cuid())
+  reporterId     String
+  reporter       User                  @relation("ReportsFiled", fields: [reporterId], references: [id], onDelete: Cascade)
+  targetId       String?
+  target         User?                 @relation("ReportsReceived", fields: [targetId], references: [id], onDelete: SetNull)
+  targetType     ReportTargetType
+  reason         String
+  reasonCategory ReportReasonCategory?
+  severity       ReportSeverity        @default(NORMAL)
+  createdAt      DateTime              @default(now())
+  resolved       Boolean               @default(false)
 
   @@index([targetId, severity, resolved])
   @@map("reports")
@@ -936,6 +953,13 @@ model LocationShare {
   latitude  Float
   longitude Float
   accuracy  Float?
+
+  // Motivo opcional visible para el contacto (ej. "Entrevista: Mesero en
+  // Restaurante La Fonda") -- usado por el botón "Voy a esta entrevista" de
+  // /vacantes/[id], que reusa este mismo mecanismo de compartir ubicación en
+  // vez de crear un sistema aparte. NULL cuando se comparte desde /seguridad
+  // sin un contexto puntual.
+  label String?
 
   // Señales heurísticas de sospecha (salto de posición imposible entre dos
   // envíos, precisión GPS irregular) -- NO es detección real de mock

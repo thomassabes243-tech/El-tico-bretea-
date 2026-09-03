@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Bell, BellOff } from "lucide-react";
+import { PermissionPrimer } from "@/components/ui/PermissionPrimer";
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -84,17 +85,33 @@ export function PushNotificationToggle() {
     return <p className="text-[11px] text-navy-800/40">Tu navegador no soporta notificaciones push.</p>;
   }
 
+  const toggleButton = (onClick: () => void) => (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={busy}
+      className="flex items-center justify-center gap-1.5 rounded-lg border border-sand-200 px-3 py-2 text-xs font-semibold text-navy-800/70 disabled:opacity-50"
+    >
+      {subscribed ? <BellOff className="h-3.5 w-3.5" /> : <Bell className="h-3.5 w-3.5" />}
+      {busy ? "Un momento..." : subscribed ? "Desactivar notificaciones" : "Activar notificaciones instantáneas"}
+    </button>
+  );
+
   return (
     <div className="flex flex-col gap-1.5">
-      <button
-        type="button"
-        onClick={subscribed ? deactivate : activate}
-        disabled={busy}
-        className="flex items-center justify-center gap-1.5 rounded-lg border border-sand-200 px-3 py-2 text-xs font-semibold text-navy-800/70 disabled:opacity-50"
-      >
-        {subscribed ? <BellOff className="h-3.5 w-3.5" /> : <Bell className="h-3.5 w-3.5" />}
-        {busy ? "Un momento..." : subscribed ? "Desactivar notificaciones" : "Activar notificaciones instantáneas"}
-      </button>
+      {subscribed ? (
+        toggleButton(deactivate)
+      ) : (
+        <PermissionPrimer
+          icon={Bell}
+          title="Vamos a pedirte permiso de notificaciones"
+          description="Para avisarte al instante cuando te escriban o te acepten una postulación, sin que tengas que estar mirando la app."
+          confirmLabel="Continuar"
+          onConfirm={activate}
+        >
+          {toggleButton}
+        </PermissionPrimer>
+      )}
       {error && <p className="text-[11px] font-medium text-mx-red-600">{error}</p>}
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Flag, CheckCircle2 } from "lucide-react";
+import { REPORT_REASON_CATEGORIES } from "@/lib/constants";
 
 export function ReportButton({
   targetUserId,
@@ -17,6 +18,7 @@ export function ReportButton({
 }) {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
+  const [reasonCategory, setReasonCategory] = useState("");
   const [isGrave, setIsGrave] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -62,6 +64,7 @@ export function ReportButton({
           targetUserId,
           targetType,
           reason: fullReason,
+          reasonCategory: targetType === "JOB_POSTING" && reasonCategory ? reasonCategory : undefined,
           severity: isGrave ? "GRAVE" : "NORMAL",
         }),
       });
@@ -79,6 +82,18 @@ export function ReportButton({
 
   return (
     <div className="flex flex-col gap-1.5">
+      {targetType === "JOB_POSTING" && (
+        <select
+          value={reasonCategory}
+          onChange={(e) => setReasonCategory(e.target.value)}
+          className="h-9 w-full rounded-lg border border-sand-200 px-2.5 text-xs text-navy-900"
+        >
+          <option value="">Elegí un motivo (opcional)</option>
+          {REPORT_REASON_CATEGORIES.map((c) => (
+            <option key={c.value} value={c.value}>{c.label}</option>
+          ))}
+        </select>
+      )}
       <textarea
         value={reason}
         onChange={(e) => setReason(e.target.value)}

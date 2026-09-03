@@ -223,6 +223,17 @@ export const reportSchema = z.object({
   targetUserId: z.string().min(1),
   targetType: z.enum(["USER", "COMPANY", "JOB_POSTING"]),
   reason: z.string().trim().min(5, "Contanos brevemente el motivo").max(500),
+  reasonCategory: z
+    .enum([
+      "PAGO_ADELANTADO",
+      "PIDE_DATOS_PERSONALES",
+      "UBICACION_IDENTIDAD_FALSA",
+      "SALARIO_ENGANOSO",
+      "ACOSO",
+      "SPAM",
+      "OTRO",
+    ])
+    .optional(),
   severity: z.enum(["NORMAL", "GRAVE"]).default("NORMAL"),
 });
 
@@ -241,6 +252,7 @@ export const locationShareSchema = z.object({
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
   accuracy: z.number().min(0).optional(),
+  label: z.string().trim().max(120).optional(),
 });
 
 export type LocationShareInput = z.infer<typeof locationShareSchema>;

@@ -17,6 +17,12 @@ import { getSiteUrl } from "@/lib/site";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import { getJobPostingById, isFeatured } from "@/lib/job-postings";
 import { SalarySemaforo } from "@/components/vacantes/SalarySemaforo";
+import { getEmployerTrustProfile } from "@/lib/employer-trust";
+import { detectPaymentScamSignals } from "@/lib/payment-scam-detector";
+import { EmployerTrustProfile } from "@/components/safety/EmployerTrustProfile";
+import { PaymentWarningBanner } from "@/components/safety/PaymentWarningBanner";
+import { AntesDeAcudirChecklist } from "@/components/safety/AntesDeAcudirChecklist";
+import { GoingToInterviewButton } from "@/components/forms/GoingToInterviewButton";
 import { MapPin, Briefcase, Users, Calendar, ShieldCheck, Sparkles, Phone, Mail } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
@@ -55,6 +61,7 @@ export default async function VacanteDetailPage({
   if (!jobPosting) notFound();
 
   let alreadyApplied = false;
+  let trustedContacts: { id: string; name: string }[] = [];
   if (session?.user?.role === "WORKER") {
     const worker = await prisma.workerProfile.findUnique({ where: { userId: session.user.id } });
     if (worker) {
@@ -63,7 +70,17 @@ export default async function VacanteDetailPage({
       });
       alreadyApplied = Boolean(existing);
     }
+    trustedContacts = await prisma.trustedContact.findMany({
+      where: { userId: session.user.id },
+      select: { id: true, name: true },
+      orderBy: { createdAt: "desc" },
+    });
   }
+
+  const paymentScamSignals = detectPaymentScamSignals(
+    `${jobPosting.description} ${jobPosting.requirements ?? ""}`
+  );
+  const trustProfile = await getEmployerTrustProfile(jobPosting.company);
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
@@ -126,6 +143,17 @@ export default async function VacanteDetailPage({
             <ShareJobButton jobId={jobPosting.id} title={jobPosting.title} siteUrl={getSiteUrl()} />
           </div>
         </Card>
+
+        {paymentScamSignals.length > 0 && (
+          <div className="mt-4">
+            <PaymentWarningBanner matches={paymentScamSignals} />
+          </div>
+        )}
+
+        <section className="mt-4">
+          <h2 className="mb-2 text-sm font-bold text-navy-900">Sobre esta empresa</h2>
+          <EmployerTrustProfile profile={trustProfile} />
+        </section>
 
         <Card className="mt-4 p-5">
           <h2 className="text-sm font-bold text-navy-900">Descripción</h2>
@@ -200,6 +228,21 @@ export default async function VacanteDetailPage({
         {session?.user && (
           <Card className="mt-4 p-4">
             <AnalyzeJobButton jobPostingId={jobPosting.id} />
+          </Card>
+        )}
+
+        <div className="mt-4">
+          <AntesDeAcudirChecklist />
+        </div>
+
+        {session?.user?.role === "WORKER" && (
+          <Card className="mt-4 p-4">
+            <h2 className="mb-2 text-sm font-bold text-navy-900">Voy a esta entrevista</h2>
+            <GoingToInterviewButton
+              contacts={trustedContacts}
+              jobTitle={jobPosting.title}
+              companyName={jobPosting.company.commercialName}
+            />
           </Card>
         )}
 

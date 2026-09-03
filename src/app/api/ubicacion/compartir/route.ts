@@ -42,6 +42,7 @@ export async function POST(request: Request) {
       latitude: parsed.data.latitude,
       longitude: parsed.data.longitude,
       accuracy: parsed.data.accuracy,
+      label: parsed.data.label || null,
       suspicious: Boolean(suspicionReason),
       suspicionReason,
       expiresAt: new Date(Date.now() + SHARE_DURATION_MS),

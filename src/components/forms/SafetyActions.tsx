@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MapPin, AlertTriangle, Copy, Check } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { PermissionPrimer } from "@/components/ui/PermissionPrimer";
 
 type Contact = { id: string; name: string; phone: string };
 
@@ -121,9 +122,19 @@ export function SafetyActions({ contacts }: { contacts: Contact[] }) {
         </select>
       </label>
 
-      <Button type="button" variant="outline" onClick={shareLocation} disabled={busy !== null}>
-        <MapPin className="h-4 w-4" /> {busy === "location" ? "Obteniendo ubicación..." : "Compartir mi ubicación (6h)"}
-      </Button>
+      <PermissionPrimer
+        icon={MapPin}
+        title="Vamos a pedirte tu ubicación"
+        description="Solo para generar un link de solo lectura que le mandás vos mismo a tu contacto -- nadie más lo ve, y se borra solo a las 6 horas."
+        confirmLabel="Continuar"
+        onConfirm={shareLocation}
+      >
+        {(open) => (
+          <Button type="button" variant="outline" onClick={open} disabled={busy !== null}>
+            <MapPin className="h-4 w-4" /> {busy === "location" ? "Obteniendo ubicación..." : "Compartir mi ubicación (6h)"}
+          </Button>
+        )}
+      </PermissionPrimer>
 
       <button
         type="button"

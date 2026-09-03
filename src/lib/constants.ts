@@ -130,3 +130,16 @@ export const SCAM_ALERT_STATUS_LABELS: Record<string, string> = {
   VERIFICADO: "Verificado por moderación",
   DESCARTADO: "Descartado",
 };
+
+// Sistema de confianza de empleador: motivos estructurados para reportar una
+// vacante (ReportButton, targetType JOB_POSTING) -- además del texto libre
+// de siempre, para poder contar reportes por tipo.
+export const REPORT_REASON_CATEGORIES = [
+  { value: "PAGO_ADELANTADO", label: "Pide pago o depósito por adelantado" },
+  { value: "PIDE_DATOS_PERSONALES", label: "Pide datos personales antes de tiempo" },
+  { value: "UBICACION_IDENTIDAD_FALSA", label: "Ubicación o identidad falsa" },
+  { value: "SALARIO_ENGANOSO", label: "Salario engañoso o distinto al ofrecido" },
+  { value: "ACOSO", label: "Acoso" },
+  { value: "SPAM", label: "Spam o publicidad" },
+  { value: "OTRO", label: "Otro" },
+] as const;

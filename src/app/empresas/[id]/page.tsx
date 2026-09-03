@@ -12,8 +12,10 @@ import { AvatarImage } from "@/components/brand/AvatarImage";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { PremiumBadge } from "@/components/brand/PremiumBadge";
 import { SERVICE_CATEGORIES } from "@/lib/constants";
-import { getServiceRatings } from "@/lib/service-ratings";
-import { ShieldCheck, MapPin, ChevronRight, Wrench, Star, Phone, FileText, Briefcase } from "lucide-react";
+import { getServiceRatings, getServiceReviews } from "@/lib/service-ratings";
+import { getEmployerTrustProfile } from "@/lib/employer-trust";
+import { EmployerTrustProfile } from "@/components/safety/EmployerTrustProfile";
+import { ShieldCheck, MapPin, ChevronRight, Wrench, Star, Phone, FileText, Briefcase, BadgeCheck, MessageSquare } from "lucide-react";
 
 function serviceLabelFor(value: string) {
   return SERVICE_CATEGORIES.find((c) => c.value === value)?.label ?? value;
@@ -40,7 +42,11 @@ export default async function EmpresaPublicPage({
   ]);
   if (!company) notFound();
 
-  const ratings = company.offersServices ? await getServiceRatings([company.id]) : new Map();
+  const [ratings, reviews, trustProfile] = await Promise.all([
+    company.offersServices ? getServiceRatings([company.id]) : new Map<string, { average: number; count: number }>(),
+    company.offersServices ? getServiceReviews(company.id) : [],
+    getEmployerTrustProfile(company),
+  ]);
   const rating = ratings.get(company.id);
 
   return (
@@ -76,13 +82,45 @@ export default async function EmpresaPublicPage({
           {company.description && (
             <p className="mt-3 text-sm text-navy-800/70">{company.description}</p>
           )}
-          <p className="mt-3 text-xs font-semibold text-navy-800/50">
-            {company.isVerified ? "Empresa verificada ✓" : "Verificación pendiente de revisión"}
-          </p>
           <div className="mt-3">
             <ReportButton targetUserId={company.userId} targetType="COMPANY" isLoggedIn={Boolean(session?.user)} />
           </div>
         </Card>
+
+        <section className="mt-5">
+          <h2 className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
+            <BadgeCheck className="h-4 w-4 text-navy-800/60" /> Datos verificados
+          </h2>
+          <p className="mt-1 text-xs text-navy-800/50">
+            Información objetiva, no opiniones -- ver &quot;Opiniones&quot; más abajo.
+          </p>
+          <div className="mt-3">
+            <EmployerTrustProfile profile={trustProfile} />
+          </div>
+        </section>
+
+        {company.offersServices && reviews.length > 0 && (
+          <section className="mt-5">
+            <h2 className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
+              <MessageSquare className="h-4 w-4 text-navy-800/60" /> Opiniones
+            </h2>
+            <div className="mt-3 flex flex-col gap-2.5">
+              {reviews.map((r) => (
+                <Card key={r.id} className="p-3.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="flex items-center gap-1 text-sm font-bold text-navy-900">
+                      <Star className="h-3.5 w-3.5 fill-peso-500 text-peso-500" /> {r.rating}/5
+                    </span>
+                    <span className="text-[11px] text-navy-800/40">
+                      {r.createdAt.toLocaleDateString("es-MX", { month: "short", year: "numeric" })}
+                    </span>
+                  </div>
+                  {r.comment && <p className="mt-1.5 text-xs leading-relaxed text-navy-800/70">{r.comment}</p>}
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         {company.offersServices && (
           <section className="mt-5">

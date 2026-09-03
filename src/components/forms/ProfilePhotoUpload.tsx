@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { Camera, Trash2 } from "lucide-react";
 import { AvatarImage } from "@/components/brand/AvatarImage";
 import { compressImageFile } from "@/lib/image-compress-client";
+import { PermissionPrimer } from "@/components/ui/PermissionPrimer";
 
 const ENDPOINT: Record<"trabajador" | "empresa", string> = {
   trabajador: "/api/perfil/trabajador/foto",
@@ -83,14 +84,24 @@ export function ProfilePhotoUpload({
         }}
       />
       <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={busy}
-          className="flex items-center gap-1.5 rounded-lg border border-sand-200 px-3 py-2 text-xs font-semibold text-navy-800 hover:border-navy-700/40 disabled:opacity-50"
+        <PermissionPrimer
+          icon={Camera}
+          title="Vamos a abrir tu cámara o galería"
+          description="Para elegir la foto -- podés cancelar antes si no querés compartir ninguna."
+          confirmLabel="Continuar"
+          onConfirm={() => fileInputRef.current?.click()}
         >
-          <Camera className="h-3.5 w-3.5" /> {busy ? "Subiendo..." : url ? "Cambiar foto" : "Subir foto"}
-        </button>
+          {(open) => (
+            <button
+              type="button"
+              onClick={open}
+              disabled={busy}
+              className="flex items-center gap-1.5 rounded-lg border border-sand-200 px-3 py-2 text-xs font-semibold text-navy-800 hover:border-navy-700/40 disabled:opacity-50"
+            >
+              <Camera className="h-3.5 w-3.5" /> {busy ? "Subiendo..." : url ? "Cambiar foto" : "Subir foto"}
+            </button>
+          )}
+        </PermissionPrimer>
         {url && (
           <button
             type="button"
