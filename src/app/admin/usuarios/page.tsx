@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { ShieldBan, ShieldCheck, Sparkles, Crown } from "lucide-react";
 import { requireAdmin } from "@/lib/admin";
 import { toggleUserBlocked, toggleWorkerPremium, toggleUserAdmin } from "./actions";
+import { ResetPasswordButton } from "@/components/admin/ResetPasswordButton";
 import type { Prisma } from "@prisma/client";
 
 const ROLE_LABELS: Record<string, string> = {
@@ -164,6 +165,8 @@ export default async function AdminUsuariosPage({
                     )}
                   </button>
                 </form>
+
+                <ResetPasswordButton userId={u.id} email={u.email} />
               </div>
             </Card>
           );

@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import bcrypt from "bcryptjs";
+import { randomUUID } from "node:crypto";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 
@@ -54,4 +56,19 @@ export async function toggleWorkerPremium(workerId: string, nextValue: boolean) 
   await requireAdmin();
   await prisma.workerProfile.update({ where: { id: workerId }, data: { isPremium: nextValue } });
   revalidatePath("/admin/usuarios");
+}
+
+/**
+ * No hay flujo de "recuperar contraseña" por correo (la app no tiene un
+ * proveedor de email configurado) -- en su lugar, el admin genera una
+ * contraseña nueva acá y se la pasa a la persona por fuera de la app
+ * (WhatsApp, en persona, etc). Se devuelve en texto plano UNA sola vez, en
+ * la respuesta de esta acción; nunca se guarda en ningún lado.
+ */
+export async function resetUserPassword(userId: string): Promise<string> {
+  await requireAdmin();
+  const newPassword = randomUUID().slice(0, 8);
+  const passwordHash = await bcrypt.hash(newPassword, 10);
+  await prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+  return newPassword;
 }
