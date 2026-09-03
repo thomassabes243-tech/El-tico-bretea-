@@ -28,12 +28,11 @@ export default function IniciarSesionPage() {
     setIsSubmitting(true);
     const result = await signIn("credentials", {
       email: data.email,
-      password: data.password,
       redirect: false,
     });
     setIsSubmitting(false);
     if (result?.error) {
-      setSubmitError("Correo o contraseña incorrectos.");
+      setSubmitError("No encontramos una cuenta con ese correo.");
       return;
     }
     router.push("/perfil");
@@ -41,17 +40,11 @@ export default function IniciarSesionPage() {
   };
 
   return (
-    <AuthShell title="Iniciá sesión" subtitle="Entrá con tu correo y contraseña.">
+    <AuthShell title="Iniciá sesión" subtitle="Entrá con tu correo.">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <FieldWrapper label="Correo electrónico" htmlFor="email" required error={errors.email?.message}>
           <TextInput id="email" type="email" placeholder="tu@correo.com" {...register("email")} />
         </FieldWrapper>
-        <FieldWrapper label="Contraseña" htmlFor="password" required error={errors.password?.message}>
-          <TextInput id="password" type="password" placeholder="••••••••" {...register("password")} />
-        </FieldWrapper>
-        <Link href="/contacto" className="-mt-2 self-end text-xs font-semibold text-navy-800/50">
-          ¿Olvidaste tu contraseña?
-        </Link>
 
         {submitError && (
           <p className="rounded-xl bg-cr-red-100 px-3.5 py-2.5 text-sm font-medium text-cr-red-700">
