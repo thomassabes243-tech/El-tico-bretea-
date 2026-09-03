@@ -380,7 +380,7 @@ model ChatFile {
   height     Int?
 
   createdAt DateTime @default(now())
-  expiresAt DateTime // createdAt + 24h; los archivos se eliminan automáticamente
+  expiresAt DateTime // createdAt + 5 días; los archivos se eliminan automáticamente
 
   @@map("chat_files")
 }

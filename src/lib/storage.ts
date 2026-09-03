@@ -21,7 +21,7 @@ import { prisma } from "@/lib/prisma";
 // pierde entre invocaciones) se lanza StorageNotConfiguredError de una vez
 // — ver README para configurar Cloudflare R2.
 
-const CHAT_FILE_TTL_MS = 24 * 60 * 60 * 1000;
+const CHAT_FILE_TTL_MS = 5 * 24 * 60 * 60 * 1000;
 const MAX_DIMENSION = 1600;
 const JPEG_QUALITY = 72;
 
