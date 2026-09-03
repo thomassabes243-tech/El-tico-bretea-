@@ -174,12 +174,19 @@ seed + next build, ~96 rutas) termina sin errores.
 ## Planes de pago (PayPal Subscriptions)
 
 Tres planes independientes, cada uno con su propio precio y su propio ID de
-PayPal guardados en `AppSettings` (tabla singleton). **Estado real (¿ya se
-creó cada uno en PayPal, con qué ID?) — NO VERIFICADO desde acá:** no hay
-forma de consultar la base de producción ni la cuenta de PayPal desde este
-entorno. La única forma confiable de saberlo es abrir
-`/admin/configuracion` logueado como admin — esa pantalla muestra en vivo,
-para cada plan, "✅ Creado" o "⚠️ Falta crear".
+PayPal guardados en `AppSettings` (tabla singleton).
+
+✅ **Confirmado en producción real (3 sep 2026, captura de `/admin/configuracion`
+enviada por el dueño)**: los 3 planes están creados en PayPal — Premium,
+Plan Profesional y Plan Empleador marcan "✅ Creado", con "Listo." como
+resultado del último "Crear/actualizar planes de PayPal". El problema de
+autenticación con las credenciales live (`Client Authentication failed`,
+detectado y diagnosticado en esta sesión, ver historial de commits
+`88a65de`) quedó resuelto del lado del dueño — no se supo ni se hizo nada
+más desde este entorno para arreglarlo, sigue sin haber acceso al
+dashboard de PayPal desde acá. Pendiente (no confirmado todavía): un test
+real de extremo a extremo suscribiéndose a alguno de los 3 planes y
+verificando que la cuenta quede marcada activa.
 
 | Plan | Precio (default en el código) | Para quién | Campo de precio | Campo de ID |
 |---|---|---|---|---|
@@ -196,11 +203,9 @@ datos `20260830060000_plan_precios_unificados_120` (además de bajar los
 singleton ya existente en producción (que un `@default` de schema no
 toca) y pone en `NULL` los IDs de plan de PayPal de Premium y Empleador
 (Profesional no cambió de precio, su ID se dejó intacto) para que
-`/admin/configuracion` los marque "⚠️ Falta crear". **Pendiente que el
-dueño entre a `/admin/configuracion` y apriete "Crear/actualizar planes de
-PayPal"** una vez que este cambio esté desplegado — esa API llama a PayPal
-con las credenciales reales de producción, que no existen en este entorno,
-así que ese último paso no se pudo hacer desde acá.
+`/admin/configuracion` los marcara "⚠️ Falta crear" hasta que se volvieran
+a crear. **Hecho** — ver confirmación arriba, los 3 ya están "✅ Creado" en
+producción real.
 
 ## Bugs conocidos
 
