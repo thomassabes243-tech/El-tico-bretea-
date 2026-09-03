@@ -41,6 +41,8 @@
   --font-sans: var(--font-plus-jakarta);
   /* Serif solo para el titular del hero de inicio. */
   --font-serif: var(--font-merriweather);
+  /* Solo para la sección de Cotizaciones (font-dm-sans), ver layout.tsx. */
+  --font-dm-sans: var(--font-dm-sans-loaded);
 
   --color-navy-950: var(--color-navy-950);
   --color-navy-900: var(--color-navy-900);

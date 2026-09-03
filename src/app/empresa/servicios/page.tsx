@@ -37,6 +37,10 @@ export default async function ServiciosPage() {
   if (!company) redirect(session.user.role === "WORKER" ? "/perfil" : "/registro/empresa");
 
   return (
+    // Rediseño visual (alcance acotado): DM Sans para toda la sección de
+    // Cotizaciones, ver src/app/servicios/layout.tsx -- esta pantalla vive
+    // fuera de ese segmento de rutas, así que se envuelve acá directo.
+    <div className="contents font-dm-sans">
     <AuthShell
       title="Cotizaciones"
       subtitle="Ofrecé tus servicios a clientes que necesitan un trabajo puntual, además de tus vacantes."
@@ -96,5 +100,6 @@ export default async function ServiciosPage() {
         </Card>
       )}
     </AuthShell>
+    </div>
   );
 }

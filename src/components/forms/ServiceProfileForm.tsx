@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { FieldWrapper, TextInput, Textarea } from "@/components/forms/FormField";
 import { ProfilePhotoUpload } from "@/components/forms/ProfilePhotoUpload";
 import { compressImageFile } from "@/lib/image-compress-client";
+import { useToast } from "@/components/ui/Toast";
 
 type Photo = { id: string; url: string };
 
@@ -53,7 +54,7 @@ export function ServiceProfileForm({
   const [gettingLocation, setGettingLocation] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
+  const { showToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [portfolioDocName, setPortfolioDocName] = useState(initialPortfolioDocName);
   const [uploadingDoc, setUploadingDoc] = useState(false);
@@ -68,7 +69,6 @@ export function ServiceProfileForm({
   const save = async () => {
     setSaving(true);
     setError(null);
-    setSaved(false);
     try {
       const res = await fetch("/api/perfil/empresa/servicios", {
         method: "POST",
@@ -84,7 +84,7 @@ export function ServiceProfileForm({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "No se pudo guardar");
-      setSaved(true);
+      showToast("Guardado");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ocurrió un error inesperado");
@@ -394,7 +394,6 @@ export function ServiceProfileForm({
       )}
 
       {error && <p className="text-xs font-medium text-mx-red-600">{error}</p>}
-      {saved && <p className="text-xs font-medium text-success-600">Guardado.</p>}
 
       <Button onClick={save} disabled={saving} fullWidth>
         {saving ? "Guardando..." : "Guardar cambios"}

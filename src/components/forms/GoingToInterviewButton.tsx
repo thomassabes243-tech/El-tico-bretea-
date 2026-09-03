@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { MapPin, Copy, Check } from "lucide-react";
 import { PermissionPrimer } from "@/components/ui/PermissionPrimer";
+import { ArrivedSafelyButton } from "@/components/forms/ArrivedSafelyButton";
 
 type Contact = { id: string; name: string };
 
@@ -30,6 +31,7 @@ export function GoingToInterviewButton({
   const [contactId, setContactId] = useState(contacts[0]?.id ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [shareId, setShareId] = useState<string | null>(null);
   const [shareLink, setShareLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -63,7 +65,8 @@ export function GoingToInterviewButton({
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error || "No se pudo compartir la ubicación");
       }
-      const { shareToken } = await res.json();
+      const { id, shareToken } = await res.json();
+      setShareId(id);
       setShareLink(`${window.location.origin}/ubicacion-compartida/${shareToken}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo obtener tu ubicación");
@@ -79,7 +82,7 @@ export function GoingToInterviewButton({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (shareLink) {
+  if (shareLink && shareId) {
     return (
       <div className="flex flex-col gap-2 rounded-xl border border-sand-200 bg-sand-50 p-3">
         <p className="text-xs text-navy-800/60">Mandale este link a tu contacto por WhatsApp:</p>
@@ -90,6 +93,7 @@ export function GoingToInterviewButton({
             {copied ? "Copiado" : "Copiar"}
           </button>
         </div>
+        <ArrivedSafelyButton shareId={shareId} />
       </div>
     );
   }

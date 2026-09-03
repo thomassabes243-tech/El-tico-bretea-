@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Merriweather } from "next/font/google";
+import { Plus_Jakarta_Sans, Merriweather, DM_Sans } from "next/font/google";
 import Script from "next/script";
 import { Providers } from "@/components/Providers";
 import { getSiteUrl } from "@/lib/site";
@@ -21,6 +21,15 @@ const merriweather = Merriweather({
   weight: ["400", "700"],
 });
 
+// Solo para la sección de Cotizaciones (rediseño visual, alcance acotado a
+// esa sección -- no es el cambio de tipografía global de la Fase 5, que
+// sigue pendiente y sin empezar).
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans-loaded",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: "El Mexa Chamba — Aquí sí hay chamba",
@@ -39,7 +48,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es-MX"
-      className={`${plusJakarta.variable} ${merriweather.variable} h-full antialiased`}
+      className={`${plusJakarta.variable} ${merriweather.variable} ${dmSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-sand-50 text-foreground">
         <Script

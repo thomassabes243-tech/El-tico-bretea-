@@ -4,15 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FieldWrapper, TextInput, Textarea } from "@/components/forms/FormField";
 import { Button } from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
 
 export function ServiceQuoteForm({ serviceRequestId }: { serviceRequestId: string }) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [priceLabel, setPriceLabel] = useState("");
   const [availability, setAvailability] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
 
   const submit = async () => {
     if (submitting || !priceLabel.trim() || !availability.trim()) return;
@@ -26,18 +27,13 @@ export function ServiceQuoteForm({ serviceRequestId }: { serviceRequestId: strin
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "No se pudo enviar la cotización");
-      setDone(true);
-      setTimeout(() => router.push("/servicios/solicitudes"), 1200);
+      showToast("¡Cotización enviada!");
+      router.push("/servicios/solicitudes");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ocurrió un error inesperado");
-    } finally {
       setSubmitting(false);
     }
   };
-
-  if (done) {
-    return <p className="text-sm font-semibold text-success-600">¡Cotización enviada!</p>;
-  }
 
   return (
     <div className="flex flex-col gap-4">

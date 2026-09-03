@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { MapPin, ShieldAlert } from "lucide-react";
+import { MapPin, ShieldAlert, CheckCircle2 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { LogoMark } from "@/components/brand/Logo";
 import { Card } from "@/components/ui/Card";
@@ -40,6 +40,17 @@ export default async function UbicacionCompartidaPage({
         </p>
         {share.label && (
           <p className="mt-1 text-xs font-semibold text-navy-800/60">Motivo: {share.label}</p>
+        )}
+
+        {share.confirmedSafeAt && (
+          <div className="mt-3 flex items-center gap-2 rounded-xl border border-success-600/25 bg-success-600/10 p-3">
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-success-600" />
+            <p className="text-xs font-semibold text-success-600">
+              {workerName} confirmó que llegó segura
+              {" "}
+              ({share.confirmedSafeAt.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })})
+            </p>
+          </div>
         )}
 
         {share.suspicious && (

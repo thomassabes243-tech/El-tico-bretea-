@@ -977,6 +977,16 @@ model LocationShare {
   createdAt DateTime            @default(now())
   expiresAt DateTime // borrado automático, mismo patrón que ChatFile (Sección 8)
 
+  // Confirmación de llegada segura ("Llegué segura"): la propia trabajadora
+  // la marca desde el mismo lugar donde generó el link (SafetyActions /
+  // GoingToInterviewButton) -- gratis para cualquiera, nunca detrás de
+  // Premium (regla ya decidida: ninguna función de seguridad se cobra). No
+  // dispara ninguna notificación push/SMS al contacto (TrustedContact no es
+  // una cuenta de la app, ver comentario de shareToken arriba) -- el
+  // contacto lo ve reflejado en el mismo link de solo lectura que ya tiene
+  // abierto si lo recarga.
+  confirmedSafeAt DateTime?
+
   @@index([workerId, createdAt])
   @@map("location_shares")
 }

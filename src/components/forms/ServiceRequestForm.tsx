@@ -6,11 +6,13 @@ import { MapPin, Loader2, Zap, ClipboardList } from "lucide-react";
 import { SERVICE_CATEGORIES, PROJECT_MAX_QUOTES } from "@/lib/constants";
 import { FieldWrapper, TextInput, Textarea, Select } from "@/components/forms/FormField";
 import { Button } from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
 
 type Mode = "URGENTE" | "PROYECTO";
 
 export function ServiceRequestForm() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [mode, setMode] = useState<Mode>("URGENTE");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
@@ -67,6 +69,7 @@ export function ServiceRequestForm() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "No se pudo enviar la solicitud");
+      showToast("¡Solicitud enviada!");
       router.push(`/servicios/mis-solicitudes/${data.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ocurrió un error inesperado");

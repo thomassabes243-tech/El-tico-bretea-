@@ -5,6 +5,7 @@ import { MapPin, AlertTriangle, Copy, Check } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { PermissionPrimer } from "@/components/ui/PermissionPrimer";
+import { ArrivedSafelyButton } from "@/components/forms/ArrivedSafelyButton";
 
 type Contact = { id: string; name: string; phone: string };
 
@@ -25,6 +26,7 @@ export function SafetyActions({ contacts }: { contacts: Contact[] }) {
   const [selectedContactId, setSelectedContactId] = useState(contacts[0]?.id ?? "");
   const [busy, setBusy] = useState<"location" | "panic" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [shareId, setShareId] = useState<string | null>(null);
   const [shareLink, setShareLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -40,6 +42,7 @@ export function SafetyActions({ contacts }: { contacts: Contact[] }) {
     setBusy("location");
     setError(null);
     setShareLink(null);
+    setShareId(null);
     try {
       const position = await getPosition();
       const res = await fetch("/api/ubicacion/compartir", {
@@ -56,7 +59,8 @@ export function SafetyActions({ contacts }: { contacts: Contact[] }) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error || "No se pudo compartir la ubicación");
       }
-      const { shareToken } = await res.json();
+      const { id, shareToken } = await res.json();
+      setShareId(id);
       setShareLink(`${window.location.origin}/ubicacion-compartida/${shareToken}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo obtener tu ubicación");
@@ -70,6 +74,7 @@ export function SafetyActions({ contacts }: { contacts: Contact[] }) {
     setBusy("panic");
     setError(null);
     setShareLink(null);
+    setShareId(null);
     try {
       let latitude: number | undefined;
       let longitude: number | undefined;
@@ -159,6 +164,7 @@ export function SafetyActions({ contacts }: { contacts: Contact[] }) {
               {copied ? "Copiado" : "Copiar"}
             </button>
           </div>
+          {shareId && <ArrivedSafelyButton shareId={shareId} />}
         </div>
       )}
     </Card>

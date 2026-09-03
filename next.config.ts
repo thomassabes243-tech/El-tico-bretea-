@@ -4,7 +4,17 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+  // geolocation=() bloqueaba TODO uso de navigator.geolocation, incluido el
+  // de esta misma app -- "Compartir mi ubicación", el botón de pánico y
+  // "Voy a esta entrevista" fallaban siempre con "No se pudo obtener tu
+  // ubicación", sin importar que el navegador diera el permiso, porque este
+  // header lo bloquea a nivel de política ANTES de llegar al permiso del
+  // navegador. (self) sigue bloqueando iframes de terceros -- la intención
+  // real de este header -- sin romper el propio uso de la app. camera/
+  // microphone se dejan en () a propósito: la app nunca llama a
+  // getUserMedia/mediaDevices (confirmado por grep), solo usa <input
+  // type="file"> para fotos, que no depende de este header.
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self)" },
 ];
 
 const nextConfig: NextConfig = {
