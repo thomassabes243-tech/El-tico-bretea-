@@ -3,7 +3,7 @@ import { Plus_Jakarta_Sans, Merriweather, DM_Sans } from "next/font/google";
 import Script from "next/script";
 import { Providers } from "@/components/Providers";
 import { getSiteUrl } from "@/lib/site";
-import { ADSENSE_CLIENT_ID } from "@/lib/ads";
+import { ADSENSE_CLIENT_ID } from "@/lib/ads-client";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({

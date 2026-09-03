@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ADSENSE_CLIENT_ID, ADSENSE_SLOT_ID } from "@/lib/ads";
+import { ADSENSE_CLIENT_ID, ADSENSE_SLOT_ID } from "@/lib/ads-client";
 
 declare global {
   interface Window {
