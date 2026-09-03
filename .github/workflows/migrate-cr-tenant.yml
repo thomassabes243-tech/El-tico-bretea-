@@ -1,0 +1,32 @@
+name: Migrar datos CR a base dedicada
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Instalar cliente de Postgres para el script de migración
+        run: npm install --no-save pg
+
+      - name: Aplicar el esquema actual a la base nueva
+        env:
+          DATABASE_URL: ${{ secrets.CR_TARGET_DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.CR_TARGET_DIRECT_URL }}
+        run: npx prisma db push --skip-generate
+
+      - name: Copiar filas appId='CR' de la base compartida a la base nueva
+        env:
+          CR_SOURCE_DATABASE_URL: ${{ secrets.CR_SOURCE_DATABASE_URL }}
+          CR_TARGET_DIRECT_URL: ${{ secrets.CR_TARGET_DIRECT_URL }}
+        run: node scripts/migrate-cr-tenant.mjs
