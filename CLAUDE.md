@@ -1016,3 +1016,87 @@ usaba la cuenta `DEMO_RELLENO`) y ningún rastro de "San José", "Escazú",
 "₡" ni "Costa Rica" en toda la página — solo quedan las 30 vacantes
 propias de esta rama en esa categoría. `get_runtime_errors` sin errores
 nuevos tras el deploy.
+
+## Bug real "Algo salió mal" al abrir una vacante desde categoría + 1ª y 2ª ola de contaminación CR (3 sep 2026)
+
+El dueño reportó (dos veces, con captura de un celular real) que abrir
+cualquier vacante desde la búsqueda por categoría tiraba "Algo salió mal",
+con la hipótesis de que eran las vacantes de Costa Rica con `appId` mal
+puesto. Se investigó a fondo esa hipótesis y **no era la causa** — la
+consulta ya filtra siempre por `appId` vía `tenant-scope.ts`, no depende de
+qué haya cargado en cada fila, y el crash pasaba con CUALQUIER vacante,
+mexicana o no.
+
+**Causa real, reproducida con Playwright**: `AdSenseSlot.tsx` (`"use
+client"`) importaba `ADSENSE_CLIENT_ID`/`ADSENSE_SLOT_ID` desde
+`src/lib/ads.ts` — el mismo archivo que tiene `getActiveAds`/
+`getAdEligibility` con `import { prisma }`. Importar CUALQUIER cosa de un
+archivo mete su contenido completo (incluidos sus propios imports) en el
+bundle de quien lo importa — así sea client o server. Como
+`PrismaClient` tira "unable to run in this browser environment" apenas se
+evalúa en el navegador, cualquier página que renderizara `AdSenseSlot`
+(`/buscar/[categoria]` con más de 4 vacantes activas, umbral real de
+`isAdEligible`) rompía por completo del lado del cliente — nunca llegaba
+al servidor, por eso no aparecía en ningún runtime error de Vercel.
+Arreglado moviendo las 2 constantes a un archivo nuevo, client-safe,
+`src/lib/ads-client.ts` (sin ningún import de Prisma) — `ads.ts` quedó
+solo con las funciones server-only. `AdSenseSlot.tsx` y `layout.tsx`
+ahora importan de `ads-client.ts`. Probado con Playwright antes/después:
+14 vacantes en 7 categorías, todas abren bien tras el fix.
+
+**Contaminación real de Costa Rica, encontrada como descubrimiento
+paralelo** (no la causa del bug de arriba, pero real e igual de seria):
+al investigar el bug se encontró, y luego se confirmó que **reaparece en
+oleadas sucesivas** — evidencia directa de que el problema de fondo (los
+dos proyectos de Vercel comparten la base de Neon y ambos corren `prisma
+migrate deploy` en cualquier deploy de cualquier rama, ver sección de
+arriba) sigue completamente activo, no es un incidente cerrado:
+
+- **1ª ola** (migración `20260903020000_borrar_contaminacion_cr_ids_uuid`):
+  una empresa+vacante puntual con `Curridabat`/"Edificaciones San Rafael",
+  identificada por formato de `id` tipo UUID (8-4-4-4-12 hex) — un patrón
+  que esta app nunca genera (México y Costa Rica usan `@default(cuid())`
+  en sus dos `schema.prisma`, confirmado comparándolos completos).
+- **2ª ola, minutos después** (migración
+  `20260903180000_borrar_contaminacion_cr_ids_uuid_ola2`): con la primera
+  ola ya limpia y confirmada contra producción, `/buscar/construccion` y
+  `/buscar/seguridad` aparecieron 100% (30/30) ocupadas por vacantes de
+  Costa Rica bajo 7 empresas nuevas ("Edificaciones San Rafael", "Obras y
+  Acabados Ticos", "Constructora Volcán Verde", "Grupo Constructor Alfa",
+  "Grupo de Seguridad Escudo", "Protección Total S.A.", "Seguridad
+  Vigilantes CR"), y `/buscar/ventas_comercio` con el mismo patrón
+  ("Distribuidora Nacional CR", "Tienda El Buen Precio", "Comercial San
+  José") — de nuevo, todos con `id` formato UUID. Se revisaron las 10
+  categorías una por una contra producción real tras cada ola; las otras 7
+  (tecnologia, restaurantes, limpieza, transporte, profesionales,
+  oficinas_administracion, hoteles_turismo) se mantuvieron limpias en
+  todo momento.
+- Se encontraron también, en `hoteles_turismo`, 2 vacantes reales con `id`
+  formato `cuid` normal (`Guia`/`Student` de una empresa "Me podés
+  recojer") — **no se borraron**: sin ubicación, sin descripción y sin
+  ningún indicador de Costa Rica, no hay evidencia de que sean
+  contaminación y no una publicación real (aunque incompleta) de un
+  usuario legítimo; borrar la cuenta de alguien real sin esa certeza
+  hubiera sido un error grave. Si el dueño confirma que esa cuenta es
+  ajena a México, se puede borrar puntualmente después.
+
+Cada ola se verificó localmente antes de pushear (Postgres local, filas
+sintéticas con el mismo patrón, confirmando que la migración no toca
+ninguna de las 300 vacantes de ejemplo propias) y luego contra producción
+real después del deploy: build logs confirmando que la migración se
+aplicó sin error, `get_runtime_errors` limpio, y fetch directo a las 10
+categorías (`/buscar/<categoria>`) confirmando 0 ids formato UUID y 0
+menciones de ciudades/marca de Costa Rica en cada una.
+
+**Esto sigue siendo un parche, no la solución de fondo** (ya advertido en
+la sección de arriba) — la reaparición en una segunda ola, minutos después
+de la primera limpieza, es la prueba más directa hasta ahora de que
+mientras las dos apps compartan la misma base física de Neon, cualquier
+deploy nuevo de la otra rama puede volver a mezclar datos. Vale la pena
+que el dueño sepa que ya existe un intento de solución de fondo, de una
+sesión anterior a esta (commits `6b6b9f1`/`0081865`/`883e137` en el
+historial de deploys): un script (`scripts/` — no confirmado el nombre
+exacto desde esta sesión) pensado para correr en un runner de GitHub
+Actions y migrar las filas `appId='CR'` a una base de Neon dedicada nueva,
+más un workflow para dispararlo — no se pudo confirmar desde esta sesión
+si ese workflow llegó a ejecutarse o si la base nueva ya existe.
