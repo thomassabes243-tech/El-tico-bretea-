@@ -45,7 +45,7 @@ async function main() {
     update: {},
   });
 
-  console.log(`Moderador demo listo: ${DEMO_MODERATOR_EMAIL} / ${DEMO_MODERATOR_PASSWORD}`);
+  console.log(`Moderador demo listo: ${DEMO_MODERATOR_EMAIL}`);
 
   const adminPasswordHash = await bcrypt.hash(DEMO_ADMIN_PASSWORD, 10);
   await prisma.user.upsert({
@@ -53,7 +53,7 @@ async function main() {
     create: { email: DEMO_ADMIN_EMAIL, passwordHash: adminPasswordHash, role: "ADMIN" },
     update: {},
   });
-  console.log(`Admin demo listo: ${DEMO_ADMIN_EMAIL} / ${DEMO_ADMIN_PASSWORD}`);
+  console.log(`Admin demo listo: ${DEMO_ADMIN_EMAIL}`);
 
   await prisma.appSettings.upsert({
     where: { id: "singleton" },
