@@ -14,7 +14,7 @@ import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { applicationStatusMeta } from "@/lib/application-status";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
-import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send, Info, Pencil, History, MessagesSquare, Wrench } from "lucide-react";
+import { MapPin, Phone, Mail, Briefcase, GraduationCap, Sparkles, ShieldCheck, Plus, ChevronRight, Send, Info, Pencil, History, MessagesSquare, Wrench, FileText } from "lucide-react";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -126,6 +126,19 @@ export default async function PerfilPage() {
               <div className="flex-1">
                 <p className="text-sm font-bold text-navy-900">Cotizaciones</p>
                 <p className="text-xs text-navy-800/50">Pedí un electricista, plomero u otro servicio puntual</p>
+              </div>
+              <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
+            </Card>
+          </Link>
+
+          <Link href="/cv" className="mt-3 block">
+            <Card className="flex items-center gap-3 border-0 p-4 shadow-[0_8px_22px_rgba(10,38,71,0.07)]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-navy-900/[0.07] text-navy-900">
+                <FileText className="h-4.5 w-4.5" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-navy-900">Mi CV profesional</p>
+                <p className="text-xs text-navy-800/50">Revisalo, mejoralo y descargalo en PDF</p>
               </div>
               <ChevronRight className="h-4.5 w-4.5 text-navy-800/30" />
             </Card>

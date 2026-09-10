@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, MessagesSquare, Wrench, FileText, CircleUserRound } from "lucide-react";
+import { Home, Search, MessagesSquare, ClipboardList, CircleUserRound } from "lucide-react";
 import clsx from "clsx";
 
 const NAV_ITEMS = [
@@ -12,8 +12,7 @@ const NAV_ITEMS = [
   // Apunta a /cotizaciones, que redirige según el rol a /servicios/* o
   // /empresa/servicios -- por eso isActive también matchea esos otros
   // prefijos, no solo el literal "/cotizaciones".
-  { href: "/cotizaciones", label: "Cotizaciones", icon: Wrench },
-  { href: "/cv", label: "CV", icon: FileText },
+  { href: "/cotizaciones", label: "Solicitudes", icon: ClipboardList },
   { href: "/perfil", label: "Perfil", icon: CircleUserRound },
 ];
 
