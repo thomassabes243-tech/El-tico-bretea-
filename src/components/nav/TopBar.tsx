@@ -10,12 +10,12 @@ export function TopBar() {
   const { status } = useSession();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-sand-200 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/75">
-      <div className="mx-auto flex max-w-lg items-center justify-between px-4 py-3">
+    <header className="sticky top-0 z-30 border-b border-white/70 bg-white/90 shadow-[0_4px_20px_rgba(10,38,71,0.05)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/78">
+      <div className="mx-auto flex max-w-lg items-center justify-between px-5 py-3.5">
         <Link href="/" className="flex items-center gap-2">
-          <LogoMark size={32} />
+          <LogoMark size={38} />
           <span className="leading-tight">
-            <span className="block font-extrabold tracking-tight text-navy-900">
+            <span className="block text-[17px] font-extrabold tracking-[-0.025em] text-navy-900">
               El Mexa <span className="text-mx-red-600">Chamba</span>
             </span>
             <span className="block text-[11px] font-medium text-navy-800/50">Aquí sí hay chamba</span>

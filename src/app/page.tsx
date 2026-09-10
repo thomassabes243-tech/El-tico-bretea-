@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldCheck, MapPin, ChevronRight, Coins, Clock, Sparkles } from "lucide-react";
+import { ShieldCheck, MapPin, ChevronRight, Coins, Clock, Sparkles, UsersRound, BriefcaseBusiness } from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
@@ -29,23 +29,27 @@ export default async function Home({
     <div className="flex min-h-full flex-1 flex-col">
       <TopBar />
 
-      <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
+      <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-4">
         {cuentaEliminada && (
           <div className="mb-4 rounded-2xl border border-success-600/25 bg-success-600/10 px-4 py-3 text-sm font-medium text-success-600">
             Tu cuenta fue eliminada. Gracias por haber usado El Mexa Chamba.
           </div>
         )}
 
-        {/* 2. Título -- texto plano, sin tarjeta ni foto de fondo. */}
-        <h1 className="text-[28px] font-bold leading-[34px] tracking-tight text-navy-900">
-          ¿Qué necesitás hacer hoy?
-        </h1>
-        <p className="mt-1.5 text-base leading-relaxed text-navy-800/60">
-          Encontrá trabajo, ofrecé tus servicios o contratá a alguien.
-        </p>
+        <section className="relative overflow-hidden rounded-[24px] bg-navy-950 px-5 py-6 text-white shadow-[0_18px_40px_rgba(6,27,51,0.22)]">
+          <HeroImage src="/assets/images/hero-worker.jpg" alt="" fallbackClassName="bg-navy-950" className="absolute inset-0 h-full w-full object-cover object-center brightness-[0.42]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/85 to-navy-950/25" />
+          <div className="relative max-w-[72%]">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.13em] text-white/90 backdrop-blur">
+              <Sparkles className="h-3 w-3 text-mx-red-500" /> Aquí sí hay chamba
+            </span>
+            <h1 className="mt-3 text-[29px] font-extrabold leading-[1.06] tracking-[-0.035em]">Tu próxima oportunidad empieza aquí</h1>
+            <p className="mt-3 text-[13px] leading-relaxed text-white/75">Encontrá trabajo, ofrecé tus servicios o contratá talento confiable.</p>
+          </div>
+        </section>
 
         {/* 3. Buscador */}
-        <div className="mt-5">
+        <div className="relative z-10 -mt-3 mx-3 rounded-2xl bg-white p-1 shadow-[0_10px_28px_rgba(10,38,71,0.14)]">
           <SmartSearchBar />
         </div>
 
@@ -54,7 +58,7 @@ export default async function Home({
             real de fondo (oscurecida) + el mismo ícono propio de siempre,
             en dos tamaños, sin sacar nada de lo que ya había. */}
         <div className="mt-5 grid grid-cols-2 gap-3">
-          <Link href="/servicios/nueva" className="group relative flex h-40 flex-col justify-between overflow-hidden rounded-xl bg-mx-red-600 p-4 text-white shadow-sm transition-all active:scale-[0.98]">
+          <Link href="/servicios/nueva" className="group relative flex h-44 flex-col justify-between overflow-hidden rounded-[20px] bg-mx-red-600 p-4 text-white shadow-[0_12px_28px_rgba(206,17,38,0.20)] transition-all active:scale-[0.98]">
             <HeroImage
               src="/assets/images/servicio-electricista.jpg"
               alt=""
@@ -72,7 +76,7 @@ export default async function Home({
             </div>
             <ChevronRight className="relative ml-auto h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
-          <Link href="/empresa/servicios" className="group relative flex h-40 flex-col justify-between overflow-hidden rounded-xl bg-navy-900 p-4 text-white shadow-sm transition-all active:scale-[0.98]">
+          <Link href="/empresa/servicios" className="group relative flex h-44 flex-col justify-between overflow-hidden rounded-[20px] bg-navy-900 p-4 text-white shadow-[0_12px_28px_rgba(10,38,71,0.20)] transition-all active:scale-[0.98]">
             <HeroImage
               src="/assets/images/quiero-trabajar.jpg"
               alt=""
@@ -90,6 +94,17 @@ export default async function Home({
             </div>
             <ChevronRight className="relative ml-auto h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <div className="flex items-center gap-3 rounded-2xl border border-white bg-white px-3.5 py-3 shadow-[0_6px_18px_rgba(10,38,71,0.06)]">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-mx-green-600/10 text-mx-green-600"><BriefcaseBusiness className="h-4.5 w-4.5" /></span>
+            <span><strong className="block text-sm text-navy-900">Vacantes reales</strong><small className="text-[10px] text-navy-800/50">Publicación directa</small></span>
+          </div>
+          <div className="flex items-center gap-3 rounded-2xl border border-white bg-white px-3.5 py-3 shadow-[0_6px_18px_rgba(10,38,71,0.06)]">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-peso-100 text-peso-600"><UsersRound className="h-4.5 w-4.5" /></span>
+            <span><strong className="block text-sm text-navy-900">Comunidad</strong><small className="text-[10px] text-navy-800/50">Conexión confiable</small></span>
+          </div>
         </div>
 
         {/* 5. Categorías */}

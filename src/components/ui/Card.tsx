@@ -9,7 +9,7 @@ export function Card({
   return (
     <div
       className={clsx(
-        "rounded-2xl border border-sand-200 bg-white shadow-sm shadow-navy-900/[0.04]",
+        "rounded-[20px] border border-white/80 bg-white shadow-[0_10px_30px_rgba(10,38,71,0.08),0_2px_8px_rgba(10,38,71,0.04)]",
         className
       )}
       {...rest}

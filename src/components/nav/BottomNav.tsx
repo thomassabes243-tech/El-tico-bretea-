@@ -23,8 +23,8 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-sand-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
-      <div className="mx-auto flex max-w-lg items-stretch justify-between px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)]">
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/80 bg-white/95 shadow-[0_-8px_30px_rgba(10,38,71,0.08)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/85">
+      <div className="mx-auto flex max-w-lg items-stretch justify-between px-2 pb-[max(env(safe-area-inset-bottom),0.55rem)] pt-0.5">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive =
             href === "/"
@@ -40,8 +40,8 @@ export function BottomNav() {
             >
               <span
                 className={clsx(
-                  "flex h-7 w-11 items-center justify-center rounded-full transition-colors",
-                  isActive && "bg-mx-red-600/10"
+                  "flex h-7 w-11 items-center justify-center rounded-full transition-all",
+                  isActive && "bg-mx-red-600/10 shadow-inner"
                 )}
               >
                 <Icon

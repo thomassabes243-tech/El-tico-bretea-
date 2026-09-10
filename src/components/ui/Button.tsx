@@ -7,18 +7,18 @@ type Size = "sm" | "md" | "lg";
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-navy-900 text-white hover:bg-navy-800 active:bg-navy-950 shadow-sm shadow-navy-900/20",
+    "bg-navy-900 text-white hover:bg-navy-800 active:bg-navy-950 shadow-[0_8px_18px_rgba(10,38,71,0.22)]",
   secondary:
-    "bg-mx-red-600 text-white hover:bg-mx-red-700 active:bg-mx-red-700 shadow-sm shadow-mx-red-600/25",
+    "bg-mx-red-600 text-white hover:bg-mx-red-700 active:bg-mx-red-700 shadow-[0_8px_18px_rgba(206,17,38,0.22)]",
   outline:
     "border border-sand-200 bg-white text-navy-900 hover:border-navy-700 hover:text-navy-900",
   ghost: "text-navy-800 hover:bg-sand-100",
 };
 
 const sizeClasses: Record<Size, string> = {
-  sm: "h-9 px-3.5 text-sm gap-1.5 rounded-lg",
+  sm: "h-9 px-3.5 text-sm gap-1.5 rounded-xl",
   md: "h-11 px-5 text-sm gap-2 rounded-xl",
-  lg: "h-13 px-6 text-base gap-2.5 rounded-2xl",
+  lg: "h-13 px-6 text-base gap-2.5 rounded-xl",
 };
 
 const baseClasses =
