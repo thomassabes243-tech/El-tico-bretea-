@@ -43,47 +43,49 @@ export default async function PerfilPage() {
     return (
       <div className="flex min-h-full flex-1 flex-col">
         <TopBar />
-        <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
-          <Card className="p-5">
+        <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-4">
+          <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-700 p-5 text-white shadow-[0_18px_40px_rgba(6,27,51,0.24)]">
+            <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-mx-red-600/25 blur-2xl" />
+            <p className="relative mb-4 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55">Mi perfil profesional</p>
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-4">
                 <AvatarImage
                   src={worker.formalPhotoUrl}
                   alt={worker.fullName}
-                  className="h-16 w-16 shrink-0 rounded-2xl object-cover"
+                  className="h-20 w-20 shrink-0 rounded-[22px] border-2 border-white/30 object-cover shadow-xl"
                   fallback={
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-navy-900/[0.07] text-xl font-extrabold text-navy-800">
+                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[22px] border-2 border-white/25 bg-white/10 text-2xl font-extrabold text-white">
                       {worker.fullName.slice(0, 1).toUpperCase()}
                     </div>
                   }
                 />
                 <div>
-                  <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
+                  <h1 className="flex items-center gap-1.5 text-xl font-extrabold tracking-tight text-white">
                     {worker.fullName}
                     {worker.isPremium && <PremiumBadge />}
                   </h1>
-                  <p className="text-sm text-navy-800/60">{worker.profession}</p>
+                  <p className="mt-1 text-sm text-white/65">{worker.profession}</p>
                 </div>
               </div>
               <Link
                 href="/perfil/editar"
-                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-sand-200 px-2.5 py-1.5 text-xs font-semibold text-navy-800/70 hover:bg-sand-100"
+                className="relative flex shrink-0 items-center gap-1.5 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold text-white backdrop-blur hover:bg-white/15"
               >
                 <Pencil className="h-3.5 w-3.5" /> Editar
               </Link>
             </div>
-            <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-navy-800/70">
-              <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
+            <div className="relative mt-5 flex flex-wrap gap-2 text-xs font-medium text-white/80">
+              <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/10 px-2.5 py-1.5">
                 <MapPin className="h-3.5 w-3.5" /> {worker.residence}
               </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
+              <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/10 px-2.5 py-1.5">
                 <Briefcase className="h-3.5 w-3.5" /> {labelFor(LABOR_CATEGORIES, worker.laborCategory)}
               </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-sand-100 px-2.5 py-1">
+              <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/10 px-2.5 py-1.5">
                 {worker.yearsExperience} años de experiencia
               </span>
               {!worker.isPublic && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-navy-900/[0.06] px-2.5 py-1 text-navy-800/60">
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1.5 text-white/60">
                   Perfil no visible para empresas
                 </span>
               )}
@@ -321,39 +323,41 @@ export default async function PerfilPage() {
     return (
       <div className="flex min-h-full flex-1 flex-col">
         <TopBar />
-        <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-5">
-          <Card className="p-5">
+        <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-28 pt-4">
+          <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-navy-950 via-navy-900 to-mx-green-700 p-5 text-white shadow-[0_18px_40px_rgba(6,27,51,0.24)]">
+            <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-mx-green-500/25 blur-2xl" />
+            <p className="relative mb-4 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55">Perfil de empresa</p>
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-4">
                 <AvatarImage
                   src={company.logoUrl}
                   alt={company.commercialName}
-                  className="h-16 w-16 shrink-0 rounded-2xl object-cover"
+                  className="h-20 w-20 shrink-0 rounded-[22px] border-2 border-white/30 object-cover shadow-xl"
                   fallback={
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-mx-red-600/[0.09] text-xl font-extrabold text-mx-red-600">
+                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[22px] border-2 border-white/25 bg-white/10 text-2xl font-extrabold text-white">
                       {company.commercialName.slice(0, 1).toUpperCase()}
                     </div>
                   }
                 />
                 <div>
-                  <h1 className="flex items-center gap-1.5 text-lg font-extrabold text-navy-900">
+                  <h1 className="flex items-center gap-1.5 text-xl font-extrabold tracking-tight text-white">
                     {company.commercialName}
                     {company.isVerified && <ShieldCheck className="h-4 w-4 text-success-600" />}
                     {company.offersServices && company.professionalPlanActive && (
                       <PremiumBadge label="Destacado" />
                     )}
                   </h1>
-                  <p className="text-sm text-navy-800/60">{company.activity}</p>
+                  <p className="mt-1 text-sm text-white/65">{company.activity}</p>
                 </div>
               </div>
               <Link
                 href="/perfil/editar"
-                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-sand-200 px-2.5 py-1.5 text-xs font-semibold text-navy-800/70 hover:bg-sand-100"
+                className="relative flex shrink-0 items-center gap-1.5 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold text-white backdrop-blur hover:bg-white/15"
               >
                 <Pencil className="h-3.5 w-3.5" /> Editar
               </Link>
             </div>
-            <p className="mt-2 text-xs font-semibold text-navy-800/50">
+            <p className="relative mt-4 inline-flex rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/75">
               {company.isVerified ? "Empresa verificada ✓" : "Verificación pendiente de revisión"}
             </p>
           </Card>
