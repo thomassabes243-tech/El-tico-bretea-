@@ -11,6 +11,7 @@ import { AvatarImage } from "@/components/brand/AvatarImage";
 import { PremiumBadge } from "@/components/brand/PremiumBadge";
 import { recommendJobsForWorker } from "@/lib/recommendations";
 import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
+import { WorkerProfileVisibilityToggle } from "@/components/forms/WorkerProfileVisibilityToggle";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { applicationStatusMeta } from "@/lib/application-status";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
@@ -90,6 +91,11 @@ export default async function PerfilPage() {
                 </span>
               )}
             </div>
+          </Card>
+
+          <Card className="mt-4 p-4">
+            <h2 className="text-sm font-bold text-navy-900">Publicación para encontrar trabajo</h2>
+            <WorkerProfileVisibilityToggle isPublic={worker.isPublic} />
           </Card>
 
           <Card className="mt-4 p-5">

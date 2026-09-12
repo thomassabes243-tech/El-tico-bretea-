@@ -11,6 +11,20 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json();
+
+  // Cambio rápido de publicación desde "Mi perfil". No obliga a reenviar
+  // todos los datos del formulario y nunca borra el CV ni las solicitudes.
+  if (typeof body.isPublic === "boolean" && Object.keys(body).every((key) => key === "isPublic")) {
+    const result = await prisma.workerProfile.updateMany({
+      where: { userId: session.user.id },
+      data: { isPublic: body.isPublic },
+    });
+    if (result.count === 0) {
+      return NextResponse.json({ error: "Perfil no encontrado" }, { status: 404 });
+    }
+    return NextResponse.json({ ok: true });
+  }
+
   const parsed = workerProfileUpdateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
