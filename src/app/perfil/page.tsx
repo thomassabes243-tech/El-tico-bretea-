@@ -12,6 +12,7 @@ import { PremiumBadge } from "@/components/brand/PremiumBadge";
 import { recommendJobsForWorker } from "@/lib/recommendations";
 import { DeleteAccountCard } from "@/components/forms/DeleteAccountCard";
 import { WorkerProfileVisibilityToggle } from "@/components/forms/WorkerProfileVisibilityToggle";
+import { PasskeyManager } from "@/components/forms/PasskeyManager";
 import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constants";
 import { applicationStatusMeta } from "@/lib/application-status";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
@@ -96,6 +97,14 @@ export default async function PerfilPage() {
           <Card className="mt-4 p-4">
             <h2 className="text-sm font-bold text-navy-900">Publicación para encontrar trabajo</h2>
             <WorkerProfileVisibilityToggle isPublic={worker.isPublic} />
+          </Card>
+
+          <Card className="mt-4 p-4">
+            <h2 className="text-sm font-bold text-navy-900">Entrada rápida y segura</h2>
+            <p className="mt-1 text-xs leading-relaxed text-navy-800/55">
+              Activá el bloqueo de pantalla de este celular para entrar después sin recordar una contraseña.
+            </p>
+            <PasskeyManager />
           </Card>
 
           <Card className="mt-4 p-5">
@@ -389,6 +398,14 @@ export default async function PerfilPage() {
               <div><dt className="font-semibold text-navy-900">Contacto</dt><dd>{[company.contactPhone, company.contactEmail].filter(Boolean).join(" · ")}</dd></div>
               {company.description && <div><dt className="font-semibold text-navy-900">Descripción</dt><dd>{company.description}</dd></div>}
             </dl>
+          </Card>
+
+          <Card className="mt-4 p-4">
+            <h2 className="text-sm font-bold text-navy-900">Entrada rápida y segura</h2>
+            <p className="mt-1 text-xs leading-relaxed text-navy-800/55">
+              Activá el bloqueo de pantalla de este celular para entrar después sin recordar una contraseña.
+            </p>
+            <PasskeyManager />
           </Card>
 
           <Card className="mt-4 p-5">
