@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import type { AdItem } from "@/lib/ad-icons";
+import { ADS_ENABLED } from "@/lib/monetization";
 
 // Sección 10/20: publicidad propia ("house ads"), editable desde
 // /admin/publicidad. Mientras no haya una red publicitaria externa
@@ -44,6 +45,8 @@ export function isAdEligible(role: string | undefined, isPremium: boolean): bool
 
 /** Helper de servidor: resuelve la sesión actual y decide si le corresponde ver anuncios. */
 export async function getAdEligibility(): Promise<boolean> {
+  if (!ADS_ENABLED) return false;
+
   const session = await auth();
   if (!session?.user) return false;
 

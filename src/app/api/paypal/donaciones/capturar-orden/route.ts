@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { capturePaypalOrder } from "@/lib/paypal";
+import { PAYMENTS_ENABLED } from "@/lib/monetization";
 
 export async function POST(request: Request) {
+  if (!PAYMENTS_ENABLED) {
+    return NextResponse.json({ error: "Los cobros todavía no están activos" }, { status: 503 });
+  }
+
   const body = await request.json().catch(() => ({}));
   const orderId = String(body.orderId || "");
   if (!orderId) {

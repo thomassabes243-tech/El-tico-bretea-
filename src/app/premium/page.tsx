@@ -9,12 +9,11 @@ import { SubscribeButton } from "@/components/forms/SubscribeButton";
 import { CancelSubscriptionButton } from "@/components/forms/CancelSubscriptionButton";
 import { getAppSettings } from "@/lib/settings";
 import { formatPesos } from "@/lib/format";
+import { PAYMENTS_ENABLED } from "@/lib/monetization";
 
 // Reactivado: cobro real vía PayPal (suscripción mensual). Ninguna función
 // de seguridad depende de esto ni depende nunca de él -- son beneficios no
 // esenciales (visibilidad, sin publicidad, herramientas de CV).
-const PREMIUM_ENABLED = true;
-
 const BENEFITS = [
   { icon: EyeOff, text: "Sin publicidad" },
   { icon: TrendingUp, text: "Mayor visibilidad de tu perfil" },
@@ -25,7 +24,7 @@ const BENEFITS = [
 ];
 
 export default async function PremiumPage() {
-  if (!PREMIUM_ENABLED) redirect("/");
+  if (!PAYMENTS_ENABLED) redirect("/planes");
 
   const session = await auth();
   if (!session?.user) redirect("/iniciar-sesion");
