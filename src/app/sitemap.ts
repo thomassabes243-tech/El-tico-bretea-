@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSiteUrl } from "@/lib/site";
 
@@ -17,6 +18,7 @@ const STATIC_PATHS = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  await connection();
   const siteUrl = getSiteUrl();
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.map((path) => ({

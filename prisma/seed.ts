@@ -1,8 +1,14 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../src/lib/prisma";
+import { assertDatabaseIsolation } from "../src/lib/resource-isolation.mjs";
 import bcrypt from "bcryptjs";
 import { CURRENT_APP } from "../src/lib/tenant";
 
-const prisma = new PrismaClient();
+assertDatabaseIsolation();
+if (process.env.NODE_ENV !== "development" && process.env.NODE_ENV !== "test") {
+  if (!process.env.SEED_ADMIN_PASSWORD || !process.env.SEED_MODERATOR_PASSWORD) {
+    throw new Error("Se requieren contraseñas explícitas para sembrar cuentas fuera de desarrollo.");
+  }
+}
 
 const DEMO_MODERATOR_EMAIL = process.env.SEED_MODERATOR_EMAIL || "moderador.demo@mexicosinhambre.com";
 const DEMO_MODERATOR_PASSWORD = process.env.SEED_MODERATOR_PASSWORD || "moderador12345";

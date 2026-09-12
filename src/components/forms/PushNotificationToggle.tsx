@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { Bell, BellOff } from "lucide-react";
 import { PermissionPrimer } from "@/components/ui/PermissionPrimer";
 
@@ -11,22 +11,27 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
 }
 
+const subscribeToCapabilities = () => () => {};
+const getPushSupport = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+const getServerPushSupport = () => false;
+
 export function PushNotificationToggle() {
   const [subscribed, setSubscribed] = useState(false);
-  const [supported, setSupported] = useState(true);
+  const supported = useSyncExternalStore(subscribeToCapabilities, getPushSupport, getServerPushSupport);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-      setSupported(false);
-      return;
-    }
+    if (!supported) return;
+    let cancelled = false;
     navigator.serviceWorker.getRegistration().then(async (reg) => {
       const sub = await reg?.pushManager.getSubscription();
-      setSubscribed(Boolean(sub));
+      if (!cancelled) setSubscribed(Boolean(sub));
+    }).catch(() => {
+      if (!cancelled) setError("No se pudo comprobar el estado de las notificaciones.");
     });
-  }, []);
+    return () => { cancelled = true; };
+  }, [supported]);
 
   const activate = async () => {
     setBusy(true);

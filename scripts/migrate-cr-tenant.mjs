@@ -1,3 +1,6 @@
+// Retired: databases must remain separate. Restore only after a dedicated migration review.
+throw new Error("Migración entre países retirada: no ejecutar contra bases de producción.");
+
 // Migración única: copia SOLO las filas appId='CR' de la base compartida
 // (mexico-sin-hambre) a una base nueva y dedicada para El Tico Bretea.
 // Corre en un runner de GitHub Actions (con internet normal) porque el

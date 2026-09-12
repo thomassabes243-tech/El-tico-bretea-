@@ -5,6 +5,8 @@ on:
 
 jobs:
   migrate:
+    # Retired: never apply the Mexican schema to Costa Rica.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
