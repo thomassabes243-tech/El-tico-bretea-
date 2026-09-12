@@ -48,9 +48,46 @@ const READ_OR_FILTER_OPS = new Set([
   "groupBy",
   "update",
   "updateMany",
+  "updateManyAndReturn",
   "delete",
   "deleteMany",
 ]);
+
+// Reject explicit tenant reassignment, including nested create/update payloads.
+function rejectForeignTenant(value: unknown): void {
+  if (!value || typeof value !== "object") return;
+  if (Array.isArray(value)) {
+    value.forEach(rejectForeignTenant);
+    return;
+  }
+  for (const [key, item] of Object.entries(value)) {
+    if (key === "appId" && item !== CURRENT_APP &&
+        !(item && typeof item === "object" &&
+          Object.keys(item).length === 1 && "set" in item && item.set === CURRENT_APP)) {
+      throw new Error("No se permite escribir datos de otra aplicación.");
+    }
+    rejectForeignTenant(item);
+  }
+}
+
+export function scopeTenantArgs(model: string, operation: string, args: Record<string, unknown>) {
+  if (!TENANT_SCOPED_MODELS.has(model as Prisma.ModelName)) return args;
+  const a = { ...args };
+  for (const field of ["data", "create", "update"]) rejectForeignTenant(a[field]);
+  if (READ_OR_FILTER_OPS.has(operation)) {
+    a.where = { ...(a.where as object | undefined), appId: CURRENT_APP };
+  } else if (operation === "create") {
+    a.data = { ...(a.data as object), appId: CURRENT_APP };
+  } else if (operation === "createMany" || operation === "createManyAndReturn") {
+    a.data = Array.isArray(a.data)
+      ? a.data.map((d) => ({ ...d, appId: CURRENT_APP }))
+      : { ...(a.data as object), appId: CURRENT_APP };
+  } else if (operation === "upsert") {
+    a.where = { ...(a.where as object | undefined), appId: CURRENT_APP };
+    a.create = { ...(a.create as object), appId: CURRENT_APP };
+  }
+  return a;
+}
 
 // Extensión de Prisma que se aplica sola a TODA consulta de los modelos de
 // arriba: agrega appId=CURRENT_APP al `where` de lecturas/updates/deletes, y
@@ -66,27 +103,7 @@ export function withTenantScope(client: PrismaClient) {
     query: {
       $allModels: {
         async $allOperations({ model, operation, args, query }) {
-          if (!TENANT_SCOPED_MODELS.has(model as Prisma.ModelName)) {
-            return query(args);
-          }
-
-          const a = args as Record<string, unknown>;
-
-          if (READ_OR_FILTER_OPS.has(operation)) {
-            a.where = { ...(a.where as object | undefined), appId: CURRENT_APP };
-          } else if (operation === "create") {
-            a.data = { appId: CURRENT_APP, ...(a.data as object) };
-          } else if (operation === "createMany" || operation === "createManyAndReturn") {
-            const data = a.data;
-            a.data = Array.isArray(data)
-              ? data.map((d) => ({ appId: CURRENT_APP, ...d }))
-              : { appId: CURRENT_APP, ...(data as object) };
-          } else if (operation === "upsert") {
-            a.where = { ...(a.where as object | undefined), appId: CURRENT_APP };
-            a.create = { appId: CURRENT_APP, ...(a.create as object) };
-          }
-
-          return query(a);
+          return query(scopeTenantArgs(model, operation, args as Record<string, unknown>));
         },
       },
     },

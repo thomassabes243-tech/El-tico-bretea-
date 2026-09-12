@@ -8,6 +8,7 @@ import {
   GetObjectCommand,
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
+import { assertStorageIsolation } from "./resource-isolation.mjs";
 import { prisma } from "@/lib/prisma";
 
 // Adaptador de almacenamiento de objetos para archivos efímeros del chat
@@ -66,6 +67,7 @@ function assertLocalDiskUsable() {
 
 let s3Client: S3Client | null = null;
 function getS3Client() {
+  assertStorageIsolation();
   if (!s3Client) {
     s3Client = new S3Client({
       endpoint: s3Config.endpoint,

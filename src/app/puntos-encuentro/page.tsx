@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { MapPin } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { TopBar } from "@/components/nav/TopBar";
@@ -5,6 +6,7 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 
 export default async function PuntosEncuentroPage() {
+  await connection();
   const points = await prisma.safeMeetingPoint.findMany({
     where: { isActive: true },
     orderBy: [{ city: "asc" }, { name: "asc" }],

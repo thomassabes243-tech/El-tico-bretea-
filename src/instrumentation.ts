@@ -5,7 +5,9 @@
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
 
-  const required = ["DATABASE_URL", "DIRECT_URL", "AUTH_SECRET"];
+  const { assertDatabaseIsolation } = await import("./lib/resource-isolation.mjs");
+  assertDatabaseIsolation();
+  const required = ["DATABASE_URL", "AUTH_SECRET"];
   const missing = required.filter((key) => !process.env[key]);
 
   if (missing.length > 0) {

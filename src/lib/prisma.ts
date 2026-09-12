@@ -1,3 +1,4 @@
+import { assertDatabaseIsolation } from "./resource-isolation.mjs";
 import { PrismaClient } from "@prisma/client";
 import { withTenantScope } from "@/lib/tenant-scope";
 
@@ -38,11 +39,21 @@ function withPoolTuning(url: string | undefined): string | undefined {
 function createClient() {
   const base = new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
-    datasources: { db: { url: withPoolTuning(process.env.DATABASE_URL) } },
+    ...(process.env.DATABASE_URL
+      ? { datasources: { db: { url: withPoolTuning(process.env.DATABASE_URL)! } } }
+      : {}),
   });
   // Ver src/lib/tenant-scope.ts -- filtra automáticamente por appId toda
   // consulta de los modelos que hoy comparten base con la otra app.
-  return withTenantScope(base);
+  return withTenantScope(base).$extends({
+    name: "database-isolation",
+    query: {
+      async $allOperations({ args, query }) {
+        assertDatabaseIsolation();
+        return query(args);
+      },
+    },
+  });
 }
 
 const globalForPrisma = globalThis as unknown as {

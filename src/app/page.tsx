@@ -23,6 +23,8 @@ export default async function Home({
 }) {
   const { "cuenta-eliminada": cuentaEliminada } = await searchParams;
   const chambas = await findJobPostingsFeaturedFirst({ isActive: true }, 8);
+  // Server Component: compare expiry against this request, never a cached module timestamp.
+  // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
 
   return (
