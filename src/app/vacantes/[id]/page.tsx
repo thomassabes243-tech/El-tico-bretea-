@@ -11,6 +11,7 @@ import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { AvatarImage } from "@/components/brand/AvatarImage";
 import { CommunityOriginBadge } from "@/components/jobs/CommunityOriginBadge";
 import { ApplyButton } from "@/components/forms/ApplyButton";
+import { JobSafetyWarning } from "@/components/jobs/JobSafetyWarning";
 import { ShareJobButton } from "@/components/forms/ShareJobButton";
 import { ReportButton } from "@/components/forms/ReportButton";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
@@ -200,6 +201,9 @@ export default async function VacanteDetailPage({
             <h2 className="flex items-center gap-2 font-heading text-sm font-bold text-navy-900">
               <Send className="h-4 w-4 text-navy-700" /> Aplicar
             </h2>
+            <div className="mt-3">
+              <JobSafetyWarning compact />
+            </div>
             <div className="mt-3">
               {!session?.user ? (
                 <p className="text-sm text-navy-800/60">

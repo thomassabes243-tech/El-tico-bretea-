@@ -20,6 +20,7 @@ import { Badge, TagChip } from "@/components/ui/Badge";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
+import { JobSafetyWarning } from "@/components/jobs/JobSafetyWarning";
 import { COMMUNITY_CATEGORIES, LABOR_CATEGORIES, JOB_TYPES, CATEGORY_PHOTOS } from "@/lib/constants";
 import { getDailyQuote } from "@/lib/motivational-quotes";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
@@ -64,6 +65,10 @@ export default async function Home({
             Tu cuenta fue eliminada. Gracias por haber usado El Tico Bretea.
           </div>
         )}
+
+        <section className="mb-5" aria-label="Seguridad al buscar empleo">
+          <JobSafetyWarning />
+        </section>
 
         {/* Hero */}
         <section className="animate-fade-in-up relative overflow-hidden rounded-3xl">
