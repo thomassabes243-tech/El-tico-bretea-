@@ -1,7 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../src/lib/prisma";
+import { assertDatabaseIsolation } from "../src/lib/resource-isolation.mjs";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+assertDatabaseIsolation();
+if (process.env.NODE_ENV !== "development" && process.env.NODE_ENV !== "test") {
+  if (!process.env.SEED_ADMIN_PASSWORD || !process.env.SEED_MODERATOR_PASSWORD) {
+    throw new Error("Se requieren contraseñas explícitas para sembrar cuentas fuera de desarrollo.");
+  }
+}
 
 // Una sola sala de comunidad (ver migración single_community_room): el
 // valor interno de category sigue siendo CONSTRUCCION, pero el nombre real
@@ -57,7 +63,7 @@ async function main() {
   }
 
   console.log(
-    `Moderador demo listo: ${DEMO_MODERATOR_EMAIL} / ${DEMO_MODERATOR_PASSWORD} (asignado a ${rooms.length} sala${rooms.length === 1 ? "" : "s"})`
+    `Moderador demo listo: ${DEMO_MODERATOR_EMAIL} (asignado a ${rooms.length} sala${rooms.length === 1 ? "" : "s"})`
   );
 
   const adminPasswordHash = await bcrypt.hash(DEMO_ADMIN_PASSWORD, 10);
@@ -66,7 +72,7 @@ async function main() {
     create: { email: DEMO_ADMIN_EMAIL, passwordHash: adminPasswordHash, role: "ADMIN" },
     update: {},
   });
-  console.log(`Admin demo listo: ${DEMO_ADMIN_EMAIL} / ${DEMO_ADMIN_PASSWORD}`);
+  console.log(`Admin demo listo: ${DEMO_ADMIN_EMAIL}`);
 
   await prisma.appSettings.upsert({
     where: { id: "singleton" },
