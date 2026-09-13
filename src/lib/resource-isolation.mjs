@@ -51,7 +51,7 @@ export function assertStorageIsolation(env = process.env) {
     const expectedLabel = expected ? expected.slice(0, 12) : "ausente";
     throw new Error(
       `${APP_ID}: almacenamiento ajeno o no verificado; acceso bloqueado ` +
-      `(esperado ${expectedLabel}, actual ${actual.slice(0, 12)}).`
+      `(esperado ${expectedLabel}, actual ${actual}).`
     );
   }
 }
