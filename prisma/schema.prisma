@@ -51,10 +51,10 @@ model User {
   reportsFiled    Report[] @relation("ReportsFiled")
   reportsReceived Report[] @relation("ReportsReceived")
 
-  chatMessages    ChatMessage[]
-  chatFiles       ChatFile[]
-  roomBlocksReceived ChatRoomBlock[] @relation("RoomBlocksReceived")
-  roomBlocksIssued   ChatRoomBlock[] @relation("RoomBlocksIssued")
+  chatMessages       ChatMessage[]
+  chatFiles          ChatFile[]
+  roomBlocksReceived ChatRoomBlock[]  @relation("RoomBlocksReceived")
+  roomBlocksIssued   ChatRoomBlock[]  @relation("RoomBlocksIssued")
   cvClaimsReviewed   CvPaymentClaim[] @relation("CvClaimsReviewed")
 
   @@map("users")
@@ -117,10 +117,10 @@ model WorkerProfile {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Identity
-  fullName        String
-  formalPhotoUrl  String?
-  age             Int
-  residence       String
+  fullName       String
+  formalPhotoUrl String?
+  age            Int
+  residence      String
 
   // Contact (private by default, see show* flags below)
   phone    String?
@@ -132,33 +132,33 @@ model WorkerProfile {
   laborCategory LaborCategory
 
   // Experience
-  yearsExperience    Int
-  workExperience     String? // free-text summary of roles/duties
-  companiesWorkedAt  String? // comma or newline separated
-  previousPositions  String?
+  yearsExperience   Int
+  workExperience    String? // free-text summary of roles/duties
+  companiesWorkedAt String? // comma or newline separated
+  previousPositions String?
 
   // Education
-  education       String?
-  degrees         String?
-  courses         String?
-  certifications  String?
+  education      String?
+  degrees        String?
+  courses        String?
+  certifications String?
 
   // Skills & languages
   skills    String? // comma separated
   languages String? // comma separated
 
   // Availability & job preferences
-  availability       Availability
-  willingToRelocate  Boolean @default(false)
-  jobTypeSought      JobType
-  salaryExpectation  String?
+  availability      Availability
+  willingToRelocate Boolean      @default(false)
+  jobTypeSought     JobType
+  salaryExpectation String?
 
   // Visibility controls — worker chooses what appears on the public profile
-  isPublic               Boolean @default(true)
-  showPhone              Boolean @default(false)
-  showWhatsapp           Boolean @default(false)
-  showEmail              Boolean @default(false)
-  showSalaryExpectation  Boolean @default(false)
+  isPublic              Boolean @default(true)
+  showPhone             Boolean @default(false)
+  showWhatsapp          Boolean @default(false)
+  showEmail             Boolean @default(false)
+  showSalaryExpectation Boolean @default(false)
 
   // Hoja de delincuencia (opcional, privada — ver nota arriba)
   criminalRecordKey        String?
@@ -177,6 +177,7 @@ model WorkerProfile {
   savedBy         SavedWorker[]
   applications    JobApplication[]
   cvPaymentClaims CvPaymentClaim[]
+  cvCardPayments  CvCardPayment[]
 
   @@map("worker_profiles")
 }
@@ -213,8 +214,8 @@ model CompanyProfile {
   logoUrl         String?
   description     String?
 
-  isVerified   Boolean   @default(false)
-  verifiedAt   DateTime?
+  isVerified Boolean   @default(false)
+  verifiedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -226,12 +227,12 @@ model CompanyProfile {
 }
 
 model SavedWorker {
-  id        String   @id @default(cuid())
+  id        String         @id @default(cuid())
   companyId String
   company   CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
   workerId  String
   worker    WorkerProfile  @relation(fields: [workerId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  createdAt DateTime       @default(now())
 
   @@unique([companyId, workerId])
   @@map("saved_workers")
@@ -242,7 +243,7 @@ model SavedWorker {
 // ---------------------------------------------------------------------------
 
 model JobPosting {
-  id     String         @id @default(cuid())
+  id        String         @id @default(cuid())
   companyId String
   company   CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
@@ -261,22 +262,22 @@ model JobPosting {
   contactEmail       String?
   deadline           DateTime?
 
-  isActive      Boolean            @default(true)
+  isActive      Boolean           @default(true)
   closureReason JobClosureReason?
   // Urgente: lo marca la propia empresa al publicar/editar, como cualquier
   // otro campo del formulario. Destacado ("Brete Premium"): curación
   // editorial, solo el admin lo activa (mismo patrón que WorkerProfile.isPremium).
-  isUrgent      Boolean            @default(false)
-  isFeatured    Boolean            @default(false)
+  isUrgent      Boolean           @default(false)
+  isFeatured    Boolean           @default(false)
   // EMPRESA: publicada normalmente (formulario propio o importada por el
   // admin -- ambas llevan una empresa real o la cuenta reservada de
   // importados detrás). CHAT_COMUNIDAD: detectada automáticamente por IA a
   // partir de un mensaje del chat de Comunidad (ver src/lib/job-auto-detect.ts)
   // -- nadie la verificó, así que la tarjeta la marca como tal en vez de
   // mostrar datos formales de empresa.
-  origin        JobPostingOrigin   @default(EMPRESA)
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
+  origin        JobPostingOrigin  @default(EMPRESA)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
 
   applications   JobApplication[]
   communityPosts ChatMessage[]
@@ -302,11 +303,11 @@ enum ApplicationStatus {
 }
 
 model JobApplication {
-  id           String         @id @default(cuid())
+  id           String        @id @default(cuid())
   jobPostingId String
-  jobPosting   JobPosting     @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+  jobPosting   JobPosting    @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
   workerId     String
-  worker       WorkerProfile  @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  worker       WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
 
   message   String?
   status    ApplicationStatus @default(ENVIADA)
@@ -328,10 +329,10 @@ enum CommunityCategory {
 }
 
 model ChatRoom {
-  id       String            @id @default(cuid())
-  name     String
-  category CommunityCategory
-  createdAt DateTime @default(now())
+  id        String            @id @default(cuid())
+  name      String
+  category  CommunityCategory
+  createdAt DateTime          @default(now())
 
   moderators ModeratorAssignment[]
   messages   ChatMessage[]
@@ -453,7 +454,7 @@ model Report {
 model AppSettings {
   id                  String   @id @default("singleton")
   cvPriceColones      Int      @default(1090)
-  premiumPriceColones Int      @default(1500)
+  premiumPriceColones Int      @default(4000)
   // Número y nombre de la cuenta SINPE Móvil a la que la persona transfiere
   // manualmente para desbloquear la descarga del CV. Sin esto configurado,
   // el flujo de pago no se muestra (no hay a dónde pagar todavía).
@@ -496,6 +497,34 @@ model CvPaymentClaim {
 
   @@index([workerId, status])
   @@map("cv_payment_claims")
+}
+
+enum CvCardPaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ERROR
+}
+
+// Intentos de pago con tarjeta mediante Tilopay. Nunca se almacenan números
+// de tarjeta ni CVV: esos datos viajan del navegador directamente a Tilopay.
+model CvCardPayment {
+  id                   String              @id @default(cuid())
+  workerId             String
+  worker               WorkerProfile       @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  orderNumber          String              @unique
+  amountColones        Int
+  status               CvCardPaymentStatus @default(PENDING)
+  tilopayTransactionId String?
+  authorizationCode    String?
+  environment          String?
+  failureReason        String?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  completedAt          DateTime?
+
+  @@index([workerId, status])
+  @@map("cv_card_payments")
 }
 
 // ---------------------------------------------------------------------------

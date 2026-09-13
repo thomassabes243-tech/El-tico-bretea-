@@ -7,6 +7,7 @@
     "build": "node scripts/build-migrate.mjs && tsx prisma/seed.ts && next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "node --import tsx --test src/lib/tilopay-validation.test.ts",
     "postinstall": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
     "chat:cleanup": "tsx prisma/cleanup-expired-files.ts"

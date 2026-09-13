@@ -13,12 +13,18 @@ import { LABOR_CATEGORIES, AVAILABILITY_OPTIONS, JOB_TYPES } from "@/lib/constan
 import { CriminalRecordSection } from "@/components/forms/CriminalRecordSection";
 import { CvPaymentClaimForm } from "@/components/forms/CvPaymentClaimForm";
 import { CvDownloadButton } from "@/components/forms/CvDownloadButton";
+import { TilopayCvCheckout } from "@/components/forms/TilopayCvCheckout";
+import { isTilopayConfigured } from "@/lib/tilopay";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
 }
 
-export default async function CvPage() {
+export default async function CvPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ pago?: string }>;
+}) {
   const session = await auth();
   if (!session?.user) redirect("/iniciar-sesion");
 
@@ -43,6 +49,7 @@ export default async function CvPage() {
   if (!worker) redirect("/registro/trabajador");
 
   const settings = await getAppSettings();
+  const { pago } = await searchParams;
   const cvPrice = formatColones(settings.cvPriceColones);
 
   const latestClaim = worker.cvUnlocked
@@ -54,6 +61,7 @@ export default async function CvPage() {
   const hasPendingClaim = latestClaim?.status === "PENDIENTE";
   const wasRejected = latestClaim?.status === "RECHAZADO";
   const paymentConfigured = Boolean(settings.sinpeMovilNumber);
+  const cardPaymentConfigured = isTilopayConfigured();
   const whatsappHref = settings.contactWhatsapp
     ? toWhatsappHref(
         settings.contactWhatsapp,
@@ -69,6 +77,17 @@ export default async function CvPage() {
         <p className="mt-1 text-sm text-navy-800/60">
           Vista previa de tu currículum, generado a partir de tu perfil.
         </p>
+
+        {pago === "rechazado" && (
+          <p role="alert" className="mt-4 rounded-2xl bg-cr-red-100 px-4 py-3 text-sm font-medium text-cr-red-700">
+            El pago fue rechazado. No se realizó ningún desbloqueo; podés intentarlo de nuevo.
+          </p>
+        )}
+        {pago === "error" && (
+          <p role="alert" className="mt-4 rounded-2xl bg-cr-red-100 px-4 py-3 text-sm font-medium text-cr-red-700">
+            No pudimos verificar el pago con Tilopay. Si viste un cargo, no repitás el pago y contactá al soporte.
+          </p>
+        )}
 
         <Card className="mt-5 flex flex-col gap-5 p-6">
           <div>
@@ -153,50 +172,65 @@ export default async function CvPage() {
               el equipo lo confirme, vas a poder descargar el PDF.
             </p>
           </Card>
-        ) : paymentConfigured ? (
-          <Card className="mt-4 flex flex-col gap-3 border-colon-600/20 bg-colon-100/40 p-4">
-            <div className="flex items-start gap-3.5">
-              <PriceTag amount={cvPrice} size="lg" />
-              <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
-                {wasRejected ? (
-                  <>
-                    <strong className="text-cr-red-700">
-                      No pudimos confirmar tu comprobante anterior.
-                    </strong>{" "}
-                    Revisá el código y enviá uno nuevo, o escribinos si creés que fue un error.
-                  </>
-                ) : (
-                  <>
-                    Para descargar tu CV en PDF, hacé un SINPE Móvil por {cvPrice} y pegá acá el
-                    código de comprobante que te dio tu banco.
-                  </>
-                )}
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-1 rounded-2xl border-2 border-colon-600/30 bg-white px-4 py-5 text-center">
-              <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-colon-700">
-                <Smartphone className="h-4 w-4" /> SINPE Móvil
-              </span>
-              <p className="mt-1 text-4xl font-extrabold tracking-wider text-navy-900">
-                {settings.sinpeMovilNumber}
-              </p>
-              {settings.sinpeMovilName && (
-                <p className="text-sm font-semibold text-navy-800/60">{settings.sinpeMovilName}</p>
-              )}
-            </div>
-            <CvPaymentClaimForm />
-          </Card>
         ) : (
-          <Card className="mt-4 flex items-start gap-3.5 border-colon-600/20 bg-colon-100/40 p-4">
-            <PriceTag amount={cvPrice} size="lg" />
-            <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
-              La descarga del CV todavía no está disponible para pagar -- el administrador
-              todavía no configuró un número de cobro. Volvé a intentarlo más adelante.
-            </p>
-          </Card>
+          <>
+            {cardPaymentConfigured && (
+              <Card className="mt-4 flex flex-col gap-4 border-colon-600/20 bg-colon-100/40 p-4">
+                <PriceTag amount={cvPrice} size="lg" className="self-start" />
+                <TilopayCvCheckout />
+              </Card>
+            )}
+
+            {paymentConfigured && (
+              <Card className="mt-4 flex flex-col gap-3 border-colon-600/20 bg-colon-100/40 p-4">
+                <div className="flex items-start gap-3.5">
+                  <PriceTag amount={cvPrice} size="lg" />
+                  <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
+                    {wasRejected ? (
+                      <>
+                        <strong className="text-cr-red-700">
+                          No pudimos confirmar tu comprobante anterior.
+                        </strong>{" "}
+                        Revisá el código y enviá uno nuevo, o escribinos si creés que fue un error.
+                      </>
+                    ) : (
+                      <>
+                        Como alternativa, hacé un SINPE Móvil por {cvPrice} y pegá acá el código
+                        de comprobante que te dio tu banco.
+                      </>
+                    )}
+                  </p>
+                </div>
+                <div className="flex flex-col items-center gap-1 rounded-2xl border-2 border-colon-600/30 bg-white px-4 py-5 text-center">
+                  <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-colon-700">
+                    <Smartphone className="h-4 w-4" /> SINPE Móvil
+                  </span>
+                  <p className="mt-1 text-4xl font-extrabold tracking-wider text-navy-900">
+                    {settings.sinpeMovilNumber}
+                  </p>
+                  {settings.sinpeMovilName && (
+                    <p className="text-sm font-semibold text-navy-800/60">
+                      {settings.sinpeMovilName}
+                    </p>
+                  )}
+                </div>
+                <CvPaymentClaimForm />
+              </Card>
+            )}
+
+            {!cardPaymentConfigured && !paymentConfigured && (
+              <Card className="mt-4 flex items-start gap-3.5 border-colon-600/20 bg-colon-100/40 p-4">
+                <PriceTag amount={cvPrice} size="lg" />
+                <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
+                  La descarga del CV todavía no está disponible para pagar -- el administrador
+                  todavía no configuró un método de cobro. Volvé a intentarlo más adelante.
+                </p>
+              </Card>
+            )}
+          </>
         )}
 
-        {!worker.cvUnlocked && whatsappHref && (
+        {!worker.cvUnlocked && !cardPaymentConfigured && whatsappHref && (
           <Card className="mt-3 flex items-center gap-3 border-cr-red-600/20 bg-cr-red-100/30 p-3.5">
             <Zap className="h-4 w-4 shrink-0 text-cr-red-600" />
             <p className="flex-1 text-xs leading-relaxed text-navy-800/70">
