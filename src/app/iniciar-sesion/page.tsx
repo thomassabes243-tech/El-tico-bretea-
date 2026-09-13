@@ -67,7 +67,11 @@ export default function IniciarSesionPage() {
       router.push("/perfil");
       router.refresh();
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "No se pudo reconocer este celular");
+      if (caught instanceof Error && caught.name === "NotAllowedError") {
+        setError("Este celular todavía no está activado para tu cuenta. Entrá primero con el código del correo y activalo desde Perfil.");
+      } else {
+        setError(caught instanceof Error ? caught.message : "No se pudo reconocer este celular");
+      }
     } finally {
       setBusy(false);
     }
@@ -78,6 +82,9 @@ export default function IniciarSesionPage() {
       <button type="button" onClick={loginWithPasskey} disabled={busy} className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-navy-900 text-sm font-bold text-white shadow-[0_10px_24px_rgba(10,38,71,0.22)]">
         <Smartphone className="h-5 w-5" /> Entrar con este celular
       </button>
+      <p className="mt-2 text-center text-[11px] leading-relaxed text-navy-800/50">
+        Funciona después de activarlo una vez desde tu Perfil. La primera entrada se hace con el código del correo.
+      </p>
 
       <div className="my-5 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-wider text-navy-800/35">
         <span className="h-px flex-1 bg-sand-200" /> o con correo <span className="h-px flex-1 bg-sand-200" />
