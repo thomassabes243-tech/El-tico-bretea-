@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye } from "lucide-react";
-import { JOB_CLOSURE_REASONS } from "@/lib/job-closure-reason";
+import { Eye, EyeOff } from "lucide-react";
 
 export function JobPostingStatusToggle({ jobId, isActive }: { jobId: string; isActive: boolean }) {
   const router = useRouter();
@@ -47,20 +46,17 @@ export function JobPostingStatusToggle({ jobId, isActive }: { jobId: string; isA
 
   return (
     <div className="flex flex-col items-end gap-1">
-      <select
-        defaultValue=""
+      <button
+        type="button"
         disabled={isSubmitting}
-        onChange={(e) => {
-          if (!e.target.value) return;
-          patchStatus({ isActive: false, closureReason: e.target.value });
+        onClick={() => {
+          if (!window.confirm("¿Quitar esta vacante de las búsquedas? Conservarás los aplicantes y podrás reactivarla.")) return;
+          patchStatus({ isActive: false, closureReason: "PUESTO_LLENO" });
         }}
-        className="rounded-lg border border-sand-200 px-2.5 py-1.5 text-xs font-semibold text-navy-800/70"
+        className="flex shrink-0 items-center gap-1.5 rounded-lg border border-mx-red-600/25 px-2.5 py-1.5 text-xs font-semibold text-mx-red-700"
       >
-        <option value="" disabled>Cerrar vacante</option>
-        {JOB_CLOSURE_REASONS.map((reason) => (
-          <option key={reason.value} value={reason.value}>{reason.label}</option>
-        ))}
-      </select>
+        <EyeOff className="h-3.5 w-3.5" /> Ya contraté · quitar
+      </button>
       {error && <p className="text-[11px] font-medium text-mx-red-600">{error}</p>}
     </div>
   );

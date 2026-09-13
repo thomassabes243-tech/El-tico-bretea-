@@ -41,3 +41,24 @@ export async function sendPasswordResetEmail(to: string, code: string): Promise<
   }
   return true;
 }
+
+export async function sendLoginCodeEmail(to: string, code: string): Promise<boolean> {
+  const apiKey = getApiKey();
+  if (!apiKey) return false;
+
+  const res = await fetch(`${RESEND_API_BASE}/emails`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      from: process.env.RESEND_FROM_EMAIL || "El Mexa Chamba <onboarding@resend.dev>",
+      to,
+      subject: "Tu código para entrar a El Mexa Chamba",
+      text: `Tu código para entrar es: ${code}\n\nVence en 10 minutos y solo se puede usar una vez. Si no lo solicitaste, ignorá este correo.`,
+    }),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Resend rechazó el envío (${res.status}): ${body}`);
+  }
+  return true;
+}

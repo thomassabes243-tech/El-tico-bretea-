@@ -12,6 +12,7 @@ import { getAppSettings } from "@/lib/settings";
 import { countActiveJobPostings } from "@/lib/job-posting-limits";
 import { FREE_ACTIVE_JOBS_LIMIT } from "@/lib/constants";
 import { formatPesos } from "@/lib/format";
+import { PAYMENTS_ENABLED } from "@/lib/monetization";
 
 export default async function NuevaVacantePage() {
   const session = await auth();
@@ -56,7 +57,7 @@ export default async function NuevaVacantePage() {
             para liberar un lugar gratis.
           </p>
           <div className="mt-3">
-            {settings.paypalEmployerPlanId ? (
+            {PAYMENTS_ENABLED && settings.paypalEmployerPlanId ? (
               <SubscribeButton
                 planId={settings.paypalEmployerPlanId}
                 confirmUrl="/api/paypal/empleador/confirmar"

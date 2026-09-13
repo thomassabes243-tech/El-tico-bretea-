@@ -91,6 +91,9 @@ model User {
   serviceReviewsGiven ServiceReview[]
 
   passwordResetCodes PasswordResetCode[]
+  passwordlessCodes  PasswordlessCode[]
+  passwordlessTickets PasswordlessTicket[]
+  passkeys           PasskeyCredential[]
 
   @@index([deviceFingerprint])
   @@map("users")
@@ -115,6 +118,56 @@ model PasswordResetCode {
 
   @@index([userId, expiresAt])
   @@map("password_reset_codes")
+}
+
+// Código de acceso de un solo uso. Se mantiene separado de los códigos de
+// recuperación para que un código de inicio nunca pueda cambiar credenciales.
+model PasswordlessCode {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash  String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, expiresAt])
+  @@map("passwordless_codes")
+}
+
+// Comprobante opaco y de un solo uso emitido después de verificar una
+// passkey. Solo se guarda su hash, de modo que una filtración de la base no
+// permita convertirlo en una sesión válida.
+model PasswordlessTicket {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, expiresAt])
+  @@map("passwordless_tickets")
+}
+
+// Credencial WebAuthn/passkey. La llave privada nunca sale del teléfono;
+// el servidor guarda únicamente la llave pública y el contador anti-replay.
+model PasskeyCredential {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialId String   @unique
+  publicKey    String
+  counter      BigInt   @default(0)
+  transports   String[]
+  deviceType   String
+  backedUp     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  lastUsedAt   DateTime?
+
+  @@index([userId])
+  @@map("passkey_credentials")
 }
 
 // ---------------------------------------------------------------------------

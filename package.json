@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/build-migrate.mjs && next build",
+    "build": "node scripts/build-preflight.mjs && next build",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
-    "chat:cleanup": "tsx prisma/cleanup-expired-files.ts"
+    "chat:cleanup": "tsx prisma/cleanup-expired-files.ts",
+    "db:migrate": "node scripts/build-migrate.mjs",
+    "typecheck": "prisma generate && next typegen && tsc --noEmit"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -19,6 +21,8 @@
     "@hookform/resolvers": "^5.7.1",
     "@prisma/client": "^6.19.3",
     "@react-pdf/renderer": "^4.6.0",
+    "@simplewebauthn/browser": "^9.0.1",
+    "@simplewebauthn/server": "^9.0.3",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "lucide-react": "^1.31.0",

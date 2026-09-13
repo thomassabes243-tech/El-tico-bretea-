@@ -2,8 +2,13 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getPaypalSubscription } from "@/lib/paypal";
+import { PAYMENTS_ENABLED } from "@/lib/monetization";
 
 export async function POST(request: Request) {
+  if (!PAYMENTS_ENABLED) {
+    return NextResponse.json({ error: "Los cobros todavía no están activos" }, { status: 503 });
+  }
+
   const session = await auth();
   if (!session?.user || session.user.role !== "COMPANY") {
     return NextResponse.json({ error: "No autorizado" }, { status: 403 });

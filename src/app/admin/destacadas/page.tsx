@@ -26,7 +26,7 @@ export default async function AdminDestacadasPage() {
         <h1 className="text-xl font-extrabold tracking-tight text-navy-900">Ofertas destacadas</h1>
       </div>
       <p className="mt-1 text-sm text-navy-800/60">
-        Compras de "Destacar oferta", últimas 100. Total recibido (completadas):{" "}
+        Compras de &quot;Destacar oferta&quot;, últimas 100. Total recibido (completadas):{" "}
         <strong>${(totalCentavos / 100).toFixed(2)} USD</strong>.
       </p>
 
