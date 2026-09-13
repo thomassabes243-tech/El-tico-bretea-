@@ -33,6 +33,12 @@ test("storage requires its own reviewed bucket pin", () => {
   assert.doesNotThrow(() => assertStorageIsolation(pinned));
   assert.throws(() => assertStorageIsolation({ ...pinned, STORAGE_S3_BUCKET: "foreign-test" }));
   assert.throws(() => assertStorageIsolation({ ...pinned, STORAGE_S3_ENDPOINT: "https://other.r2.cloudflarestorage.com" }));
+  assert.doesNotThrow(() => assertStorageIsolation({
+    ...pinned,
+    STORAGE_S3_ENDPOINT: `  ${storage.STORAGE_S3_ENDPOINT}\n`,
+    STORAGE_S3_BUCKET: ` ${storage.STORAGE_S3_BUCKET} `,
+    CR_STORAGE_IDENTITY_SHA256: ` ${pinned.CR_STORAGE_IDENTITY_SHA256}\n`,
+  }));
 });
 test("real Prisma model and raw operations are blocked before a database connection", async () => {
   const previous = { DATABASE_URL: process.env.DATABASE_URL, DIRECT_URL: process.env.DIRECT_URL };

@@ -34,18 +34,24 @@ export function assertDatabaseIsolation(env = process.env) {
 }
 
 export function storageIdentityHash(endpoint, bucket) {
-  const url = new URL(endpoint);
-  if (url.protocol !== "https:" || !bucket || url.username || url.password || url.search || url.hash) {
+  const normalizedEndpoint = typeof endpoint === "string" ? endpoint.trim() : "";
+  const normalizedBucket = typeof bucket === "string" ? bucket.trim() : "";
+  const url = new URL(normalizedEndpoint);
+  if (url.protocol !== "https:" || !normalizedBucket || url.username || url.password || url.search || url.hash) {
     throw new Error("Identidad de almacenamiento inválida.");
   }
-  return digest(`${url.origin}${url.pathname.replace(/\/$/, "")}\n${bucket}`);
+  return digest(`${url.origin}${url.pathname.replace(/\/$/, "")}\n${normalizedBucket}`);
 }
 
 export function assertStorageIsolation(env = process.env) {
   assertDatabaseIsolation(env);
-  const expected = env[`${APP_ID}_STORAGE_IDENTITY_SHA256`];
+  const expected = env[`${APP_ID}_STORAGE_IDENTITY_SHA256`]?.trim();
   const actual = storageIdentityHash(env.STORAGE_S3_ENDPOINT, env.STORAGE_S3_BUCKET);
   if (!expected || actual !== expected) {
-    throw new Error(`${APP_ID}: almacenamiento ajeno o no verificado; acceso bloqueado.`);
+    const expectedLabel = expected ? expected.slice(0, 12) : "ausente";
+    throw new Error(
+      `${APP_ID}: almacenamiento ajeno o no verificado; acceso bloqueado ` +
+      `(esperado ${expectedLabel}, actual ${actual.slice(0, 12)}).`
+    );
   }
 }
