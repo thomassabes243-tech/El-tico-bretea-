@@ -17,7 +17,7 @@ import { ReportButton } from "@/components/forms/ReportButton";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { toWhatsappHref } from "@/lib/whatsapp";
 import { getSiteUrl } from "@/lib/site";
-import { isExampleCompany } from "@/lib/example-job";
+import { isExampleJob } from "@/lib/example-job";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import {
   MapPin,
@@ -50,7 +50,7 @@ export async function generateMetadata({
   });
   if (!jobPosting) return {};
 
-  const informational = isExampleCompany(jobPosting.company);
+  const informational = isExampleJob(jobPosting);
   const title = `${jobPosting.title} en ${jobPosting.company.commercialName} — El Tico Bretea`;
   const description = `${labelFor(LABOR_CATEGORIES, jobPosting.laborCategory)} en ${jobPosting.location}. ${jobPosting.description}`.slice(0, 200);
 
@@ -76,7 +76,7 @@ export default async function VacanteDetailPage({
     include: { company: true },
   });
   if (!jobPosting) notFound();
-  const informational = isExampleCompany(jobPosting.company);
+  const informational = isExampleJob(jobPosting);
 
   let alreadyApplied = false;
   if (!informational && session?.user?.role === "WORKER") {

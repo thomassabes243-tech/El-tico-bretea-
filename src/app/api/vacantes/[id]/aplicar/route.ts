@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { isExampleCompany } from "@/lib/example-job";
+import { isExampleJob } from "@/lib/example-job";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -22,7 +22,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   if (!jobPosting || !jobPosting.isActive) {
     return NextResponse.json({ error: "Vacante no disponible" }, { status: 404 });
   }
-  if (isExampleCompany(jobPosting.company)) {
+  if (isExampleJob(jobPosting)) {
     return NextResponse.json({ error: "Este contenido informativo no recibe postulaciones" }, { status: 409 });
   }
 

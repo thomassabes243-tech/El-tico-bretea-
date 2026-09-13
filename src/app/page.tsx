@@ -27,7 +27,7 @@ import { getDailyQuote } from "@/lib/motivational-quotes";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { prisma } from "@/lib/prisma";
-import { realCompanyFilter } from "@/lib/example-job";
+import { realCompanyFilter, realJobIdFilter } from "@/lib/example-job";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -43,14 +43,21 @@ export default async function Home({
     getAdEligibility(),
     getActiveAds(),
     prisma.jobPosting.findMany({
-      where: { isActive: true, isFeatured: true, company: realCompanyFilter },
+      where: { isActive: true, isFeatured: true, id: realJobIdFilter, company: realCompanyFilter },
       include: { company: true },
       orderBy: { createdAt: "desc" },
       take: 4,
     }),
   ]);
   const newJobs = await prisma.jobPosting.findMany({
-    where: { isActive: true, id: { notIn: featuredJobs.map((j) => j.id) }, company: realCompanyFilter },
+    where: {
+      isActive: true,
+      AND: [
+        { id: realJobIdFilter },
+        { id: { notIn: featuredJobs.map((j) => j.id) } },
+      ],
+      company: realCompanyFilter,
+    },
     include: { company: true },
     orderBy: { createdAt: "desc" },
     take: 6,
