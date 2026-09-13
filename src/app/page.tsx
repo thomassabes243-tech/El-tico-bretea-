@@ -1,5 +1,19 @@
 import Link from "next/link";
-import { ShieldCheck, ShieldAlert, MapPin, ChevronRight, Coins, Clock, Sparkles, UsersRound, BriefcaseBusiness } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  ChevronRight,
+  Clock,
+  Coins,
+  FileText,
+  MapPin,
+  Search,
+  ShieldAlert,
+  ShieldCheck,
+  Sparkles,
+  UserRoundSearch,
+  UsersRound,
+  Wrench,
+} from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
@@ -55,15 +69,15 @@ export default async function Home({
           <ChevronRight className="mt-2 h-4 w-4 shrink-0 text-mx-red-600" />
         </Link>
 
-        <section className="relative overflow-hidden rounded-[24px] bg-navy-950 px-5 py-6 text-white shadow-[0_18px_40px_rgba(6,27,51,0.22)]">
+        <section className="relative min-h-[278px] overflow-hidden rounded-[28px] bg-navy-950 px-6 py-7 text-white shadow-[0_22px_48px_rgba(6,27,51,0.24)]">
           <HeroImage src="/assets/images/hero-worker.jpg" alt="" fallbackClassName="bg-navy-950" className="absolute inset-0 h-full w-full object-cover object-center brightness-[0.42]" />
           <div className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/85 to-navy-950/25" />
-          <div className="relative max-w-[72%]">
+          <div className="relative flex min-h-[222px] max-w-[76%] flex-col justify-end">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.13em] text-white/90 backdrop-blur">
               <Sparkles className="h-3 w-3 text-mx-red-500" /> Aquí sí hay chamba
             </span>
-            <h1 className="mt-3 text-[29px] font-extrabold leading-[1.06] tracking-[-0.035em]">Tu próxima oportunidad empieza aquí</h1>
-            <p className="mt-3 text-[13px] leading-relaxed text-white/75">Encontrá trabajo, ofrecé tus servicios o contratá talento confiable.</p>
+            <h1 className="mt-3 text-[31px] font-extrabold leading-[1.03] tracking-[-0.04em]">Trabajo y talento en un lugar seguro</h1>
+            <p className="mt-3 text-[13px] leading-relaxed text-white/78">Encontrá una oportunidad, ofrecé un servicio o contratá personal en México.</p>
           </div>
         </section>
 
@@ -71,6 +85,59 @@ export default async function Home({
         <div className="relative z-10 -mt-3 mx-3 rounded-2xl bg-white p-1 shadow-[0_10px_28px_rgba(10,38,71,0.14)]">
           <SmartSearchBar />
         </div>
+
+        <section className="mt-5" aria-labelledby="elige-camino">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-mx-red-600">Empezá por aquí</p>
+              <h2 id="elige-camino" className="mt-1 text-lg font-extrabold tracking-tight text-navy-900">¿Qué necesitás hoy?</h2>
+            </div>
+            <Link href="/bienvenida" className="text-xs font-bold text-navy-700">Guía segura</Link>
+          </div>
+
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <Link href="/buscar" className="group relative overflow-hidden rounded-[22px] bg-navy-950 p-4 text-white shadow-[0_12px_28px_rgba(10,38,71,0.18)] transition-transform active:scale-[0.98]">
+              <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-mx-red-600/30 blur-2xl" />
+              <span className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-white/12 ring-1 ring-inset ring-white/15">
+                <Search className="h-5 w-5" />
+              </span>
+              <h3 className="relative mt-8 text-base font-extrabold">Busco trabajo</h3>
+              <p className="relative mt-1 text-[11px] leading-relaxed text-white/65">Vacantes por oficio y ubicación</p>
+              <ChevronRight className="relative mt-3 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+
+            <Link href="/buscar-personal" className="group relative overflow-hidden rounded-[22px] bg-mx-red-600 p-4 text-white shadow-[0_12px_28px_rgba(206,17,38,0.20)] transition-transform active:scale-[0.98]">
+              <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/20 blur-2xl" />
+              <span className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-white/14 ring-1 ring-inset ring-white/20">
+                <UserRoundSearch className="h-5 w-5" />
+              </span>
+              <h3 className="relative mt-8 text-base font-extrabold">Quiero contratar</h3>
+              <p className="relative mt-1 text-[11px] leading-relaxed text-white/75">Encontrá personal disponible</p>
+              <ChevronRight className="relative mt-3 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
+        </section>
+
+        <section className="mt-5 grid grid-cols-2 gap-3" aria-label="Herramientas principales">
+          {[
+            { href: "/servicios/mis-solicitudes", title: "Cotizaciones", text: "Pedí u ofrecé servicios", Icon: Wrench, tone: "bg-peso-100 text-peso-700" },
+            { href: "/cv", title: "CV profesional", text: "Presentá tus habilidades", Icon: FileText, tone: "bg-navy-900/[0.07] text-navy-900" },
+            { href: "/comunidad", title: "Comunidad", text: "Conectá con confianza", Icon: UsersRound, tone: "bg-mx-green-600/10 text-mx-green-600" },
+            { href: "/planes", title: "Más visibilidad", text: "Planes opcionales", Icon: Sparkles, tone: "bg-mx-red-100 text-mx-red-700" },
+          ].map(({ href, title, text, Icon, tone }) => (
+            <Link key={href} href={href}>
+              <Card className="flex min-h-28 items-start gap-3 border-0 p-4 transition-transform active:scale-[0.98]">
+                <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${tone}`}>
+                  <Icon className="h-5 w-5" />
+                </span>
+                <span className="min-w-0">
+                  <strong className="block text-sm text-navy-900">{title}</strong>
+                  <span className="mt-1 block text-[11px] leading-relaxed text-navy-800/50">{text}</span>
+                </span>
+              </Card>
+            </Link>
+          ))}
+        </section>
 
         {/* 4. Pedir un servicio / Ofrecer mis servicios -- las dos acciones
             centrales, mismo peso visual, una en rojo y otra en navy. Foto
