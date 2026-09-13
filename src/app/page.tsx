@@ -86,7 +86,13 @@ export default async function Home({
 
         <section className="mt-4 grid grid-cols-2 gap-2.5" aria-label="Acciones principales">
             <Link href="/buscar" className="group relative min-h-[138px] overflow-hidden rounded-[20px] bg-navy-950 p-3.5 text-white shadow-[0_10px_24px_rgba(10,38,71,0.17)] transition-transform active:scale-[0.98]">
-              <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-mx-red-600/30 blur-2xl" />
+              <HeroImage
+                src="/assets/images/quiero-trabajar.jpg"
+                alt=""
+                fallbackClassName="bg-navy-950"
+                className="absolute inset-0 h-full w-full object-cover object-center brightness-[0.62] transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/80 to-navy-900/45" />
               <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-white/12 ring-1 ring-inset ring-white/15">
                 <Search className="h-4.5 w-4.5" />
               </span>
@@ -96,7 +102,13 @@ export default async function Home({
             </Link>
 
             <Link href="/buscar-personal" className="group relative min-h-[138px] overflow-hidden rounded-[20px] bg-mx-red-600 p-3.5 text-white shadow-[0_10px_24px_rgba(206,17,38,0.19)] transition-transform active:scale-[0.98]">
-              <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/20 blur-2xl" />
+              <HeroImage
+                src="/assets/images/servicio-electricista.jpg"
+                alt=""
+                fallbackClassName="bg-mx-red-600"
+                className="absolute inset-0 h-full w-full object-cover object-center brightness-[0.62] transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-mx-red-700 via-mx-red-700/80 to-mx-red-600/40" />
               <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-white/14 ring-1 ring-inset ring-white/20">
                 <UserRoundSearch className="h-4.5 w-4.5" />
               </span>
