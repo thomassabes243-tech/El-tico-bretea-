@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isExampleCompany } from "@/lib/example-job";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -14,9 +15,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   }
 
   const { id } = await params;
-  const jobPosting = await prisma.jobPosting.findUnique({ where: { id } });
+  const jobPosting = await prisma.jobPosting.findUnique({
+    where: { id },
+    include: { company: { select: { legalId: true } } },
+  });
   if (!jobPosting || !jobPosting.isActive) {
     return NextResponse.json({ error: "Vacante no disponible" }, { status: 404 });
+  }
+  if (isExampleCompany(jobPosting.company)) {
+    return NextResponse.json({ error: "Este contenido informativo no recibe postulaciones" }, { status: 409 });
   }
 
   const body = await request.json().catch(() => ({}));

@@ -10,6 +10,7 @@ import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { CommunityOriginBadge } from "@/components/jobs/CommunityOriginBadge";
 import { LABOR_CATEGORIES, JOB_TYPES, CATEGORY_PHOTOS } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+import { realCompanyFilter } from "@/lib/example-job";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -27,6 +28,7 @@ export default async function BuscarPage({
     ? await prisma.jobPosting.findMany({
         where: {
           isActive: true,
+          company: realCompanyFilter,
           OR: [
             { title: { contains: query, mode: "insensitive" } },
             { description: { contains: query, mode: "insensitive" } },

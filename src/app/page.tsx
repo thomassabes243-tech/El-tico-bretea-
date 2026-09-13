@@ -21,11 +21,13 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CategoryIcon } from "@/components/brand/CategoryIcon";
 import { JobSafetyWarning } from "@/components/jobs/JobSafetyWarning";
+import { JobIdeasShowcase } from "@/components/jobs/JobIdeasShowcase";
 import { COMMUNITY_CATEGORIES, LABOR_CATEGORIES, JOB_TYPES, CATEGORY_PHOTOS } from "@/lib/constants";
 import { getDailyQuote } from "@/lib/motivational-quotes";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { prisma } from "@/lib/prisma";
+import { realCompanyFilter } from "@/lib/example-job";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -41,14 +43,14 @@ export default async function Home({
     getAdEligibility(),
     getActiveAds(),
     prisma.jobPosting.findMany({
-      where: { isActive: true, isFeatured: true },
+      where: { isActive: true, isFeatured: true, company: realCompanyFilter },
       include: { company: true },
       orderBy: { createdAt: "desc" },
       take: 4,
     }),
   ]);
   const newJobs = await prisma.jobPosting.findMany({
-    where: { isActive: true, id: { notIn: featuredJobs.map((j) => j.id) } },
+    where: { isActive: true, id: { notIn: featuredJobs.map((j) => j.id) }, company: realCompanyFilter },
     include: { company: true },
     orderBy: { createdAt: "desc" },
     take: 6,
@@ -210,6 +212,8 @@ export default async function Home({
             </Button>
           )}
         </section>
+
+        {newJobs.length === 0 && featuredJobs.length === 0 && <JobIdeasShowcase />}
 
         {/* Comunidad Tica */}
         <section className="mt-8">

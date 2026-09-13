@@ -17,6 +17,7 @@ import { ReportButton } from "@/components/forms/ReportButton";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { toWhatsappHref } from "@/lib/whatsapp";
 import { getSiteUrl } from "@/lib/site";
+import { isExampleCompany } from "@/lib/example-job";
 import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import {
   MapPin,
@@ -45,10 +46,11 @@ export async function generateMetadata({
   const { id } = await params;
   const jobPosting = await prisma.jobPosting.findUnique({
     where: { id },
-    include: { company: { select: { commercialName: true } } },
+    include: { company: { select: { commercialName: true, legalId: true } } },
   });
   if (!jobPosting) return {};
 
+  const informational = isExampleCompany(jobPosting.company);
   const title = `${jobPosting.title} en ${jobPosting.company.commercialName} — El Tico Bretea`;
   const description = `${labelFor(LABOR_CATEGORIES, jobPosting.laborCategory)} en ${jobPosting.location}. ${jobPosting.description}`.slice(0, 200);
 
@@ -57,6 +59,7 @@ export async function generateMetadata({
     description,
     openGraph: { title, description, url: `/vacantes/${id}`, type: "website" },
     twitter: { card: "summary_large_image", title, description },
+    ...(informational ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
@@ -73,9 +76,10 @@ export default async function VacanteDetailPage({
     include: { company: true },
   });
   if (!jobPosting) notFound();
+  const informational = isExampleCompany(jobPosting.company);
 
   let alreadyApplied = false;
-  if (session?.user?.role === "WORKER") {
+  if (!informational && session?.user?.role === "WORKER") {
     const worker = await prisma.workerProfile.findUnique({ where: { userId: session.user.id } });
     if (worker) {
       const existing = await prisma.jobApplication.findUnique({
@@ -161,6 +165,15 @@ export default async function VacanteDetailPage({
           )}
         </Card>
 
+        {informational && (
+          <Card className="mt-4 border-warning-600/25 bg-warning-600/10 p-5">
+            <h2 className="font-heading text-sm font-bold text-navy-900">Referencia de puesto</h2>
+            <p className="mt-1.5 text-sm leading-relaxed text-navy-800/70">
+              Este contenido sirve para conocer el tipo de puestos que pueden publicarse. No es una vacante activa ni recibe postulaciones.
+            </p>
+          </Card>
+        )}
+
         <Card className="mt-4 p-5">
           <h2 className="flex items-center gap-2 font-heading text-sm font-bold text-navy-900">
             <FileText className="h-4 w-4 text-navy-700" /> Descripción del brete
@@ -196,7 +209,7 @@ export default async function VacanteDetailPage({
           </Card>
         )}
 
-        {jobPosting.isActive && (
+        {jobPosting.isActive && !informational && (
           <Card id="aplicar" className="mt-4 scroll-mt-20 p-5">
             <h2 className="flex items-center gap-2 font-heading text-sm font-bold text-navy-900">
               <Send className="h-4 w-4 text-navy-700" /> Aplicar
@@ -259,7 +272,11 @@ export default async function VacanteDetailPage({
       {/* CTA fija -- refleja el estado real de aplicación, no un botón decorativo */}
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-sand-200 bg-white px-4 py-3 shadow-[0_-4px_12px_rgba(26,43,72,0.05)]">
         <div className="mx-auto w-full max-w-lg">
-          {!jobPosting.isActive ? (
+          {informational ? (
+            <Button href="/registro/empresa" variant="secondary" fullWidth>
+              Publicar una vacante
+            </Button>
+          ) : !jobPosting.isActive ? (
             <Button disabled fullWidth>
               Vacante cerrada
             </Button>

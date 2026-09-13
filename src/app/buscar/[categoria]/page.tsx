@@ -13,6 +13,7 @@ import { LABOR_CATEGORIES, JOB_TYPES } from "@/lib/constants";
 import { getAdEligibility, getActiveAds } from "@/lib/ads";
 import { AdSlot } from "@/components/ads/AdSlot";
 import type { LaborCategory } from "@prisma/client";
+import { realCompanyFilter } from "@/lib/example-job";
 
 function labelFor(list: readonly { value: string; label: string }[], value: string) {
   return list.find((i) => i.value === value)?.label ?? value;
@@ -29,7 +30,7 @@ export default async function BuscarCategoriaPage({
 
   const [jobPostings, adEligible, ads] = await Promise.all([
     prisma.jobPosting.findMany({
-      where: { laborCategory: category.value as LaborCategory, isActive: true },
+      where: { laborCategory: category.value as LaborCategory, isActive: true, company: realCompanyFilter },
       include: { company: true },
       orderBy: { createdAt: "desc" },
       take: 30,
