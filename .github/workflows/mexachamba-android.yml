@@ -24,13 +24,14 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Install Android API 36
+        shell: bash
         run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          command -v sdkmanager
           yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platforms;android-36"
+          sdkmanager "platform-tools" "platforms;android-36"
 
       - name: Static config verification
         run: python3 android/scripts/verify-config.py
