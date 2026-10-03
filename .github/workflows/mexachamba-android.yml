@@ -35,13 +35,18 @@ jobs:
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" "platform-tools" "platforms;android-36"
 
+      - name: Set up Gradle 8.13
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+
       - name: Static config verification
         run: python3 android/scripts/verify-config.py
 
-      - name: Verify Gradle wrapper and compile
+      - name: Compile Android project
         working-directory: android
         run: |
-          chmod +x gradlew
-          ./gradlew clean
-          ./gradlew lintRelease
-          ./gradlew assembleDebug
+          gradle --version
+          gradle clean
+          gradle lintRelease
+          gradle assembleDebug
