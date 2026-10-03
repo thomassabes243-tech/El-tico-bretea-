@@ -50,3 +50,10 @@ jobs:
           gradle clean
           gradle lintRelease
           gradle assembleDebug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: mexachamba-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
