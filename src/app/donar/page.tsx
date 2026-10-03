@@ -3,6 +3,7 @@ import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
 import { DonationForm } from "@/components/forms/DonationForm";
 import { HeartHandshake } from "lucide-react";
+import { PAYMENTS_ENABLED } from "@/lib/monetization";
 
 export default function DonarPage() {
   return (
@@ -22,7 +23,13 @@ export default function DonarPage() {
             forma de apoyar el mantenimiento de la app.
           </p>
           <div className="mt-2 w-full border-t border-sand-200 pt-5">
-            <DonationForm />
+            {PAYMENTS_ENABLED ? (
+              <DonationForm />
+            ) : (
+              <p className="rounded-xl bg-sand-100 px-4 py-3 text-xs font-semibold text-navy-800/50">
+                Las donaciones estarán disponibles próximamente.
+              </p>
+            )}
           </div>
         </Card>
       </main>

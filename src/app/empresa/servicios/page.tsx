@@ -11,6 +11,7 @@ import { PushNotificationToggle } from "@/components/forms/PushNotificationToggl
 import { getAppSettings } from "@/lib/settings";
 import { formatPesos } from "@/lib/format";
 import { canOfferServices, findOrCreateServiceProfile } from "@/lib/company-profile";
+import { PAYMENTS_ENABLED } from "@/lib/monetization";
 
 export default async function ServiciosPage() {
   const session = await auth();
@@ -85,7 +86,7 @@ export default async function ServiciosPage() {
                 <CancelSubscriptionButton cancelUrl="/api/paypal/profesional/cancelar" label="Cancelar Plan Profesional" />
                 <PushNotificationToggle />
               </div>
-            ) : settings.paypalProfessionalPlanId ? (
+            ) : PAYMENTS_ENABLED && settings.paypalProfessionalPlanId ? (
               <SubscribeButton
                 planId={settings.paypalProfessionalPlanId}
                 confirmUrl="/api/paypal/profesional/confirmar"

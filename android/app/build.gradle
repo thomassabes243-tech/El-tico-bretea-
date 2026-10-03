@@ -1,0 +1,92 @@
+import java.util.Properties
+
+plugins {
+    id 'com.android.application'
+}
+
+final String APP_ID = 'com.mexicosinhambre.app'
+final int VERSION_CODE_VALUE = 1
+final String VERSION_NAME_VALUE = '1.0.0'
+final int MIN_SDK_VALUE = 23
+final int TARGET_SDK_VALUE = 36
+final int COMPILE_SDK_VALUE = 36
+
+Properties localSigning = new Properties()
+File localSigningFile = rootProject.file('keystore.properties')
+if (localSigningFile.exists()) {
+    localSigningFile.withInputStream { localSigning.load(it) }
+}
+
+def signingValue = { String envName, String propertyName ->
+    String envValue = System.getenv(envName)
+    if (envValue != null && !envValue.trim().isEmpty()) return envValue
+    String fileValue = localSigning.getProperty(propertyName)
+    return fileValue != null && !fileValue.trim().isEmpty() ? fileValue : null
+}
+
+def keystorePath = signingValue('ANDROID_KEYSTORE_PATH', 'storeFile')
+def keystorePassword = signingValue('ANDROID_KEYSTORE_PASSWORD', 'storePassword')
+def keyAliasValue = signingValue('ANDROID_KEY_ALIAS', 'keyAlias')
+def keyPasswordValue = signingValue('ANDROID_KEY_PASSWORD', 'keyPassword')
+def signingReady = [keystorePath, keystorePassword, keyAliasValue, keyPasswordValue].every { it != null }
+
+android {
+    namespace APP_ID
+    compileSdk COMPILE_SDK_VALUE
+
+    defaultConfig {
+        applicationId APP_ID
+        minSdk MIN_SDK_VALUE
+        targetSdk TARGET_SDK_VALUE
+        versionCode VERSION_CODE_VALUE
+        versionName VERSION_NAME_VALUE
+    }
+
+    if (signingReady) {
+        signingConfigs {
+            release {
+                storeFile file(keystorePath)
+                storePassword keystorePassword
+                keyAlias keyAliasValue
+                keyPassword keyPasswordValue
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+            if (signingReady) {
+                signingConfig signingConfigs.release
+            }
+        }
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError true
+        checkReleaseBuilds true
+    }
+}
+
+gradle.taskGraph.whenReady { graph ->
+    boolean releaseRequested = graph.allTasks.any { task ->
+        task.name in ['bundleRelease', 'assembleRelease']
+    }
+    if (releaseRequested && !signingReady) {
+        throw new GradleException('Release signing is not configured. Set ANDROID_KEYSTORE_PATH, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS and ANDROID_KEY_PASSWORD (or ignored android/keystore.properties).')
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.3'
+}

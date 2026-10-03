@@ -1,0 +1,50 @@
+#!/usr/bin/env sh
+set -eu
+
+APP_HOME=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+WRAPPER_DIR="$APP_HOME/gradle/wrapper"
+WRAPPER_JAR="$WRAPPER_DIR/gradle-wrapper.jar"
+WRAPPER_URL="https://services.gradle.org/distributions/gradle-8.13-wrapper.jar"
+WRAPPER_SHA256="81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f"
+
+verify_wrapper() {
+  [ -f "$WRAPPER_JAR" ] || return 1
+  if command -v sha256sum >/dev/null 2>&1; then
+    actual=$(sha256sum "$WRAPPER_JAR" | awk '{print $1}')
+    [ "$actual" = "$WRAPPER_SHA256" ] || {
+      echo "ERROR: Gradle wrapper JAR checksum mismatch." >&2
+      return 1
+    }
+  fi
+  return 0
+}
+
+bootstrap_wrapper() {
+  mkdir -p "$WRAPPER_DIR"
+  tmp="$WRAPPER_JAR.tmp"
+  rm -f "$tmp"
+  echo "Gradle wrapper JAR not found; downloading verified Gradle 8.13 wrapper..." >&2
+  if command -v curl >/dev/null 2>&1; then
+    curl --fail --location --retry 2 --connect-timeout 10 --output "$tmp" "$WRAPPER_URL" || return 1
+  elif command -v wget >/dev/null 2>&1; then
+    wget --tries=2 --timeout=10 --output-document="$tmp" "$WRAPPER_URL" || return 1
+  else
+    return 1
+  fi
+  mv "$tmp" "$WRAPPER_JAR"
+  verify_wrapper
+}
+
+if ! verify_wrapper; then
+  rm -f "$WRAPPER_JAR"
+  if ! bootstrap_wrapper; then
+    rm -f "$WRAPPER_JAR" "$WRAPPER_JAR.tmp"
+    if command -v gradle >/dev/null 2>&1; then
+      exec gradle "$@"
+    fi
+    echo "ERROR: Unable to obtain the verified Gradle 8.13 wrapper JAR and no system Gradle is installed." >&2
+    exit 1
+  fi
+fi
+
+exec java ${JAVA_OPTS:-} -classpath "$WRAPPER_JAR" org.gradle.wrapper.GradleWrapperMain "$@"

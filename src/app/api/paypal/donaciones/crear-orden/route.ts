@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createPaypalOrder } from "@/lib/paypal";
+import { PAYMENTS_ENABLED } from "@/lib/monetization";
 
 // Monto libre, pero con un piso y un techo razonables -- evita órdenes de
 // $0 (inútiles) o typos con demasiados ceros que después haya que reversar.
@@ -8,6 +9,10 @@ const MIN_PESOS = 10;
 const MAX_PESOS = 50000;
 
 export async function POST(request: Request) {
+  if (!PAYMENTS_ENABLED) {
+    return NextResponse.json({ error: "Los cobros todavía no están activos" }, { status: 503 });
+  }
+
   const body = await request.json().catch(() => ({}));
   const amountPesos = Math.round(Number(body.amountPesos));
 

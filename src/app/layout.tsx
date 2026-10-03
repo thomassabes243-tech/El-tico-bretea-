@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
+import type { ReactNode } from "react";
 import { Plus_Jakarta_Sans, Merriweather, DM_Sans } from "next/font/google";
 import Script from "next/script";
 import { Providers } from "@/components/Providers";
 import { getSiteUrl } from "@/lib/site";
 import { ADSENSE_CLIENT_ID } from "@/lib/ads-client";
+import { ADS_ENABLED } from "@/lib/monetization";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -44,19 +46,21 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="es-MX"
       className={`${plusJakarta.variable} ${merriweather.variable} ${dmSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-sand-50 text-foreground">
-        <Script
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
-          crossOrigin="anonymous"
-          strategy="beforeInteractive"
-        />
+        {ADS_ENABLED && (
+          <Script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
+            crossOrigin="anonymous"
+            strategy="beforeInteractive"
+          />
+        )}
         <Providers>{children}</Providers>
       </body>
     </html>

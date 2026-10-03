@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { AcceptQuoteButton } from "@/components/forms/AcceptQuoteButton";
 import { RateQuoteForm } from "@/components/forms/RateQuoteForm";
 import { ReportButton } from "@/components/forms/ReportButton";
+import { ServiceRequestStatusToggle } from "@/components/forms/ServiceRequestStatusToggle";
 import { SERVICE_CATEGORIES, PROJECT_MAX_QUOTES } from "@/lib/constants";
 import { DistanceBadge } from "@/components/servicios/DistanceBadge";
 import { PremiumBadge } from "@/components/brand/PremiumBadge";
@@ -79,6 +80,8 @@ export default async function SolicitudDetallePage({
             {serviceRequest.budgetLabel && <span>💰 Presupuesto: {serviceRequest.budgetLabel}</span>}
           </div>
         </Card>
+
+        <ServiceRequestStatusToggle requestId={serviceRequest.id} status={serviceRequest.status} />
 
         <h2 className="mt-6 text-base font-bold text-navy-900">
           Cotizaciones ({serviceRequest.quotes.length})

@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { FeatureJobButton } from "@/components/forms/FeatureJobButton";
 import { CheckCircle2 } from "lucide-react";
+import { PAYMENTS_ENABLED } from "@/lib/monetization";
 
 export default async function VacantePublicadaPage({
   params,
@@ -33,9 +34,11 @@ export default async function VacantePublicadaPage({
         </div>
       </Card>
 
-      <div className="mt-4">
-        <FeatureJobButton jobPostingId={jobPosting.id} featuredUntil={jobPosting.featuredUntil} />
-      </div>
+      {PAYMENTS_ENABLED && (
+        <div className="mt-4">
+          <FeatureJobButton jobPostingId={jobPosting.id} featuredUntil={jobPosting.featuredUntil} />
+        </div>
+      )}
 
       <div className="mt-5 flex flex-col gap-2">
         <Button href={`/vacantes/${jobPosting.id}/aplicantes`} fullWidth>

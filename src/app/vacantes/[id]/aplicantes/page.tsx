@@ -13,6 +13,7 @@ import { ApplicationStatusSelect } from "@/components/forms/ApplicationStatusSel
 import { FeatureJobButton } from "@/components/forms/FeatureJobButton";
 import { closureReasonLabel } from "@/lib/job-closure-reason";
 import { MapPin, Briefcase, Sparkles, Info, Pencil } from "lucide-react";
+import { PAYMENTS_ENABLED } from "@/lib/monetization";
 
 export default async function AplicantesPage({
   params,
@@ -70,7 +71,7 @@ export default async function AplicantesPage({
           </p>
         )}
 
-        {jobPosting.isActive && (
+        {PAYMENTS_ENABLED && jobPosting.isActive && (
           <div className="mt-4">
             <FeatureJobButton jobPostingId={jobPosting.id} featuredUntil={jobPosting.featuredUntil} />
           </div>

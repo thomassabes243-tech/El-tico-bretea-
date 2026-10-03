@@ -19,7 +19,7 @@ export function PushNotificationToggle() {
 
   useEffect(() => {
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-      setSupported(false);
+      queueMicrotask(() => setSupported(false));
       return;
     }
     navigator.serviceWorker.getRegistration().then(async (reg) => {

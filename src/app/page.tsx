@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldCheck, MapPin, ChevronRight, Coins, Clock, Sparkles, UsersRound, BriefcaseBusiness } from "lucide-react";
+import { ShieldCheck, ShieldAlert, MapPin, ChevronRight, Coins, Clock, Sparkles, UsersRound, BriefcaseBusiness } from "lucide-react";
 import { TopBar } from "@/components/nav/TopBar";
 import { BottomNav } from "@/components/nav/BottomNav";
 import { Card } from "@/components/ui/Card";
@@ -23,6 +23,9 @@ export default async function Home({
 }) {
   const { "cuenta-eliminada": cuentaEliminada } = await searchParams;
   const chambas = await findJobPostingsFeaturedFirst({ isActive: true }, 8);
+  // Es un componente de servidor: el instante se toma una vez por solicitud
+  // para etiquetar publicaciones de menos de tres días como nuevas.
+  // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
 
   return (
@@ -35,6 +38,22 @@ export default async function Home({
             Tu cuenta fue eliminada. Gracias por haber usado El Mexa Chamba.
           </div>
         )}
+
+        <Link
+          href="/bienvenida"
+          className="mb-4 flex items-start gap-3 rounded-2xl border border-mx-red-600/15 bg-mx-red-100/55 px-4 py-3.5 text-navy-900 shadow-[0_6px_18px_rgba(10,38,71,0.05)]"
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-mx-red-600 text-white">
+            <ShieldAlert className="h-4.5 w-4.5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <strong className="block text-sm">Antes de aceptar una chamba</strong>
+            <span className="mt-0.5 block text-xs leading-relaxed text-navy-800/65">
+              No pagués por una vacante ni entregués documentos originales. Conocé las señales de alerta.
+            </span>
+          </span>
+          <ChevronRight className="mt-2 h-4 w-4 shrink-0 text-mx-red-600" />
+        </Link>
 
         <section className="relative overflow-hidden rounded-[24px] bg-navy-950 px-5 py-6 text-white shadow-[0_18px_40px_rgba(6,27,51,0.22)]">
           <HeroImage src="/assets/images/hero-worker.jpg" alt="" fallbackClassName="bg-navy-950" className="absolute inset-0 h-full w-full object-cover object-center brightness-[0.42]" />

@@ -3,6 +3,7 @@
 import { SessionProvider } from "next-auth/react";
 import { ReactNode, useEffect } from "react";
 import { ToastProvider } from "@/components/ui/Toast";
+import { WelcomeExperience } from "@/components/onboarding/WelcomeExperience";
 
 export function Providers({ children }: { children: ReactNode }) {
   useEffect(() => {
@@ -20,7 +21,10 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <SessionProvider>
-      <ToastProvider>{children}</ToastProvider>
+      <ToastProvider>
+        {children}
+        <WelcomeExperience />
+      </ToastProvider>
     </SessionProvider>
   );
 }
