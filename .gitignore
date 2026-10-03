@@ -50,3 +50,18 @@ next-env.d.ts
 
 # almacenamiento local de archivos efímeros del chat (Sección 8/21)
 /.data/
+
+# Android/Gradle local state and signing credentials
+/android/.gradle/
+/android/**/build/
+/android/local.properties
+/android/keystore.properties
+/android/*.jks
+/android/*.keystore
+/android/**/*.jks
+/android/**/*.keystore
+*.jks
+*.keystore
+keystore.properties
+local.properties
+/android/.idea/
